@@ -1,0 +1,7 @@
+{
+  "name": "HK Bus",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
