@@ -1,8 +1,8 @@
-import { createApp, reactive, ref } from 'vue'
-import App from './App.vue'
+import { createApp, reactive, ref, Vue } from 'vue'
+import App from './App.vue';
 import router from './router';
-
 import { IonicVue } from '@ionic/vue';
+import localforage from 'localforage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -26,6 +26,9 @@ import './theme/variables.css';
 const app = createApp(App)
   .use(IonicVue)
   .use(router);
+
+// Global variables
+app.config.globalProperties.localforage = localforage;
 
 router.isReady().then(() => {
   app.mount('#app');
