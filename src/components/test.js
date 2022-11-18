@@ -1,30 +1,12 @@
-export async function fetch_kmb(){
-    let kmb = {stop: [], route: []};
-    let kmb_route_response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route/')
-    let kmb_route_json = await kmb_route_response.json();
-    let kmb_route_stop_response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route-stop');
-    let kmb_route_stop_json = await kmb_route_stop_response.json();
-    let kmb_stop_response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/stop');
-    let kmb_stop_json = await kmb_stop_response.json();
-    kmb.stop = kmb_stop_json.data;
-    kmb.route = [...kmb_route_json.data]
-    for (let i = 0; i < kmb.route.length; i++){
-        let stop_array = kmb_route_stop_json.data.filter(x => x.route == kmb.route[i].route && x.bound == kmb.route[i].bound && x.service_type == kmb.route[i].service_type);
-        stop_array.sort((a,b) => a.seq - b.seq);
-        kmb.route[i].stop = stop_array.map(y => y.stop);
-    }
-    return kmb
-}
-
-export async function get_buses(){
+async function get_buses(){
     let buses_response = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
     let buses_json = await buses_response.json();
     let buses_obj = buses_json.features;
 
     let buses = buses_obj.reduce(function(buses, stop){ //reduce(function (accumulator, currentValue) { /* … */ }, initialValue)
         let new_stop = { //Create new stop
-                name_tc: stop.properties.stopNameC.replace('<br>' , ''),
-                name_en: stop.properties.stopNameE.replace('<br>' , ''),
+                name_tc: stop.properties.stopNameC,
+                name_en: stop.properties.stopNameE,
                 id: stop.properties.stopId,
                 seq: stop.properties.stopSeq,
                 coord: stop.geometry.coordinates
@@ -63,7 +45,6 @@ export async function get_buses(){
     for (let index in buses){
         buses[index].company = buses[index].company.split('+'); //Split bus companys into array
     }
-    // console.log(buses.filter(x => x.route_no == 1));
-    console.log('fetch finished')
-    return buses;
+    console.log(buses.filter(x => x.route_no.indexOf('277X') == 0));
 }
+get_buses();
