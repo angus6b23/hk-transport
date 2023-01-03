@@ -20,14 +20,14 @@
             <ion-tabs>
                 <ion-router-outlet></ion-router-outlet>
                 <ion-tab-bar slot="bottom">
-                    <ion-tab-button tab="tab1" href="/tabs/tab1">
+                    <ion-tab-button tab="tab1" href="/tabs/bus">
                         <ion-icon :icon="bus" />
                         <ion-label>巴士</ion-label>
                     </ion-tab-button>
 
-                    <ion-tab-button tab="tab2" href="/tabs/tab2">
-                        <ion-icon :icon="business" />
-                        <ion-label>Tab2</ion-label>
+                    <ion-tab-button tab="tab2" href="/tabs/minibus">
+                        <ion-icon :icon="speedometerOutline" />
+                        <ion-label>專線小巴</ion-label>
                     </ion-tab-button>
 
                     <ion-tab-button tab="tab3" href="/tabs/tab3">
@@ -43,8 +43,8 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading } from '@ionic/vue';
-import { business, square, bus } from 'ionicons/icons';
-import { fetch_bus, get_buses } from '@/components/fetch.js';
+import { business, square, bus, speedometerOutline } from 'ionicons/icons';
+import { fetch_bus, get_buses, get_minibuses } from '@/components/fetch.js';
 
 export default defineComponent({
     name: 'TabsPage',
@@ -55,13 +55,14 @@ export default defineComponent({
         const loading = ref(true);
         const loading_message = ref('請稍侯...<br>Please Wait...');
         return {
+            speedometerOutline,
             business,
             square,
             bus,
             setting_found,
             setting,
             loading,
-            loading_message
+            loading_message,
         }
     },
     methods:{
@@ -90,6 +91,14 @@ export default defineComponent({
                 this.loading_message = '正在獲取巴士資訊...<br>Fetching Bus data...';
                 bus_data = await get_buses();
                 this.localforage.setItem('bus_data', bus_data).then(()=>{this.loading = false});
+            }
+            let minibus_data = await this.localforage.getItem('minibus_data');
+            if (!minibus_data){
+                console.log('fetch minibus data');
+                this.loading = true;
+                this.loading_message = '正在獲取小巴資訊...<br>Fetching Minibus data...';
+                minibus_data = await get_minibuses();
+                this.localforage.setItem('minibus_data', minibus_data).then(()=>{this.loading = false});
             }
         } catch (err){
             console.error(err)

@@ -1,27 +1,55 @@
-/*export async function fetch_kmb(){
-    let kmb = {stop: [], route: []};
-    let kmb_route_response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route/')
-    let kmb_route_json = await kmb_route_response.json();
-    let kmb_route_stop_response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route-stop');
-    let kmb_route_stop_json = await kmb_route_stop_response.json();
-    let kmb_stop_response = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/stop');
-    let kmb_stop_json = await kmb_stop_response.json();
-    kmb.stop = kmb_stop_json.data;
-    kmb.route = [...kmb_route_json.data]
-    for (let i = 0; i < kmb.route.length; i++){
-        let stop_array = kmb_route_stop_json.data.filter(x => x.route == kmb.route[i].route && x.bound == kmb.route[i].bound && x.service_type == kmb.route[i].service_type);
-        stop_array.sort((a,b) => a.seq - b.seq);
-        kmb.route[i].stop = stop_array.map(y => y.stop);
-    }
-    return kmb
+let data = {
+    bus: getBuses(),
+    minibus: getMinibuses()
 }
-*/
-export async function get_buses(){
-    let buses_response = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
-    let buses_json = await buses_response.json();
-    let buses_obj = buses_json.features;
+class route{
+    constructor(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
+        this.company = company;
+        this.routeNo = routeNo;
+        this.originEN = originEN;
+        this.originTC = originTC;
+        this.serviceMode = serviceMode;
+        this.specialType = specialType;
+        this.fullFare = fullFare;
+        this.routeDirection = (routeDirection == 1) ? 'Inbound' : 'Outbound';
+        this.journeyTime = journeyTime;
+        this.infoLink = infoLink;
+        this.stops = [];
+    }
+}
+class stop{
+    constructor(nameTC, nameEN, id, seq, coord){
+        this.nameTC = nameTC.replace('<br>' , '');
+        this.nameEN = nameEN.replace('<br>' , '');
+        this.id = id;
+        this.seq = seq;
+        this.coord = coord;
+    }
+}
+class busRoute extends route{
+    constructor(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
+        super(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
+        this.type = 'bus';
+    }
+}
 
-    let buses = buses_obj.reduce(function(buses, stop){ //reduce(function (accumulator, currentValue) { /* … */ }, initialValue)
+class minibusRoute extends route{
+    constructor(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink, district){
+        super(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
+        this.type = 'minibus';
+        this.district = district;
+    };
+}
+
+let a = new minibusRoute('company', '1A', 'originEN', 'originTC', 'destEN', 'destTC', 'R', 'S', '10', 1, '100', 'infoLink', 'KLN');
+console.log(a)
+/*
+export async function get_buses(){
+    let busesResponse = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
+    let busesJson = await busesResponse.json();
+    let busesObj = busesJson.features;
+
+    let buses = busesObj.reduce(function(buses, stop){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
         let new_stop = { //Create new stop
                 name_tc: stop.properties.stopNameC.replace('<br>' , ''),
                 name_en: stop.properties.stopNameE.replace('<br>' , ''),
@@ -72,7 +100,7 @@ export async function get_minibuses(){
     let minibuses_json = await minibuses_response.json();
     let minibuses_obj = minibuses_json.features;
 
-    let minibuses = minibuses_obj.reduce(function(minibuses, stop){ //reduce(function (accumulator, currentValue) { /* … */ }, initialValue)
+    let minibuses = minibuses_obj.reduce(function(minibuses, stop){ //reduce(function (accumulator, currentValue) {  …  }, initialValue)
         let new_stop = { //Create new stop
                 name_tc: stop.properties.stopNameC.replace('<br>' , ''),
                 name_en: stop.properties.stopNameE.replace('<br>' , ''),
@@ -116,3 +144,4 @@ export async function get_minibuses(){
     // console.log(minibuses.filter(x => x.route_no == 1));
     return minibuses;
 }
+*/
