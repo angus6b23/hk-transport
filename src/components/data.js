@@ -1,7 +1,11 @@
-let data = {
-    bus: getBuses(),
-    minibus: getMinibuses()
-}
+// let data = {
+//     bus: getBuses(),
+//     minibus: getMinibuses()
+// }
+let buses = 1;
+(async()=>{
+    buses = await getBuses();
+})();
 class route{
     constructor(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
         this.company = company;
@@ -15,6 +19,8 @@ class route{
         this.journeyTime = journeyTime;
         this.infoLink = infoLink;
         this.stops = [];
+        this.starred = false;
+        this.toggleStar = () => {this.starred = !this.starred}
     }
 }
 class stop{
@@ -29,6 +35,7 @@ class stop{
 class busRoute extends route{
     constructor(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
         super(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
+        this.etas = [];
         this.type = 'bus';
     }
 }
@@ -38,53 +45,48 @@ class minibusRoute extends route{
         super(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
         this.type = 'minibus';
         this.district = district;
+        this.getStops = () =>{
+            console.log(this);
+        }
     };
 }
-
-let a = new minibusRoute('company', '1A', 'originEN', 'originTC', 'destEN', 'destTC', 'R', 'S', '10', 1, '100', 'infoLink', 'KLN');
-console.log(a)
+// Test code
+console.log(buses)
 /*
-export async function get_buses(){
+let a = new minibusRoute('company', '1A', 'originEN', 'originTC', 'destEN', 'destTC', 'R', 'S', '10', 1, '100', 'infoLink', 'KLN');
+console.log(a.getStops())
+*/
+
+
+async function getBuses(){
     let busesResponse = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
     let busesJson = await busesResponse.json();
     let busesObj = busesJson.features;
 
-    let buses = busesObj.reduce(function(buses, stop){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
-        let new_stop = { //Create new stop
-                name_tc: stop.properties.stopNameC.replace('<br>' , ''),
-                name_en: stop.properties.stopNameE.replace('<br>' , ''),
-                id: stop.properties.stopId,
-                seq: stop.properties.stopSeq,
-                coord: stop.geometry.coordinates
-            }
-        let filtered_bus_route = buses.filter(bus => bus.route_no == stop.properties.routeNameE && bus.company == stop.properties.companyCode && bus.route_direction == stop.properties.routeSeq && bus.service_mode == stop.properties.serviceMode); //Check if route of current stop is stored
-        if (filtered_bus_route.length == 0){ //Create route if not found
-            let new_bus_route = {
-                    company: stop.properties.companyCode,
-                    route_no: stop.properties.routeNameE,
-                    service_mode: stop.properties.serviceMode,
-                    special_type: stop.properties.specialType,
-                    link: stop.properties.hyperlinkE,
-                    full_fare: stop.properties.fullFare,
-                    route_direction: stop.properties.routeSeq,
-                    journey_time: stop.properties.journeyTime,
-                    stops: []
-            }
-            if (stop.properties.routeSeq == 1){ //Direction 1 = Inbound
-                    new_bus_route.dest_tc = stop.properties.locEndNameC;
-                    new_bus_route.dest_en = stop.properties.locEndNameE;
-                    new_bus_route.orig_tc = stop.properties.locStartNameC;
-                    new_bus_route.orig_en = stop.properties.locStartNameE;
+    let buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
+        let {stopNameC: nameTC, stopNameE: nameEN, stopId: id, stopSeq: seq } = item.properties;
+        let {coordinates: coord} = item.geometry
+        let newStop = new stop(nameTC, nameEN, id, seq, coord);
+        let checkIndex = buses.findIndex(bus => bus.route_no == item.properties.routeNameE && bus.company == item.properties.companyCode && bus.route_direction == item.properties.routeSeq && bus.service_mode == item.properties.serviceMode); //Check if route of current stop is stored
+        if (checkIndex == -1){ //Create route if not found
+            let { companyCode: company, routeNameE: routeNo, serviceMode, specialType, hyperlinkE: infoLink, fullFare, routeSeq: routeDirection, journeyTime} = item.properties;
+            let originEN, originTC, destEN, destTC;
+            if (item.properties.routeSeq == 1){ //Direction 1 = Inbound
+                    destTC = item.properties.locEndNameC;
+                    destEN = item.properties.locEndNameE;
+                    originTC = item.properties.locStartNameC;
+                    originEN = item.properties.locStartNameE;
                 } else { //Direction 2 = Outbound
-                    new_bus_route.dest_tc = stop.properties.locStartNameC;
-                    new_bus_route.dest_en = stop.properties.locStartNameE;
-                    new_bus_route.orig_tc = stop.properties.locEndNameC;
-                    new_bus_route.orig_en = stop.properties.locEndNameE;
+                    destTC = item.properties.locStartNameC;
+                    destEN = item.properties.locStartNameE;
+                    originTC = item.properties.locEndNameC;
+                    originEN = item.properties.locEndNameE;
                 }
-            new_bus_route.stops.push(new_stop);
-            buses.push(new_bus_route);
+            let newBusRoute = new busRoute(company, routeNo, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
+            newBusRoute.stops.push(newStop);
+            buses.push(newBusRoute);
         } else { //Push the new stop to pre-existing route
-            filtered_bus_route[0].stops.push(new_stop);
+            buses[checkIndex].stops.push(newStop);
         }
         return buses;
     }, []); //Initial value for reduce
@@ -94,6 +96,7 @@ export async function get_buses(){
     // console.log(buses.filter(x => x.route_no == 1));
     return buses;
 }
+/*
 
 export async function get_minibuses(){
     let minibuses_response = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_GMB.json'); //Get all minibuses information from data.gov.hk
