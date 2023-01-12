@@ -1,0 +1,127 @@
+<template>
+    <!-- Header -->
+    <ion-header>
+        <!-- Toolbar -->
+        <ion-toolbar>
+            <ion-title>{{ item.routeNo }}<span class="ion-margin-start">{{ item.destTC }}</span></ion-title>
+            <ion-buttons slot="start">
+                <ion-button @click="closeModal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
+            </ion-buttons>
+            <ion-buttons slot="end">
+                <ion-button  v-if="checkbusStar" @click="removeStar">
+                    <ion-icon :icon="star" />
+                </ion-button>
+                <ion-button v-else @click="addStar">
+                    <ion-icon :icon="starOutline" />
+                </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
+        <!-- Segment select -->
+        <ion-segment v-model="popupView">
+            <ion-segment-button value="default">
+                <ion-label>預報</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="info">
+                <ion-label>資訊</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="map">
+                <ion-label>地圖</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+    </ion-header>
+    <!-- Segment for route etas -->
+    <ion-content v-if="popupView == 'default'" class="tabs">
+        <!-- Skeleton view for loading -->
+        <ion-list v-if="popupLoading">
+            <SkeletonItems />
+        </ion-list>
+        <!-- Show loaded stations -->
+        <ion-list v-else>
+            <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop"></StopItems>
+        </ion-list>
+    </ion-content>
+    <!-- Route Info -->
+    <ion-content v-else-if="popupView == 'info'" class="tabs">
+       <RouteInfo :item="item"></RouteInfo>
+    </ion-content>
+    <ion-content v-else-if="popupView == 'map'" class="tabs">
+        <LeafletMap :routeLocations="item.stops" />
+    </ion-content>
+</template>
+
+<script>
+import { ref, computed } from 'vue';
+import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
+import { star, starOutline, chevronBack } from 'ionicons/icons'
+import SkeletonItems from '@/components/SkeletonItems.vue'
+import StopItems from '@/components/StopItems.vue';
+import RouteInfo from '@/components/RouteInfo.vue';
+import LeafletMap from '@/components/leaflet.vue';
+
+export default {
+    name: "ETAPopup",
+    components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
+    props: ['item', 'busStarred'],
+    emits: ['closeModal', 'addStar', 'removeStar'],
+    setup(props){
+        const popupLoading = ref(false);
+        const item = ref(props.item);
+        const popupView = ref('default');
+        const busStarred = props.busStarred;
+        return{
+            popupLoading,
+            item,
+            busStarred,
+            popupView,
+            chevronBack,
+            starOutline,
+            star
+        }
+    },
+    mounted(){
+        if (this.item.type == "minibus"){
+            this.popupLoading = true;
+        }
+    },
+    computed:{
+        checkbusStar(){
+            let busStarredClone = [...this.busStarred];
+            if (busStarredClone.length == 0){
+                return false
+            } else {
+                let indexResult = busStarredClone.findIndex(x => x.routeNo == this.item.routeNo && x.infoLink == this.item.infoLink && x.routeDirection == this.item.routeDirection && x.serviceMode == this.item.serviceMode);
+                if (indexResult == -1){
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+    },
+    methods:{
+        closeModal(){
+            this.$emit('closeModal');
+        },
+        addStar(){
+            this.$emit('addStar');
+        },
+        removeStar(){
+            this.$emit('removeStar');
+        }
+    },
+    beforeUnmount(){
+    }
+};
+</script>
+<style scoped>
+.tabs{
+    --offset-bottom: -100px !important;
+    height: 100vh;
+}
+@media only screen and (min-width: 768px) and (min-height: 600px){
+    .tabs{
+        --offset-bottom: -100px !important;
+        height: 600px !important;
+    }
+}
+</style>

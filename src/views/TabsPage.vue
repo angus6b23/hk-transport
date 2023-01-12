@@ -44,7 +44,8 @@
 import { defineComponent, ref } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading } from '@ionic/vue';
 import { business, square, bus, speedometerOutline } from 'ionicons/icons';
-import { fetch_bus, get_buses, get_minibuses } from '@/components/fetch.js';
+import { loadData, setData } from '@/components/loadData.js'
+import { fetchBuses, fetchMinibuses } from '@/components/fetchData.js'
 
 export default defineComponent({
     name: 'TabsPage',
@@ -52,7 +53,9 @@ export default defineComponent({
     setup() {
         const setting_found = ref(false);
         const setting = ref({});
-        const loading = ref(true);
+        const loading = ref(false);
+        const busData = [];
+        const minibusData = [];
         const loading_message = ref('請稍侯...<br>Please Wait...');
         return {
             speedometerOutline,
@@ -67,43 +70,35 @@ export default defineComponent({
     },
     methods:{
         async set_language(lang){
+            // Set Language
             this.setting.lang = lang;
-            let clone_setting = {...this.setting}
-            let setting_promise = await this.localforage.setItem('setting', clone_setting);
+            let clone_setting = {...this.setting};
+            let setting_promise = await setData('setting', clone_setting);
+            // Initiate loading after selection
+            try{
+                this.loading = true;
+                this.loading_message = '正在獲取交通資訊...<br>Fetching Transport data...';
+                this.busData = await loadData('busData', true, false);
+                this.minibusData = await loadData('minibusData', true, false);
+                this.loading = false;
+            }
+            catch(err){
+                console.error(err);
+            }
             this.setting_found = true;
-        }
+        },
     },
     async mounted(){
         try{
-            let load_setting = await this.localforage.getItem('setting')
-            if (load_setting){
-                this.setting = load_setting;
+            let loadSetting = await loadData('setting');
+            console.log(`Current setting: ${loadSetting}`)
+            if (loadSetting){
+                this.setting = loadSetting;
                 this.setting_found = true;
             }
         } catch(err){
             console.error(err);
         }
-        this.loading = false;
-        try{
-            let bus_data = await this.localforage.getItem('bus_data');
-            if (!bus_data){
-                this.loading = true;
-                this.loading_message = '正在獲取巴士資訊...<br>Fetching Bus data...';
-                bus_data = await get_buses();
-                this.localforage.setItem('bus_data', bus_data).then(()=>{this.loading = false});
-            }
-            let minibus_data = await this.localforage.getItem('minibus_data');
-            if (!minibus_data){
-                console.log('fetch minibus data');
-                this.loading = true;
-                this.loading_message = '正在獲取小巴資訊...<br>Fetching Minibus data...';
-                minibus_data = await get_minibuses();
-                this.localforage.setItem('minibus_data', minibus_data).then(()=>{this.loading = false});
-            }
-        } catch (err){
-            console.error(err)
-        }
-        this.loading = false;
     }
 });
 </script>
