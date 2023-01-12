@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "dev": "vue-cli-service serve",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
@@ -18,6 +19,7 @@
     "@capacitor/status-bar": "4.0.1",
     "@ionic/vue": "^6.0.0",
     "@ionic/vue-router": "^6.0.0",
+    "chromium": "^3.0.3",
     "core-js": "^3.6.5",
     "ionicons": "^6.0.3",
     "leaflet": "^1.9.2",

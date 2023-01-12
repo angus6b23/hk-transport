@@ -1,23 +1,55 @@
-/* eslint-disable */
 <template>
+    <ion-select interface="action-sheet" placeholder="選擇放大的位置" v-model="zoomIndex">
+        <ion-select-option v-for="(stop, index) in routeLocations" :value="index">{{ index + 1}} {{ stop.nameTC }}</ion-select-option>
+        <ion-select-option value="gps">目前GPS 位置</ion-select-option>
+    </ion-select>
     <div id="mapContainer"></div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, watch, toRaw } from 'vue';
+import { IonSelect, IonSelectOption } from '@ionic/vue';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 export default {
     name: "LeafletMap",
-    props: ['route_locations'],
+    props: ['routeLocations'],
+    components: { IonSelect, IonSelectOption },
     data() {
         return {
             map: null
         };
     },
+    methods:{
+        setView(zoomIndex){
+            if(zoomIndex == 'gps'){
+               toRaw(this.map).locate({setView: true});
+               this.map.on('locationfound', (e) => {
+                   let navIcon = L.icon({
+                       iconUrl: 'navigation.png',
+                       iconSize:     [32, 32],
+                       iconAnchor:   [16, 16],
+                       popupAnchor:  [0, -32]
+                   });
+                   var radius = e.accuracy;
+                   L.marker(e.latlng, {icon: navIcon}).addTo(toRaw(this.map));
+                   L.circle(e.latlng, radius).addTo(toRaw(this.map));
+               });
+           } else {
+               let lat = this.routeLocations[zoomIndex].coord[1];
+               let long = this.routeLocations[zoomIndex].coord[0]
+               toRaw(this.map).setView([lat, long], 18);
+           }
+        }
+    },
     setup(props){
-        const route_locations = ref(props.route_locations);
+        const routeLocations = ref(props.routeLocations);
+        const zoomIndex = ref('gps');
+        return {
+            routeLocations,
+            zoomIndex
+        }
     },
     mounted() {
         // Add leaflet marker group for showing locations of stops
@@ -52,52 +84,56 @@ export default {
         L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
             attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(this.map);
+        }).addTo(toRaw(this.map));
         // Invalidate size to avoid problems
-        let inv = this;
+        let self = this;
         setTimeout(function(){
-            inv.map.invalidateSize()
+            self.map.invalidateSize()
         }, 200);
         // Add markers to marker group
-        for (let index in this.route_locations){
+        for (let index in this.routeLocations){
             let marker
             if (index == 0){
-                marker = L.marker([this.route_locations[index].coord[1], this.route_locations[index].coord[0]], {icon: startIcon});
-            } else if (index == this.route_locations.length - 1){
-                marker = L.marker([this.route_locations[index].coord[1], this.route_locations[index].coord[0]], {icon: endIcon});
+                marker = L.marker([this.routeLocations[index].coord[1], this.routeLocations[index].coord[0]], {icon: startIcon});
+            } else if (index == this.routeLocations.length - 1){
+                marker = L.marker([this.routeLocations[index].coord[1], this.routeLocations[index].coord[0]], {icon: endIcon});
             } else {
-                marker = L.marker([this.route_locations[index].coord[1], this.route_locations[index].coord[0]], {icon: nodeIcon});
+                marker = L.marker([this.routeLocations[index].coord[1], this.routeLocations[index].coord[0]], {icon: nodeIcon});
             }
-            marker.bindPopup(`${this.route_locations[index].seq} ${this.route_locations[index].name_tc}`);
+            marker.bindPopup(`${this.routeLocations[index].seq} ${this.routeLocations[index].nameTC}`);
             marker.addTo(markersGroup);
         }
         // Create array for stop geometries
-        let stop_geometries = this.route_locations.map(x => new L.LatLng(x.coord[1], x.coord[0]));
-        console.log(stop_geometries);
+        let stop_geometries = this.routeLocations.map(x => new L.LatLng(x.coord[1], x.coord[0]));
+        // console.log(stop_geometries);
         let polyline = new L.Polyline(stop_geometries, {
             color: 'rebeccapurple',
             weight: 3,
             opacity: 0.7
         });
         // Apply markers and polyline
-        this.map.addLayer(markersGroup);
-        polyline.addTo(this.map)
+        toRaw(this.map).addLayer(markersGroup);
+        polyline.addTo(toRaw(this.map))
         //Zoom to fit boundaries ? function not working
-        this.map.fitBounds(markersGroup.getBounds().pad(0.05), false);
+        toRaw(this.map).fitBounds(markersGroup.getBounds().pad(0.05), false);
         // Set minimum zoom level to 10 to avoiding zooming out to world map
-        this.map.setMinZoom(10);
+        toRaw(this.map).setMinZoom(10);
         // Try to get GPS location and set view
-        this.map.locate({setView: true});
-        this.map.on('locationfound', function(e){
+        toRaw(this.map).locate({setView: true});
+        toRaw(this.map).on('locationfound', function(e){
             var radius = e.accuracy;
-            console.log
-            L.marker(e.latlng, {icon: navIcon}).addTo(inv.map);
-            L.circle(e.latlng, radius).addTo(inv.map);
+            L.marker(e.latlng, {icon: navIcon}).addTo(self.map);
+            L.circle(e.latlng, radius).addTo(self.map);
         });
     },
     beforeUnmount() {
         if (this.map) {
-            this.map.remove();
+            toRaw(this.map).remove();
+        }
+    },
+    watch:{
+        zoomIndex(newZoomIndex){
+            this.setView(newZoomIndex);
         }
     }
 };

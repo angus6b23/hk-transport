@@ -2,19 +2,21 @@
     <ion-page>
         <ion-header>
             <ion-toolbar>
-                <ion-searchbar autocorrect="off" v-model="bus_query" placeholder="請輸入路線或目的地"></ion-searchbar>
+                <ion-searchbar autocorrect="off" v-model="busQuery" placeholder="請輸入路線或目的地"></ion-searchbar>
             </ion-toolbar>
         </ion-header>
         <ion-content :fullscreen="true">
             <ion-list>
-                <ion-list-header v-if="bus_query.length > 0"><ion-label>搜尋: {{ bus_query }}</ion-label></ion-list-header>
+                <!-- Change List Header according to bus search -->
+                <ion-list-header v-if="busQuery.length > 0"><ion-label>搜尋: {{ busQuery }}</ion-label></ion-list-header>
                 <ion-list-header v-else><ion-label>我的最愛</ion-label></ion-list-header>
-                <div v-for="(route, index) in bus_display_array">
+                <!-- Bus route display list here -->
+                <div v-for="(route, index) in busDisplayArray" :key="route.id">
                     <ion-item button>
                         <ion-grid>
-                            <ion-row class="open-modal" expand="block" @click="open_bus_modal(index)">
-                                <ion-col size-xs="3" size-md="1" class="route_no ion-align-items-center">
-                                    <h3 v-if="route.route_no.length < 10">{{ route.route_no }}</h3>
+                            <ion-row class="open-modal" expand="block" @click="openBusModal(index)">
+                                <ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
+                                    <h3 v-if="route.routeNo.length < 10">{{ route.routeNo }}</h3>
                                     <h3 v-else>-</h3>
                                 </ion-col>
                                 <ion-col size-xs="9" size-md="11">
@@ -27,9 +29,9 @@
                                     <ion-badge v-if="route.company.includes('PI')" class="pi-badge ion-margin-start">馬灣</ion-badge>
                                     <ion-badge v-if="route.company.includes('XB')" class="xb-badge ion-margin-start">過境</ion-badge>
                                     <ion-badge v-if="route.company.includes('LRTFeeder')" class="ltr-badge ion-margin-start">港鐵</ion-badge>
-                                    <ion-badge v-if="route.service_mode.includes('N')" class="night-badge ion-margin-start">晚間</ion-badge>
-                                    <ion-badge v-if="route.service_mode == 'T'" class="special-badge ion-margin-start">特別</ion-badge>
-                                    <h3 class="ion-no-margin ion-margin-start">{{ route.dest_tc }}</h3>
+                                    <ion-badge v-if="route.serviceMode.includes('N')" class="night-badge ion-margin-start">晚間</ion-badge>
+                                    <ion-badge v-if="route.serviceMode == 'T'" class="special-badge ion-margin-start">特別</ion-badge>
+                                    <h3 class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
                                 </ion-col>
                             </ion-row>
                         </ion-grid>
@@ -37,152 +39,63 @@
                 </div>
             </ion-list>
             <!-- Modal for displaying bus details -->
-            <ion-modal :is-open="bus_modal_is_open" ref="modal" @WillDismiss="close_bus_modal">
-                <ion-header>
-                    <ion-toolbar>
-                        <ion-title>{{ bus_selected.route_no }}<span class="ion-margin-start">{{ bus_selected.dest_tc }}</span></ion-title>
-                        <ion-buttons slot="start">
-                            <ion-button @click="close_bus_modal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
-                        </ion-buttons>
-                        <ion-buttons slot="end">
-                            <ion-button  v-if="bus_starred_check" @click="remove_starred">
-                                <ion-icon :icon="star" />
-                            </ion-button>
-                            <ion-button v-else @click="add_starred">
-                                <ion-icon :icon="starOutline" />
-                            </ion-button>
-                        </ion-buttons>
-                    </ion-toolbar>
-                    <ion-segment v-model="popup_view">
-                        <ion-segment-button value="default">
-                            <ion-label>預報</ion-label>
-                        </ion-segment-button>
-                        <ion-segment-button value="info">
-                            <ion-label>資訊</ion-label>
-                        </ion-segment-button>
-                        <ion-segment-button value="map">
-                            <ion-label>地圖</ion-label>
-                        </ion-segment-button>
-                    </ion-segment>
-                </ion-header>
-                <!-- Segment for route etas -->
-                <ion-content v-if="popup_view == 'default'" class="default-tab">
-                    <ion-list>
-                        <ion-item v-for="(stop, index) in bus_selected.stops">
-                            <ion-grid>
-                                <ion-row class="ion-align-items-center">
-                                    <ion-col size-xs="2" size-md="2">
-                                        <h5 class="ion-margin-start">{{ index + 1 }}</h5>
-                                    </ion-col>
-                                    <ion-col size-xs="7" size-md="7">
-                                        <h5 class="ion-margin-start">{{ stop.name_tc }}</h5>
-                                    </ion-col>
-                                    <ion-col size-xs="3" size-md="3">
-                                        <p class="ion-no-margin ion-text-right">
-                                            <div v-if="stop.eta_message == 'no_available_bus'">暫無班次</div>
-                                            <div v-else>
-                                                <span v-if="stop.etas[0] != null">{{stop.eta_display[0]}}</span>
-                                                <span v-if="stop.etas[1] != null">, {{stop.eta_display[1]}}</span>
-                                                <span v-if="stop.etas[2] != null">, {{stop.eta_display[2]}}</span>
-                                                <span><br>分鐘</span>
-                                            </div>
-                                        </p>
-                                    </ion-col>
-                                </ion-row>
-                            </ion-grid>
-                        </ion-item>
-                    </ion-list>
-                </ion-content>
-                <!-- Segment for route information -->
-                <ion-content v-else-if="popup_view == 'info'">
-                    <ion-list>
-                        <ion-item>
-                            <ion-grid>
-                                <ion-row>
-                                    <ion-col size="6" class="ion-text-left">車程</ion-col>
-                                    <ion-col size="6" class="ion-text-right">{{ this.bus_selected.journey_time }} 分鐘</ion-col>
-                                </ion-row>
-                            </ion-grid>
-                        </ion-item>
-                        <ion-item>
-                            <ion-grid>
-                                <ion-row>
-                                    <ion-col size="6" class="ion-text-left">全程收費</ion-col>
-                                    <ion-col size="6" class="ion-text-right">${{ this.bus_selected.full_fare }}</ion-col>
-                                </ion-row>
-                            </ion-grid>
-                        </ion-item>
-                    </ion-list>
-                </ion-content>
-                <!-- Segment for route map -->
-                <ion-content v-else-if="popup_view == 'map'">
-                    <LeafletMap :route_locations="bus_selected.stops" />
-                </ion-content>
+            <ion-modal :is-open="busModalIsOpen" ref="modal" @WillDismiss="closeModal">
+                <div>
+                    <ETAPopup :item="busSelected" :busStarred="busStarred" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar"/>
+                </div>
             </ion-modal>
         </ion-content>
     </ion-page>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, watch, computed } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonGrid, IonCol, IonRow, IonModal, IonIcon, IonButton, IonButtons, IonBadge, IonSegment, IonSegmentButton } from '@ionic/vue';
+import { defineComponent, ref, onMounted, watch } from 'vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonGrid, IonCol, IonRow, IonModal, IonIcon, IonButton, IonButtons, IonBadge } from '@ionic/vue';
 import { map, hourglass, chevronBack, starOutline, star } from 'ionicons/icons';
-import { fetch_bus, get_buses } from '@/components/fetch.js';
+import { loadData, setData } from '@/components/loadData.js'
+import ETAPopup from '@/components/ETAPopup.vue'
 import LeafletMap from '@/components/leaflet.vue';
 
 export default defineComponent({
     name: 'Bus',
-    components: { IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonGrid, IonCol, IonRow, IonModal, IonIcon, IonButton, IonButtons, IonBadge, IonSegment, IonSegmentButton, LeafletMap },
+    components: { IonHeader, IonToolbar, IonContent, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonGrid, IonCol, IonRow, IonModal, IonIcon, IonButton, IonButtons, IonBadge, LeafletMap, ETAPopup },
     setup(){
         // Create ref for loading and show map for ui control
         let interval; // For storing interval for reloading time
-        const bus_query = ref(''); // Reference for two way bind of search bar value
-        const bus_display_array = ref([]);// Reference for displaying search results
-        const bus_selected = ref({}); // Reference for selected bus on query
-        const bus_modal_is_open = ref(false);
-        const bus = ref({}); // For storage of bus routes and stops
-        const bus_starred = ref([]);
-        const popup_view = ref('default');
-        /* Old Method
-        onMounted(async()=>{
-            loading.value = true;
-            if(localStorage.getItem('bus')){
-                bus.value = JSON.parse(localStorage.getItem('bus')); // Load localStorage if exists
-            } else{
-                bus.value = await get_buses(); // See components/fetch.js for bus fetching function
-                localStorage.setItem("bus", JSON.stringify(bus.value)); // Save routes information into local storage
-            }
-            loading.value = false;
-        });
-        */
+        const busQuery = ref(''); // Reference for two way bind of search bar value
+        const busDisplayArray = ref([]);// Reference for displaying search results
+        const busSelected = ref({}); // Reference for selected bus on query
+        const busModalIsOpen = ref(false);
+        const bus = ref([]); // For storage of bus routes and stops
+        const busStarred = ref([]);
+        const popupView = ref('default');
         // Event listeners
         addEventListener('ionModalDidDismiss', function(){
-            bus_modal_is_open.value = false;
+            busModalIsOpen.value = false;
             clearInterval(this.interval);
         })
-
-        watch(bus_query, async ()=>{ //Search for buses upon change in bus query
-            if (bus_query.value == ''){
-                bus_display_array.value = bus_starred.value;
+        watch(busQuery, async ()=>{ //Search for buses upon change in bus query
+            if (busQuery.value == ''){
+                busDisplayArray.value = busStarred.value;
             } else {
-                bus_display_array.value = (bus_query.value) < 10 ? bus.value.filter(x => x.route_no.length <= 2 && x.route_no.indexOf(bus_query.value.toUpperCase()) == 0 || x.dest_tc.includes(bus_query.value)) :
-                bus.value.filter(x => x.route_no.indexOf(bus_query.value.toUpperCase()) == 0 ||x.dest_tc.includes(bus_query.value)); // Filter by route numbers and destinations.
-                await bus_display_array.value.sort(function(a, b){
-                    a = Number(a.route_no.replace(/[A-Z]/g, 0));
-                    b = Number(b.route_no.replace(/[A-Z]/g, 0));
+                busDisplayArray.value = (busQuery.value) < 10 ? bus.value.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(busQuery.value.toUpperCase()) == 0 || x.destTC.includes(busQuery.value)) :
+                bus.value.filter(x => x.routeNo.indexOf(busQuery.value.toUpperCase()) == 0 ||x.destTC.includes(busQuery.value)); // Filter by route numbers and destinations.
+                await busDisplayArray.value.sort(function(a, b){
+                    a = Number(a.routeNo.replace(/[A-Z]/g, 0));
+                    b = Number(b.routeNo.replace(/[A-Z]/g, 0));
                     return a - b;
                 });
-                bus_display_array.value.splice(50);// Only show first 50 results
+                busDisplayArray.value.splice(50);// Only show first 50 results
             }
         })
         return{
             bus,
-            bus_query,
-            bus_display_array,
-            bus_selected,
-            bus_modal_is_open,
-            bus_starred,
-            popup_view,
+            busQuery,
+            busDisplayArray,
+            busSelected,
+            busModalIsOpen,
+            busStarred,
+            popupView,
             map,
             hourglass,
             chevronBack,
@@ -191,23 +104,23 @@ export default defineComponent({
         }
     },
     methods:{
-        open_bus_modal(index){
-            this.bus_selected = JSON.parse(JSON.stringify(this.bus_display_array[index])); //Use Deep copy to prevent problems when clicked again
-            console.log(this.bus_selected)
-            this.bus_modal_is_open = true;
+        openBusModal(index){
+            this.busSelected = JSON.parse(JSON.stringify(this.busDisplayArray[index])); //Use Deep copy to prevent problems when clicked again
+            console.log(this.busSelected)
+            this.busModalIsOpen = true;
             this.getbusRouteTime();
             let inv = this
             this.interval = setInterval(function(){
                 inv.getbusRouteTime();
             }, 10000)
         },
-        close_bus_modal(){
-            this.bus_modal_is_open = false;
+        closeModal(){
+            this.busModalIsOpen = false;
             clearInterval(this.interval);
-            this.popup_view = 'default';
+            this.popupView = 'default';
         },
         async getbusRouteTime(){
-            for (stop of this.bus_selected.stops){
+            for (stop of this.busSelected.stops){
                 stop.etas = [];
                 stop.eta_message = ''
                 if (!stop.stop_id){
@@ -220,11 +133,11 @@ export default defineComponent({
             let eta;
             let eta_message;
             // Get bus etas for KMB
-            if (this.bus_selected.company.includes('KMB') || this.bus_selected.company.includes('LWB')){
+            if (this.busSelected.company.includes('KMB') || this.busSelected.company.includes('LWB')){
                 try{
-                    let service_type = (this.bus_selected.service_mode == 'R' ) ? 1 : 2; //Service type: R => 1, others => 2
-                    let direction = ( this.bus_selected.route_direction == 1 ) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
-                    let route_response = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/route-eta/${this.bus_selected.route_no}/${service_type}`);
+                    let service_type = (this.busSelected.serviceMode == 'R' ) ? 1 : 2; //Service type: R => 1, others => 2
+                    let direction = ( this.busSelected.routeDirection == 1 ) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
+                    let route_response = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/route-eta/${this.busSelected.routeNo}/${service_type}`);
                     let route_eta = await route_response.json();
                     route_eta = route_eta.data.filter(x => x.dir == direction);
                     //console.log(route_eta);
@@ -239,36 +152,36 @@ export default defineComponent({
                         } else {
                             eta_message = 'no_available_bus';
                         }
-                        let index = this.bus_selected.stops.findIndex(x => x.seq == route_eta[i].seq);
-                        this.bus_selected.stops[index].etas.push(eta);
-                        this.bus_selected.stops[index].eta_message = eta_message;
+                        let index = this.busSelected.stops.findIndex(x => x.seq == route_eta[i].seq);
+                        this.busSelected.stops[index].etas.push(eta);
+                        this.busSelected.stops[index].eta_message = eta_message;
                     }
-                    //console.log(this.bus_selected.stops);
+                    //console.log(this.busSelected.stops);
                 } catch(err){
                     console.error(err);
                 }
             }
-            if (this.bus_selected.company.includes('CTB') || this.bus_selected.company.includes('NWFB') ||this.bus_selected.company.includes('NLB')){
-                let company =   (this.bus_selected.company.includes('CTB')) ? 'CTB':
-                                (this.bus_selected.company.includes('NWFB')) ? 'NWFB':
-                                (this.bus_selected.company.includes('NLB')) ? 'NLB': null;
-                let direction = ( this.bus_selected.route_direction == 1 ) ? 'outbound' : 'inbound'; //Direction 1 = outbound, 2 = inbound
+            if (this.busSelected.company.includes('CTB') || this.busSelected.company.includes('NWFB') ||this.busSelected.company.includes('NLB')){
+                let company =   (this.busSelected.company.includes('CTB')) ? 'CTB':
+                                (this.busSelected.company.includes('NWFB')) ? 'NWFB':
+                                (this.busSelected.company.includes('NLB')) ? 'NLB': null;
+                let direction = ( this.busSelected.routeDirection == 1 ) ? 'outbound' : 'inbound'; //Direction 1 = outbound, 2 = inbound
                 try{
-                    if (this.bus_selected.stops[0].stop_id == ''){
+                    if (this.busSelected.stops[0].stop_id == ''){
                         // Get Bus stop ids first
-                        let route_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/route-stop/${company}/${this.bus_selected.route_no}/${direction}`);
+                        let route_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/route-stop/${company}/${this.busSelected.routeNo}/${direction}`);
                         let route_data = await route_response.json();
                         route_data = route_data.data;
                         // Insert the stop ids into bus object
-                        for (stop of this.bus_selected.stops){
+                        for (stop of this.busSelected.stops){
                             let index = route_data.findIndex(x => x.seq == stop.seq);
                             stop.stop_id = route_data[index].stop;
                         }
                     }
                     // Get etas
-                    direction = ( this.bus_selected.route_direction == 1 ) ? 'O' : 'I';
-                    for (const stop of this.bus_selected.stops){
-                        let eta_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/eta/${company}/${stop.stop_id}/${this.bus_selected.route_no}`);
+                    direction = ( this.busSelected.routeDirection == 1 ) ? 'O' : 'I';
+                    for (const stop of this.busSelected.stops){
+                        let eta_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/eta/${company}/${stop.stop_id}/${this.busSelected.routeNo}`);
                         let eta_data = await eta_response.json();
                         eta_data = eta_data.data.filter((x) => x.dir == direction);
                         // console.log(eta_data);
@@ -287,7 +200,7 @@ export default defineComponent({
                     console.error(err);
                 }
             }
-            for (stop of this.bus_selected.stops){
+            for (stop of this.busSelected.stops){
                 if (stop.etas.length == 0){
                     stop.eta_message = 'no_available_bus'
                 } else {
@@ -295,57 +208,27 @@ export default defineComponent({
                     stop.eta_display = [...stop.etas];
                 }
             }
-
-            // let route_response = await fetch(`https://data.etabus.gov.hk/v1/transport/bus/route-eta/${this.bus_selected.route}/${this.bus_selected.service_type}`);
-            //     let route_eta = await route_response.json();
-            //     let eta;
-            //     route_eta = route_eta.data.filter(x => x.dir == this.bus_selected.bound);
-            //     for (let i = 0; i < route_eta.length; i++){
-            //         if (route_eta[i].eta != null){
-            //             let current_time = new Date(route_eta[i].data_timestamp);
-            //             let eta_time = new Date(route_eta[i].eta);
-            //             eta = Math.ceil((eta_time - current_time)/60000);
-            //             (eta < 0) ? eta = 0 : null ;
-            //         } else {
-            //             eta = null;
-            //         }
-            //     ( route_eta[i].eta_seq == 1) ? this.bus_selected.stop[route_eta[i].seq - 1].eta_1 = eta :
-            //     ( route_eta[i].eta_seq == 2) ? this.bus_selected.stop[route_eta[i].seq - 1].eta_2 = eta :
-            //     this.bus_selected.stop[route_eta[i].seq - 1].eta_3 = eta;
-            //     }
         },
-        async add_starred(){
-            this.bus_starred.push(this.bus_selected);
-            let bus_starred_clone = JSON.parse(JSON.stringify(this.bus_starred));
-            let bus_starred_promise = await this.localforage.setItem('bus_starred', bus_starred_clone);
+        async addStar(){
+            this.busStarred.push(this.busSelected);
+            let busStarredClone = JSON.parse(JSON.stringify(this.busStarred));
+            await setData('busStarred', busStarredClone);
         },
-        async remove_starred(){
-            let remove_index = this.bus_starred.findIndex(x =>  x.route_no == this.bus_selected.route_no && x.link == this.bus_selected.link && x.route_direction == this.bus_selected.route_direction && x.service_mode == this.bus_selected.service_mode)
-            this.bus_starred.splice(remove_index, 1);
-            let bus_starred_clone = JSON.parse(JSON.stringify(this.bus_starred));
-            let bus_starred_promise = await this.localforage.setItem('bus_starred', bus_starred_clone);
-        }
-    },
-    computed:{
-        bus_starred_check(){
-            let bus_starred_array = [...this.bus_starred];
-            if (bus_starred_array.length == 0) {
-                return false;
-            } else {
-                let bus_starred_filtered = bus_starred_array.filter(x =>  x.route_no == this.bus_selected.route_no && x.link == this.bus_selected.link && x.route_direction == this.bus_selected.route_direction && x.service_mode == this.bus_selected.service_mode);
-                return ( bus_starred_filtered.length > 0 ) ? true : false;
-            }
+        async removeStar(){
+            let removeIndex = this.busStarred.findIndex(x => x.routeNo == this.busSelected.routeNo && x.infoLink == this.busSelected.infoLink && x.routeDirection == this.busSelected.routeDirection && x.serviceMode == this.busSelected.serviceMode)
+            this.busStarred.splice(removeIndex, 1);
+            let busStarred_clone = JSON.parse(JSON.stringify(this.busStarred));
+            await setData('busStarred', busStarred_clone);
         }
     },
     async mounted(){
-        this.bus = await this.localforage.getItem('bus_data');
-        this.bus_starred = await this.localforage.getItem('bus_starred');
-        if (!this.bus_starred){
-            this.bus_starred = [];
+        this.bus = await loadData('busData');
+        this.busStarred = await loadData('busStarred');
+        if (!this.busStarred){
+            this.busStarred = [];
         } else {
-            this.bus_display_array = this.bus_starred;
+            this.busDisplayArray = this.busStarred;
         }
-        console.log(this.bus_starred);
     }
 });
 </script>
@@ -383,7 +266,7 @@ export default defineComponent({
 .special-badge{
     --background: #663399;
 }
-.route_no{
+.route-no{
     display: flex;
 }
 </style>
