@@ -81,7 +81,7 @@ export default {
         });
         // Default showing hong kong with zome level 10
         this.map = L.map("mapContainer").setView([22.3745, 114.19849], 10);
-        L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+        L.tileLayer("https://api.maptiler.com/maps/stage/{z}/{x}/{y}.png?key=WmzwDfSJItQdmlz1POs4", {
             attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(toRaw(this.map));
@@ -107,7 +107,7 @@ export default {
         let stop_geometries = this.routeLocations.map(x => new L.LatLng(x.coord[1], x.coord[0]));
         // console.log(stop_geometries);
         let polyline = new L.Polyline(stop_geometries, {
-            color: 'rebeccapurple',
+            color: '#647fc0',
             weight: 3,
             opacity: 0.7
         });

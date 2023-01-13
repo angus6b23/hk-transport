@@ -61,18 +61,15 @@ export default defineComponent({
     components: { IonHeader, IonToolbar, IonContent, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonGrid, IonCol, IonRow, IonModal, IonIcon, IonButton, IonButtons, IonBadge, LeafletMap, ETAPopup },
     setup(){
         // Create ref for loading and show map for ui control
-        let interval; // For storing interval for reloading time
         const busQuery = ref(''); // Reference for two way bind of search bar value
         const busDisplayArray = ref([]);// Reference for displaying search results
         const busSelected = ref({}); // Reference for selected bus on query
         const busModalIsOpen = ref(false);
         const bus = ref([]); // For storage of bus routes and stops
         const busStarred = ref([]);
-        const popupView = ref('default');
         // Event listeners
         addEventListener('ionModalDidDismiss', function(){
             busModalIsOpen.value = false;
-            clearInterval(this.interval);
         })
         watch(busQuery, async ()=>{ //Search for buses upon change in bus query
             if (busQuery.value == ''){
@@ -95,7 +92,6 @@ export default defineComponent({
             busSelected,
             busModalIsOpen,
             busStarred,
-            popupView,
             map,
             hourglass,
             chevronBack,
@@ -108,18 +104,11 @@ export default defineComponent({
             this.busSelected = JSON.parse(JSON.stringify(this.busDisplayArray[index])); //Use Deep copy to prevent problems when clicked again
             console.log(this.busSelected)
             this.busModalIsOpen = true;
-            this.getbusRouteTime();
-            let inv = this
-            this.interval = setInterval(function(){
-                inv.getbusRouteTime();
-            }, 10000)
         },
         closeModal(){
             this.busModalIsOpen = false;
-            clearInterval(this.interval);
-            this.popupView = 'default';
         },
-        async getbusRouteTime(){
+        /*async getbusRouteTime(){
             for (stop of this.busSelected.stops){
                 stop.etas = [];
                 stop.eta_message = ''
@@ -133,6 +122,7 @@ export default defineComponent({
             let eta;
             let eta_message;
             // Get bus etas for KMB
+            
             if (this.busSelected.company.includes('KMB') || this.busSelected.company.includes('LWB')){
                 try{
                     let service_type = (this.busSelected.serviceMode == 'R' ) ? 1 : 2; //Service type: R => 1, others => 2
@@ -208,7 +198,7 @@ export default defineComponent({
                     stop.eta_display = [...stop.etas];
                 }
             }
-        },
+        },*/
         async addStar(){
             this.busStarred.push(this.busSelected);
             let busStarredClone = JSON.parse(JSON.stringify(this.busStarred));
