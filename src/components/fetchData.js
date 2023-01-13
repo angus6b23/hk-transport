@@ -58,7 +58,9 @@ function createStop(item){
         nameEN: nameEN.replace('<br>', ''),
         id: id,
         seq: seq,
-        coord: coord
+        coord: coord,
+        etas: [],
+        etaMessage: ''
     };
     return newStop
 }
@@ -91,8 +93,6 @@ function createRoute(item, type){
         originTC: originTC,
         originEN: originEN,
         stops: [],
-        etas: [],
-        etaMessage: '',
         starred: false,
     }
     if (type == 'bus'){
@@ -113,7 +113,7 @@ async function fetchBuses(){
         let busesObj = busesJson.features;
         let buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
             let newStop = createStop(item);
-            let checkIndex = buses.findIndex(bus => bus.routeNo == item.properties.routeNameE && bus.company == item.properties.companyCode && bus.routeDirection == item.properties.routeSeq); //Check if route of current stop is stored
+            let checkIndex = buses.findIndex(bus => bus.routeNo == item.properties.routeNameE && bus.company == item.properties.companyCode && bus.routeDirection == item.properties.routeSeq && item.properties.serviceMode == bus.serviceMode); //Check if route of current stop is stored
             if (checkIndex == -1){ //Create route if not found
                 let newBusRoute = createRoute(item, 'bus');
                 newBusRoute.stops.push(newStop);
