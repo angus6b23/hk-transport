@@ -123,14 +123,15 @@ async function fetchBuses(){
             }
             return buses;
         }, []); //Initial value for reduce
-        // Get special types from kmb
+        // Get service modes from kmb
         try{
             const kmbResponse = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route/');
             const kmbJson = await kmbResponse.json();
-            const checkParathesis = /\(.*$/;
+            const checkParenthesis = /\(.*$/; // Remove parenthesis due to different naming
             const kmbFiltered = kmbJson.data.filter(kmb => kmb.serviceType != '1');
+            // Search for kmb service mode != 1
             for (const specialRoute of kmbFiltered){
-                const checkIndex = buses.findIndex(bus => bus.serviceMode != 'R' && bus.routeNo == specialRoute.route && bus.destEN.replace(checkParathesis, '') == specialRoute.dest_en.replace(checkParathesis, ''));
+                const checkIndex = buses.findIndex(bus => bus.serviceMode != 'R' && bus.routeNo == specialRoute.route && bus.destEN.replace(checkParenthesis, '') == specialRoute.dest_en.replace(checkParenthesis, ''));
                 if (checkIndex != -1){
                     buses[checkIndex].specialType = specialRoute.service_type;
                 }
