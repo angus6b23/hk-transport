@@ -121,8 +121,10 @@ export default {
             if (etaData.status == 'success') {
                 etaData.data.forEach(element => {
                     let index = this.item.stops.findIndex(x => x.seq == element.seq);
-                    this.item.stops[index].etaMessage = element.note;
-                    this.item.stops[index].etas = [...element.etas];
+                    if(index != -1){
+                        this.item.stops[index].etaMessage = element.note;
+                        this.item.stops[index].etas = [...element.etas];
+                    }
                 })
             }
         }

@@ -15,7 +15,7 @@ export async function fetchKMBETA(route){
         data: []
     }
     try {
-        let serviceType = (route.serviceMode == 'T') ? 2 : 1; //Service type: R => 1, others => 2 ???
+        let serviceType = (route.specialType == 0) ? 1 : route.specialType; //Service type: R => 1, others => 2 ???
         let direction = (route.routeDirection == 1) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
         let routeResponse = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/route-eta/${route.routeNo}/${serviceType}`);
         // Return Network error if response not ok
