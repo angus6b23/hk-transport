@@ -108,14 +108,14 @@ function createRoute(item, type){
 }
 async function fetchBuses(){
     try{
-        let busesResponse = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
-        let busesJson = await busesResponse.json();
-        let busesObj = busesJson.features;
-        let buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
-            let newStop = createStop(item);
-            let checkIndex = buses.findIndex(bus => bus.routeNo == item.properties.routeNameE && bus.company == item.properties.companyCode && bus.routeDirection == item.properties.routeSeq && item.properties.serviceMode == bus.serviceMode); //Check if route of current stop is stored
+        const busesResponse = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
+        const busesJson = await busesResponse.json();
+        const busesObj = busesJson.features;
+        const buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
+            const newStop = createStop(item);
+            const checkIndex = buses.findIndex(bus => bus.routeId == item.properties.routeId && bus.routeDirection == item.properties.routeSeq); //Check if route of current stop is stored
             if (checkIndex == -1){ //Create route if not found
-                let newBusRoute = createRoute(item, 'bus');
+                const newBusRoute = createRoute(item, 'bus');
                 newBusRoute.stops.push(newStop);
                 buses.push(newBusRoute);
             } else { //Push the new stop to pre-existing route
@@ -123,6 +123,23 @@ async function fetchBuses(){
             }
             return buses;
         }, []); //Initial value for reduce
+        // Get special types from kmb
+        try{
+            const kmbResponse = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route/');
+            const kmbJson = await kmbResponse.json();
+            const checkParathesis = /\(.*$/;
+            const kmbFiltered = kmbJson.data.filter(kmb => kmb.serviceType != '1');
+            for (const specialRoute of kmbFiltered){
+                const checkIndex = buses.findIndex(bus => bus.serviceMode != 'R' && bus.routeNo == specialRoute.route && bus.destEN.replace(checkParathesis, '') == specialRoute.dest_en.replace(checkParathesis, ''));
+                if (checkIndex != -1){
+                    buses[checkIndex].specialType = specialRoute.service_type;
+                }
+            }
+        } catch (err){
+            console.error(err);
+        }
+        
+
         for (let index in buses){
             buses[index].company = buses[index].company.split('+'); //Split bus companys into array
         }
