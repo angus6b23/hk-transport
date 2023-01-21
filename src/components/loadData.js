@@ -45,7 +45,6 @@ async function loadData(key, forceReload = false, chunk = false){
 }
 
 async function setData(key, value, chunk = false){
-    console.log('Set data called //key: ' + key)
     if (chunk){
         saveChunk(key, value)
     } else {
