@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 class etaResult{
     constructor(seq, etas, note){
         this.seq = seq;
@@ -15,15 +17,10 @@ export async function fetchKMBETA(route){
         data: []
     }
     try {
-        let serviceType = (route.specialType == 0) ? 1 : route.specialType; //Service type: R => 1, others => 2 ???
-        let direction = (route.routeDirection == 1) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
-        let routeResponse = await fetch(`https://data.etabus.gov.hk/v1/transport/kmb/route-eta/${route.routeNo}/${serviceType}`);
-        // Return Network error if response not ok
-        if (!routeResponse.ok){
-            etaData.status = 'netError'
-            return { etaData }
-        }
-        let routeEta = await routeResponse.json();
+        const serviceType = (route.specialType == 0) ? 1 : route.specialType; //Service type: R => 1, others => 2 ???
+        const direction = (route.routeDirection == 1) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
+        const routeResponse = await axios(`https://data.etabus.gov.hk/v1/transport/kmb/route-eta/${route.routeNo}/${serviceType}`);
+        let routeEta = routeResponse.data;
         // Filter for currently selected direction
         routeEta = routeEta.data.filter(x => x.dir == direction);
         // Loop for all elements of filtered array
@@ -39,9 +36,9 @@ export async function fetchKMBETA(route){
                 }
             } else {
                 if (index == -1) {
-                    etaData.data.push(new etaResult(element.seq, [], 'NA'));
+                    etaData.data.push(new etaResult(element.seq, [], 'N/A'));
                 } else {
-                    etaData.data[index].note = 'NA';
+                    etaData.data[index].note = 'N/A';
                 }
             }
         });
@@ -57,6 +54,7 @@ export async function fetchKMBETA(route){
     etaData.status = 'success';
     return etaData;
 }
+
     /*
     if (route.company.includes('CTB') || route.company.includes('NWFB') || route.company.includes('NLB')) {
         let company = (route.company.includes('CTB')) ? 'CTB' :
