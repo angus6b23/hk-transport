@@ -1,3 +1,4 @@
+import axios from 'axios';
 /* Classes do not work with dataforage
 class route{
     constructor(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){

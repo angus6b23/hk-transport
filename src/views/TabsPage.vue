@@ -1,7 +1,7 @@
 <template>
     <ion-page>
         <ion-loading :is-open="loading" :message="loading_message"></ion-loading>
-        <div v-if="!setting_found" id="init">
+        <div v-if="!settingFound" id="init">
             <ion-card id="welcome_card">
                 <div>
                     <ion-card-header>
@@ -51,7 +51,7 @@ export default defineComponent({
     name: 'TabsPage',
     components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading },
     setup() {
-        const setting_found = ref(false);
+        const settingFound = ref(false);
         const setting = ref({});
         const loading = ref(false);
         const busData = [];
@@ -62,7 +62,7 @@ export default defineComponent({
             business,
             square,
             bus,
-            setting_found,
+            settingFound,
             setting,
             loading,
             loading_message,
@@ -78,23 +78,24 @@ export default defineComponent({
             try{
                 this.loading = true;
                 this.loading_message = '正在獲取交通資訊...<br>Fetching Transport data...';
-                this.busData = await loadData('busData', true, false);
-                this.minibusData = await loadData('minibusData', true, false);
+                // loadData(key, forceReload, chunk);
+                this.busData = await loadData('busData', false, true); 
+                this.minibusData = await loadData('minibusData', false, false);
                 this.loading = false;
             }
             catch(err){
                 console.error(err);
             }
-            this.setting_found = true;
+            this.settingFound = true;
         },
     },
     async mounted(){
         try{
-            let loadSetting = await loadData('setting');
+            let loadSetting = await loadData('setting', false, false);
             console.log(`Current setting: ${loadSetting}`)
             if (loadSetting){
                 this.setting = loadSetting;
-                this.setting_found = true;
+                this.settingFound = true;
             }
         } catch(err){
             console.error(err);

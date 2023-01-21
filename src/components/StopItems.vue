@@ -10,7 +10,7 @@
                 </ion-col>
                 <ion-col size-xs="3" size-md="3">
                     <p class="ion-no-margin ion-text-right">
-                    <div v-if="stop.etaMessage == 'NA'">暫無班次</div>
+                    <div v-if="stop.etaMessage == 'N/A'">暫無班次</div>
                     <div v-else>
                         <span v-if="stop.etas[0] != null">{{ stop.etas.join(', ') }}</span>
                         <span><br>分鐘</span>

@@ -53,7 +53,8 @@
 import { ref, computed } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
-import { fetchKMBETA } from '@/components/fetchETA.js'
+import { fetchKMBETA } from '@/components/fetchETA.js';
+import { fetchBusStopID } from '@/components/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
 import RouteInfo from '@/components/RouteInfo.vue';
@@ -63,7 +64,7 @@ export default {
     name: "ETAPopup",
     components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
     props: ['item', 'busStarred'],
-    emits: ['closeModal', 'addStar', 'removeStar'],
+    emits: ['closeModal', 'addStar', 'removeStar', 'saveData'],
     setup(props){
         const popupLoading = ref(false);
         const item = ref(props.item);
@@ -82,17 +83,20 @@ export default {
     },
     async mounted(){
         // Show loading for minibus
-        if (this.item.type == "minibus"){
+        if (this.item.type == 'minibus'){
             this.popupLoading = true;
         }
         // Fetch KMB ETAs
-        if(this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))){
+        if (this.item.type == 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))){
             this.getKMB();
             this.interval = setInterval(()=>this.getKMB(), 10000);
         }
+        if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB') || this.item.company.includes('NLB'))){
+            const stopIDResponse = this.getStopID();
+        }
     },
     computed:{
-        checkbusStar(){
+        checkbusStar(){ //Return true if bus is in busStarred array.
             let busStarredClone = [...this.busStarred];
             if (busStarredClone.length == 0){
                 return false
@@ -116,11 +120,29 @@ export default {
         removeStar(){
             this.$emit('removeStar');
         },
+        async getStopID(){
+            // Break function if stops already saved
+            if (!('stopId' in this.item.stops[0])){
+                this.popupLoading = true
+                const stopData = await fetchBusStopID(this.item);
+                if (stopData.status == 'success'){
+                    stopData.data.forEach(element => {
+                        const index = this.item.stops.findIndex(x => x.seq == element.seq);
+                        if (index != -1){
+                            this.item.stops[index].stopId = element.stop;
+                        }
+                    });
+                    this.popupLoading = false;
+                    this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
+                }
+                this.popupLoading = false;
+            }
+        },
         async getKMB(){
-            let etaData = await fetchKMBETA(this.item);
+            const etaData = await fetchKMBETA(this.item);
             if (etaData.status == 'success') {
                 etaData.data.forEach(element => {
-                    let index = this.item.stops.findIndex(x => x.seq == element.seq);
+                    const index = this.item.stops.findIndex(x => x.seq == element.seq);
                     if(index != -1){
                         this.item.stops[index].etaMessage = element.note;
                         this.item.stops[index].etas = [...element.etas];

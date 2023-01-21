@@ -41,7 +41,7 @@
             <!-- Modal for displaying bus details -->
             <ion-modal :is-open="busModalIsOpen" ref="modal" @WillDismiss="closeModal">
                 <div>
-                    <ETAPopup :item="busSelected" :busStarred="busStarred" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar"/>
+                    <ETAPopup :item="busSelected" :busStarred="busStarred" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveBusData" />
                 </div>
             </ion-modal>
         </ion-content>
@@ -201,18 +201,37 @@ export default defineComponent({
         },*/
         async addStar(){
             this.busStarred.push(this.busSelected);
-            let busStarredClone = JSON.parse(JSON.stringify(this.busStarred));
+            const busStarredClone = JSON.parse(JSON.stringify(this.busStarred));
             await setData('busStarred', busStarredClone);
         },
         async removeStar(){
-            let removeIndex = this.busStarred.findIndex(x => x.routeNo == this.busSelected.routeNo && x.infoLink == this.busSelected.infoLink && x.routeDirection == this.busSelected.routeDirection && x.serviceMode == this.busSelected.serviceMode)
+            const removeIndex = this.busStarred.findIndex(this.currentSelectedBus)
             this.busStarred.splice(removeIndex, 1);
-            let busStarred_clone = JSON.parse(JSON.stringify(this.busStarred));
-            await setData('busStarred', busStarred_clone);
+            const busStarredClone = JSON.parse(JSON.stringify(this.busStarred));
+            await setData('busStarred', busStarredClone);
+        },
+        async saveBusData(data){
+            // Link to currently displayed bus
+            const displayIndex = this.busDisplayArray.findIndex(this.currentSelectedBus)
+            this.busDisplayArray[displayIndex] = data;
+            // Link to global bus array
+            const index = this.bus.findIndex(this.currentSelectedBus);
+            this.bus[index] = JSON.parse(JSON.stringify(data));
+            console.log(index);
+
+            // Save to localforage
+            const key = 'busData-chunk' + Math.floor(index / 100);
+            const chunkIndex = index % 100;
+            let chunk = await loadData(key, false, false);
+            chunk[chunkIndex] = JSON.parse(JSON.stringify(data));
+            await setData(key, chunk);
+        },
+        currentSelectedBus(x){
+            return x.routeId == this.busSelected.routeId && x.routeDirection == this.busSelected.routeDirection
         }
     },
     async mounted(){
-        this.bus = await loadData('busData');
+        this.bus = await loadData('busData', false, true);
         this.busStarred = await loadData('busStarred');
         if (!this.busStarred){
             this.busStarred = [];
