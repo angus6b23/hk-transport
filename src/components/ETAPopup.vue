@@ -35,7 +35,6 @@
         <ion-list v-if="popupLoading">
             <SkeletonItems />
         </ion-list>
-        <!-- Show loaded stations -->
         <ion-list v-else>
             <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop"></StopItems>
         </ion-list>
@@ -91,8 +90,8 @@ export default {
             this.getKMB();
             this.interval = setInterval(()=>this.getKMB(), 10000);
         }
-        if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB') || this.item.company.includes('NLB'))){
-            const stopIDResponse = this.getStopID();
+        if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))){
+            await this.getStopID();
         }
     },
     computed:{
@@ -123,7 +122,6 @@ export default {
         async getStopID(){
             // Break function if stops already saved
             if (!('stopId' in this.item.stops[0])){
-                this.popupLoading = true
                 const stopData = await fetchBusStopID(this.item);
                 if (stopData.status == 'success'){
                     stopData.data.forEach(element => {
@@ -132,10 +130,8 @@ export default {
                             this.item.stops[index].stopId = element.stop;
                         }
                     });
-                    this.popupLoading = false;
                     this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
                 }
-                this.popupLoading = false;
             }
         },
         async getKMB(){

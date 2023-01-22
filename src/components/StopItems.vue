@@ -1,5 +1,5 @@
 <template>
-    <ion-item>
+    <ion-item button>
         <ion-grid>
             <ion-row class="ion-align-items-center">
                 <ion-col size-xs="2" size-md="2">

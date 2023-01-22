@@ -12,8 +12,6 @@ export default {
     props: [''],
     emits: [''],
     setup(props){
-
-        }
     },
     mounted(){
 
