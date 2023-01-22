@@ -217,7 +217,7 @@ export default defineComponent({
             // Link to global bus array
             const index = this.bus.findIndex(this.currentSelectedBus);
             this.bus[index] = JSON.parse(JSON.stringify(data));
-            console.log(index);
+            // console.log(index);
 
             // Save to localforage
             const key = 'busData-chunk' + Math.floor(index / 100);
