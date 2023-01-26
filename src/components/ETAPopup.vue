@@ -36,7 +36,7 @@
             <SkeletonItems />
         </ion-list>
         <ion-list v-else>
-            <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop"></StopItems>
+            <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" @getETA="getCTBETA"></StopItems>
         </ion-list>
     </ion-content>
     <!-- Route Info -->
@@ -52,7 +52,7 @@
 import { ref, computed } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
-import { fetchKMBETA } from '@/components/fetchETA.js';
+import { fetchKMBETA, fetchCTBETA } from '@/components/fetchETA.js';
 import { fetchBusStopID } from '@/components/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
@@ -69,6 +69,7 @@ export default {
         const item = ref(props.item);
         const popupView = ref('default');
         const busStarred = props.busStarred;
+        const itemOptions = ref({clickable: false}); 
         let interval;
         return{
             popupLoading,
@@ -77,7 +78,8 @@ export default {
             popupView,
             chevronBack,
             starOutline,
-            star
+            star,
+            itemOptions
         }
     },
     async mounted(){
@@ -90,6 +92,7 @@ export default {
             this.getKMB();
             this.interval = setInterval(()=>this.getKMB(), 10000);
         }
+        // Fetch CTB and NWFB bus stop ids
         if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))){
             await this.getStopID();
         }
@@ -100,7 +103,7 @@ export default {
             if (busStarredClone.length == 0){
                 return false
             } else {
-                let indexResult = busStarredClone.findIndex(x => x.routeNo == this.item.routeNo && x.infoLink == this.item.infoLink && x.routeDirection == this.item.routeDirection && x.serviceMode == this.item.serviceMode);
+                let indexResult = busStarredClone.findIndex(x => x.routeId == this.item.routeId && x.routeDirection == this.item.routeDirection);
                 if (indexResult == -1){
                     return false;
                 } else {
@@ -133,6 +136,8 @@ export default {
                     this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
                 }
             }
+            console.log('Fetch stop id finished');
+            this.itemOptions.clickable = true;
         },
         async getKMB(){
             const etaData = await fetchKMBETA(this.item);
@@ -145,6 +150,20 @@ export default {
                     }
                 })
             }
+        },
+        async getCTBETA(seq){
+            const clickedIndex = this.item.stops.findIndex(x => x.seq == seq);
+            this.item.stops[clickedIndex].etaMessage = 'loading';
+            const etaData = await fetchCTBETA(this.item, this.item.stops[clickedIndex].stopId);
+            if (etaData.status == 'success'){
+                if (etaData.data.length > 0){
+                    this.item.stops[clickedIndex].etas = [...etaData.data]
+                    this.item.stops[clickedIndex].etaMessage = '';
+                } else {
+                    this.item.stops[clickedIndex].etaMessage = 'N/A'
+                }
+            }
+            // console.log(this.item.stops[clickedIndex]);
         }
     },
     beforeUnmount(){

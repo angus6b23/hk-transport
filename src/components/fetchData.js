@@ -109,8 +109,8 @@ function createRoute(item, type){
 }
 async function fetchBuses(){
     try{
-        const busesResponse = await axios('./JSON_BUS.json'); //For Debug
-        // const busesResponse = await axios('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
+        // const busesResponse = await axios('./JSON_BUS.json'); //For Debug
+        const busesResponse = await axios('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
         const busesObj = busesResponse.data.features;
         const buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
             const newStop = createStop(item);
