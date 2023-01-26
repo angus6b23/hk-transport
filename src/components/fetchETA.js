@@ -31,7 +31,7 @@ export async function fetchKMBETA(route){
                 let eta = getTimeDifference(new Date(element.data_timestamp), new Date(element.eta));
                 if (index == -1){ //Create new element if current seq exist
                     etaData.data.push(new etaResult(element.seq, [eta], ''));
-                } else {
+                } else { //Push eta to existing stop
                     etaData.data[index].etas.push(eta);
                 }
             } else {
@@ -55,6 +55,39 @@ export async function fetchKMBETA(route){
     return etaData;
 }
 
+export async function fetchCTBETA(route, stopId){
+    let etaData = {
+        status: '',
+        data: []
+    }
+    try{
+        const companyCode =
+            route.company.includes('CTB') ? 'CTB' :
+                route.company.includes('NWFB') ? 'NWFB' : null;
+        const etaResponse = await axios(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/eta/${companyCode}/${stopId}/${route.routeNo}`);
+        let stopEta = etaResponse.data.data;
+        console.log(etaResponse);
+        stopEta = stopEta.filter(x => { //Filter the result with the direction requested
+            if (route.routeDirection == 1) {
+                return x.dir == 'O'
+            } else {
+                return x.dir == 'I'
+            }
+        });
+        stopEta.forEach(element => {
+            const eta = getTimeDifference(new Date(element.eta), new Date(element.data_timestamp));
+            etaData.data.push(eta);
+        })
+        etaData.data.sort((a, b) => a - b);
+        etaData.status = 'success'
+        return etaData;
+    } catch (err){
+        console.error(err);
+        etaData.status = 'error';
+        etaData.data = err;
+        return etaData
+    }
+}
     /*
     if (route.company.includes('CTB') || route.company.includes('NWFB') || route.company.includes('NLB')) {
         let company = (route.company.includes('CTB')) ? 'CTB' :
