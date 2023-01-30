@@ -109,9 +109,9 @@ function createRoute(item, type){
 }
 async function fetchBuses(){
     try{
-        const busesResponse = await fetch('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
-        const busesJson = await busesResponse.json();
-        const busesObj = busesJson.features;
+        // const busesResponse = await axios('./JSON_BUS.json'); //For Debug
+        const busesResponse = await axios('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
+        const busesObj = busesResponse.data.features;
         const buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
             const newStop = createStop(item);
             const checkIndex = buses.findIndex(bus => bus.routeId == item.properties.routeId && bus.routeDirection == item.properties.routeSeq); //Check if route of current stop is stored
@@ -140,11 +140,33 @@ async function fetchBuses(){
         } catch (err){
             console.error(err);
         }
-        
+        try{
+            const nlbResponse = await axios('https://rt.data.gov.hk/v2/transport/nlb/route.php?action=list');
+            const originRegex = /^\w.* \>/;
+            const destRegex = /\> \w.*$/;
+            const checkParenthesis = / \(Circu.*$/; // Remove parenthesis due to different naming
+            for (const element of nlbResponse.data.routes){
+                const origin = element.routeName_e.match(originRegex)[0].replace(' >', '');
+                const dest = element.routeName_e.match(destRegex)[0].replace('> ', '').replace(checkParenthesis, '');
+                const checkIndex = buses.findIndex(bus => bus.company == 'NLB' && bus.routeNo == element.routeNo && bus.destEN == dest && bus.originEN == origin);
+                // console.log(`
+                // route: ${element.routeNo}
+                // Destination: ${dest}
+                // Origin: ${origin}
+                // Index: ${checkIndex}`)
+                if (checkIndex != -1){
+                    buses[checkIndex].nlbID = element.routeId;
+                }
+            }
+        } catch(err){
+            console.error(err)
+        }
 
         for (let index in buses){
             buses[index].company = buses[index].company.split('+'); //Split bus companys into array
         }
+        const debug = buses.filter(bus => bus.company.includes('NLB'));
+        console.log(debug);
         return buses;
     }
     catch(err){

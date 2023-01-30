@@ -7,8 +7,7 @@ export async function fetchBusStopID(route){
     };
     const company = 
     (route.company.includes('CTB')) ? 'CTB' :
-    (route.company.includes('NWFB')) ? 'NWFB' :
-    (route.company.includes('NLB')) ? 'NLB' : null;
+    (route.company.includes('NWFB')) ? 'NWFB' : null;
     const direction = (route.routeDirection == 1) ? 'outbound' : 'inbound'; //Direction 1 = outbound, 2 = inbound
     if (!company){
         stopIdData.status = 'unknown_company';
