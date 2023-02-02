@@ -11,14 +11,19 @@
                 <ion-col size-xs="3" size-md="3">
                     <p class="ion-no-margin ion-text-right">
                         <div v-if="stop.etaMessage == 'N/A'">
-                            <span>暫無班次</span>
+                            <ion-text color="medium">
+                                <span>暫無班次</span>
+                            </ion-text>
                         </div>
                         <div v-else-if="stop.etaMessage == 'loading'">
-                            <span>Loading</span>
+                            <ion-spinner color="primary"></ion-spinner>
                         </div>
                         <div v-else-if="stop.etas.length > 0">
-                            <span>{{ stop.etas.join(', ') }}</span>
-                            <span><br>分鐘</span>
+                            <ion-text>
+                                <span>{{ stop.etas.join(', ') }}</span>
+                                <br />
+                                <span>分鐘</span>
+                            </ion-text>
                         </div>
                     </p>
                 </ion-col>
@@ -29,11 +34,11 @@
 
 <script>
 import { ref } from 'vue';
-import { IonGrid, IonRow, IonCol, IonItem } from '@ionic/vue';
+import { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText } from '@ionic/vue';
 
 export default {
     name: "StopItems",
-    components: { IonGrid, IonRow, IonCol, IonItem },
+    components: { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText },
     props: ['stop', 'options'],
     emits: ['getETA'],
     setup(props){
