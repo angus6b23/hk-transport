@@ -66,7 +66,7 @@ export async function fetchCTBETA(route, stopId){
                 route.company.includes('NWFB') ? 'NWFB' : null;
         const etaResponse = await axios(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/eta/${companyCode}/${stopId}/${route.routeNo}`);
         let stopEta = etaResponse.data.data;
-        console.log(etaResponse);
+        // console.log(etaResponse);
         stopEta = stopEta.filter(x => { //Filter the result with the direction requested
             if (route.routeDirection == 1) {
                 return x.dir == 'O'

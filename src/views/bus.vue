@@ -8,8 +8,12 @@
         <ion-content :fullscreen="true">
             <ion-list>
                 <!-- Change List Header according to bus search -->
-                <ion-list-header v-if="busQuery.length > 0"><ion-label>搜尋: {{ busQuery }}</ion-label></ion-list-header>
-                <ion-list-header v-else><ion-label>我的最愛</ion-label></ion-list-header>
+                <ion-list-header v-if="busQuery.length > 0">
+                    <ion-label>搜尋: {{ busQuery }}</ion-label>
+                </ion-list-header>
+                <ion-list-header v-else>
+                    <ion-label>我的最愛</ion-label>
+                </ion-list-header>
                 <!-- Bus route display list here -->
                 <div v-for="(route, index) in busDisplayArray" :key="route.id">
                     <ion-item button>
@@ -38,13 +42,11 @@
                     </ion-item>
                 </div>
             </ion-list>
-            <!-- Modal for displaying bus details -->
-            <ion-modal :is-open="busModalIsOpen" ref="modal" @WillDismiss="closeModal">
-                <div>
-                    <ETAPopup :item="busSelected" :busStarred="busStarred" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveBusData" />
-                </div>
-            </ion-modal>
         </ion-content>
+        <!-- Modal for displaying bus details -->
+        <ion-modal :is-open="busModalIsOpen" ref="modal" @WillDismiss="closeModal">
+            <ETAPopup :item="busSelected" :busStarred="busStarred" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveBusData" />
+        </ion-modal>
     </ion-page>
 </template>
 
@@ -232,7 +234,7 @@ export default defineComponent({
     },
     async mounted(){
         this.bus = await loadData('busData', false, true);
-        this.busStarred = await loadData('busStarred');
+        this.busStarred = await loadData('busStarred', false, false);
         if (!this.busStarred){
             this.busStarred = [];
         } else {
@@ -242,9 +244,6 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.default-tab{
-    --offset-bottom: -104px !important;
-}
 .kmb-badge{
     --background: #e51f28;
 }

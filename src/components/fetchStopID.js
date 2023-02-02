@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 export async function fetchBusStopID(route){
     const stopIdData = {
         status: '',
@@ -24,4 +25,33 @@ export async function fetchBusStopID(route){
         return stopIdData
     }
 
+}
+
+export async function reconstructBusStops(stopData){
+    const returnData = {
+        status: '',
+        data: []
+    }
+    try{
+        for (stop of stopData.data) {
+            const response = await axios(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/stop/${stop.stop}`);
+            const newStop = {
+                nameTC: response.data.data.name_tc,
+                nameEN: response.data.data.name_en,
+                id: stop.stop,
+                seq: stop.seq,
+                coord: [response.data.data.long, response.data.data.lat],
+                etas: [],
+                etaMessage: '',
+                stopId: stop.stop
+            }
+            returnData.data.push(newStop);
+        }
+        returnData.status = 'success';
+        return returnData;
+    } catch(err){
+        console.error(err);
+        returnData.status = 'Error' + err;
+        return returnData
+    }
 }
