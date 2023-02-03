@@ -1,6 +1,7 @@
 <template>
     <ion-page>
-        <ion-loading :is-open="loading" :message="loadingMessage"></ion-loading>
+        <ion-loading :is-open="loading" :message="loadingMessage" :translucent="true">
+        </ion-loading>
         <div v-if="!settingFound" id="init">
             <ion-card id="welcome_card">
                 <div>
@@ -44,19 +45,20 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading } from '@ionic/vue';
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar } from '@ionic/vue';
 import { square, bus, busOutline, speedometer, speedometerOutline } from 'ionicons/icons';
 import { loadData, setData } from '@/components/loadData.js'
 
 export default defineComponent({
     name: 'TabsPage',
-    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading },
+    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar },
     setup() {
         const settingFound = ref(false);
         const setting = ref({});
         const loading = ref(false);
         const loadingMessage = ref('請稍侯...<br>Please Wait...');
-        const currentTab = ref('')
+        const currentTab = ref('');
+        const downloadProgress = ref('1%');
         const afterTabChange = (e) => {
             // do something after tab change
             currentTab.value = e.tab;
@@ -72,6 +74,7 @@ export default defineComponent({
             loading,
             loadingMessage,
             currentTab,
+            downloadProgress,
             afterTabChange
         }
     },
@@ -84,9 +87,9 @@ export default defineComponent({
             // Initiate loading after selection
             try{
                 this.loading = true;
-                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...';
+                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br>';
                 // loadData(key, forceReload, chunk);
-                await loadData('busData', false, true); 
+                await loadData('busData', false, true);
                 await loadData('minibusData', false, false);
                 this.loading = false;
             }

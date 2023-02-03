@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry'
 /* Classes do not work with dataforage
 class route{
     constructor(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
@@ -66,7 +67,7 @@ function createStop(item){
     return newStop
 }
 function createRoute(item, type){
-    let { companyCode: company, routeNameE: routeNo, routeId, serviceMode, specialType, hyperlinkE: infoLink, fullFare, routeSeq: routeDirection, journeyTime} = item.properties;
+    let { companyCode: company, routeNameE: routeNo, routeId, serviceMode, specialType, hyperlinkE: infoLink, fullFare, routeSeq: routeDirection, journeyTime} = item.properties; //Deconstruct item;
     let originEN, originTC, destEN, destTC;
     if (item.properties.routeSeq == 1){ //Direction 1 = Inbound
         destTC = item.properties.locEndNameC;
@@ -107,10 +108,21 @@ function createRoute(item, type){
         return newRoute
     }
 }
+
+function presentDownloadProgress(progressEvent){
+    console.log(Math.floor(progressEvent.progress * 100) + '%');
+}
+
 async function fetchBuses(){
     try{
-        // const busesResponse = await axios('./JSON_BUS.json'); //For Debug
-        const busesResponse = await axios('https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json'); //Get all buses information from data.gov.hk
+        axiosRetry(axios, {retry: 3});
+        // const busesResponse = await axios('./JSON_BUS.json'); //Use json in from local for debugging purpose
+        const busesResponse = await axios(
+            'https://static.data.gov.hk/td/routes-fares-geojson/JSON_BUS.json',
+            {
+                onDownloadProgress: presentDownloadProgress
+            }
+        ); //Get all buses information from data.gov.hk
         const busesObj = busesResponse.data.features;
         const buses = busesObj.reduce(function(buses, item){ //reduce(function (accumulator, currentValue) { ... }, initialValue)
             const newStop = createStop(item);
@@ -126,6 +138,7 @@ async function fetchBuses(){
         }, []); //Initial value for reduce
         // Get service modes from kmb
         try{
+            axiosRetry(axios, { retry: 3 });
             const kmbResponse = await fetch('https://data.etabus.gov.hk/v1/transport/kmb/route/');
             const kmbJson = await kmbResponse.json();
             const checkParenthesis = /\(.*$/; // Remove parenthesis due to different naming
@@ -141,6 +154,7 @@ async function fetchBuses(){
             console.error(err);
         }
         try{
+            axiosRetry(axios, { retry: 3 });
             const nlbResponse = await axios('https://rt.data.gov.hk/v2/transport/nlb/route.php?action=list');
             const originRegex = /^\w.* \>/;
             const destRegex = /\> \w.*$/;
@@ -165,8 +179,6 @@ async function fetchBuses(){
         for (let index in buses){
             buses[index].company = buses[index].company.split('+'); //Split bus companys into array
         }
-        const debug = buses.filter(bus => bus.company.includes('NLB'));
-        console.log(debug);
         return buses;
     }
     catch(err){
