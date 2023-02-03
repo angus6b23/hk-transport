@@ -1,7 +1,7 @@
 import { fetchBuses, fetchMinibuses } from '@/components/fetchData.js';
 import localforage from 'localforage';
 
-async function loadData(key, forceReload = false, chunk = false){
+async function loadData(key, forceReload = false, chunk = false, progressProxy = null){
     let data;
     if (chunk){
         // load chunked data
@@ -29,10 +29,10 @@ async function loadData(key, forceReload = false, chunk = false){
     }
     if (!data || forceReload){ //If no data from localforage with the given key
         if (key == 'busData'){
-            data = await fetchBuses();
+            data = await fetchBuses(progressProxy);
         }
         else if (key == 'minibusData'){
-            data = await fetchMinibuses();
+            data = await fetchMinibuses(progressProxy);
         } else {
             return undefined
         }

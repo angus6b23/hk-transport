@@ -125,7 +125,7 @@ export default {
         async getStopID(){ //Fetch Stop ids of CTB and NWFB bus from api
             if (!('stopId' in this.item.stops[0])){
                 const stopData = await fetchBusStopID(this.item);
-                console.log(stopData);
+                // console.log(stopData);
                 if (stopData.status == 'success'){
                     // Populate stop ids into current route
                     if (stopData.data.length == this.item.stops.length)
@@ -140,6 +140,7 @@ export default {
                         // Reconstruct CTB bus stop array
                         presentToast('info', '正在更新路線資料')
                         const reconBusData = await reconstructBusStops(stopData);
+                        // console.log(reconBusData);
                         if (reconBusData.status == 'success' && reconBusData.data.length > 0){
                             this.item.stops = JSON.parse(JSON.stringify(reconBusData.data));
                         } else {
