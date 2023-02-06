@@ -31,13 +31,13 @@
     </ion-header>
     <!-- Segment for route etas -->
     <ion-content v-if="popupView == 'default'" class="tabs">
-        <!-- Skeleton view for loading -->
-        <ion-list v-if="popupLoading">
-            <SkeletonItems />
-        </ion-list>
-        <ion-list v-else>
-            <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" @getETA="getCTBETA"></StopItems>
-        </ion-list>
+            <!-- Skeleton view for loading -->
+            <ion-list v-if="popupLoading">
+                <SkeletonItems />
+            </ion-list>
+            <ion-list v-else>
+                <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" @getETA="getCTBETA"></StopItems>
+            </ion-list>
     </ion-content>
     <!-- Route Info -->
     <ion-content v-else-if="popupView == 'info'" class="tabs">
@@ -53,11 +53,12 @@ import { ref, computed } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
 import { fetchKMBETA, fetchCTBETA } from '@/components/fetchETA.js';
-import { fetchBusStopID } from '@/components/fetchStopID.js';
+import { fetchBusStopID, reconstructBusStops } from '@/components/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
 import RouteInfo from '@/components/RouteInfo.vue';
 import LeafletMap from '@/components/leaflet.vue';
+import presentToast from '@/components/presentToast.js';
 
 export default {
     name: "ETAPopup",
@@ -70,7 +71,6 @@ export default {
         const popupView = ref('default');
         const busStarred = props.busStarred;
         const itemOptions = ref({clickable: false}); 
-        let interval;
         return{
             popupLoading,
             item,
@@ -122,24 +122,40 @@ export default {
         removeStar(){
             this.$emit('removeStar');
         },
-        async getStopID(){
-            // Break function if stops already saved
+        async getStopID(){ //Fetch Stop ids of CTB and NWFB bus from api
             if (!('stopId' in this.item.stops[0])){
                 const stopData = await fetchBusStopID(this.item);
+                // console.log(stopData);
                 if (stopData.status == 'success'){
-                    stopData.data.forEach(element => {
-                        const index = this.item.stops.findIndex(x => x.seq == element.seq);
-                        if (index != -1){
-                            this.item.stops[index].stopId = element.stop;
+                    // Populate stop ids into current route
+                    if (stopData.data.length == this.item.stops.length)
+                    {
+                        stopData.data.forEach(element => {
+                            const index = this.item.stops.findIndex(x => x.seq == element.seq);
+                            if (index != -1){
+                                this.item.stops[index].stopId = element.stop;
+                            }
+                        });
+                    } else {
+                        // Reconstruct CTB bus stop array
+                        presentToast('info', '正在更新路線資料')
+                        const reconBusData = await reconstructBusStops(stopData);
+                        // console.log(reconBusData);
+                        if (reconBusData.status == 'success' && reconBusData.data.length > 0){
+                            this.item.stops = JSON.parse(JSON.stringify(reconBusData.data));
+                        } else {
+                            presentToast('error', '重新建立路線失敗')
+                            return
                         }
-                    });
+                    }
+                    // Emits save data to save data to local forage
                     this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
                 }
             }
-            console.log('Fetch stop id finished');
+            presentToast('done', '按一下巴士站名稱以取得到站時間');
             this.itemOptions.clickable = true;
         },
-        async getKMB(){
+        async getKMB(){ //Get KMB route etas from api
             const etaData = await fetchKMBETA(this.item);
             if (etaData.status == 'success') {
                 etaData.data.forEach(element => {
@@ -173,8 +189,7 @@ export default {
 </script>
 <style scoped>
 .tabs{
-    --offset-bottom: -100px !important;
-    height: 100vh;
+    height: calc(100vh - 100px);
 }
 @media only screen and (min-width: 768px) and (min-height: 600px){
     .tabs{

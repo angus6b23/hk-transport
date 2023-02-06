@@ -1,6 +1,7 @@
 <template>
     <ion-page>
-        <ion-loading :is-open="loading" :message="loading_message"></ion-loading>
+        <ion-loading :is-open="loading" :message="loadingMessage" :translucent="true">
+        </ion-loading>
         <div v-if="!settingFound" id="init">
             <ion-card id="welcome_card">
                 <div>
@@ -17,16 +18,18 @@
             </ion-card>
         </div>
         <div v-else>
-            <ion-tabs>
+            <ion-tabs @ionTabsDidChange="afterTabChange">
                 <ion-router-outlet></ion-router-outlet>
-                <ion-tab-bar slot="bottom">
-                    <ion-tab-button tab="tab1" href="/tabs/bus">
-                        <ion-icon :icon="bus" />
+                <ion-tab-bar slot="bottom" >
+                    <ion-tab-button tab="bus" href="/tabs/bus">
+                        <ion-icon v-if="currentTab == 'bus'" :icon="bus" />
+                        <ion-icon v-else :icon="busOutline" />
                         <ion-label>巴士</ion-label>
                     </ion-tab-button>
 
-                    <ion-tab-button tab="tab2" href="/tabs/minibus">
-                        <ion-icon :icon="speedometerOutline" />
+                    <ion-tab-button tab="minibus" href="/tabs/minibus">
+                        <ion-icon v-if="currentTab == 'minibus'" :icon="speedometer" />
+                        <ion-icon v-else :icon="speedometerOutline" />
                         <ion-label>專線小巴</ion-label>
                     </ion-tab-button>
 
@@ -42,45 +45,52 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading } from '@ionic/vue';
-import { business, square, bus, speedometerOutline } from 'ionicons/icons';
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar } from '@ionic/vue';
+import { square, bus, busOutline, speedometer, speedometerOutline } from 'ionicons/icons';
 import { loadData, setData } from '@/components/loadData.js'
-import { fetchBuses, fetchMinibuses } from '@/components/fetchData.js'
 
 export default defineComponent({
     name: 'TabsPage',
-    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading },
+    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar },
     setup() {
         const settingFound = ref(false);
         const setting = ref({});
         const loading = ref(false);
-        const busData = [];
-        const minibusData = [];
-        const loading_message = ref('請稍侯...<br>Please Wait...');
+        const loadingMessage = ref('請稍侯...<br>Please Wait...');
+        const currentTab = ref('');
+        const downloadProgress = ref('1%');
+        const afterTabChange = (e) => {
+            // do something after tab change
+            currentTab.value = e.tab;
+        }
         return {
+            speedometer,
             speedometerOutline,
-            business,
             square,
             bus,
+            busOutline,
             settingFound,
             setting,
             loading,
-            loading_message,
+            loadingMessage,
+            currentTab,
+            downloadProgress,
+            afterTabChange
         }
     },
     methods:{
         async set_language(lang){
             // Set Language
             this.setting.lang = lang;
-            let clone_setting = {...this.setting};
-            let setting_promise = await setData('setting', clone_setting);
+            let cloneSetting = {...this.setting};
+            await setData('setting', cloneSetting);
             // Initiate loading after selection
             try{
                 this.loading = true;
-                this.loading_message = '正在獲取交通資訊...<br>Fetching Transport data...';
+                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br>';
                 // loadData(key, forceReload, chunk);
-                this.busData = await loadData('busData', false, true); 
-                this.minibusData = await loadData('minibusData', false, false);
+                await loadData('busData', false, true);
+                await loadData('minibusData', false, false);
                 this.loading = false;
             }
             catch(err){
