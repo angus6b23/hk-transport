@@ -81,7 +81,7 @@ export default {
         });
         // Default showing hong kong with zome level 10
         this.map = L.map("mapContainer").setView([22.3745, 114.19849], 10);
-        L.tileLayer("https://api.maptiler.com/maps/stage/{z}/{x}/{y}.png?key=WmzwDfSJItQdmlz1POs4", {
+        L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
             attribution:
             '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(toRaw(this.map));

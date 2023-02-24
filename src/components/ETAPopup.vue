@@ -36,7 +36,7 @@
                 <SkeletonItems />
             </ion-list>
             <ion-list v-else>
-                <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" @getETA="getCTBETA"></StopItems>
+                <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :class="{nearest: nearestStop(stop.id)}" @getETA="getCTBETA"></StopItems>
             </ion-list>
     </ion-content>
     <!-- Route Info -->
@@ -49,9 +49,12 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
+import { Geolocation } from '@capacitor/geolocation';
+import { getDistance } from 'geolib';
+
 import { fetchKMBETA, fetchCTBETA } from '@/components/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/components/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
@@ -70,7 +73,10 @@ export default {
         const item = ref(props.item);
         const popupView = ref('default');
         const busStarred = props.busStarred;
-        const itemOptions = ref({clickable: false}); 
+        const itemOptions = ref({clickable: false});
+        const currentPosition = ref();
+        const nearestStop = ref();
+        
         return{
             popupLoading,
             item,
@@ -79,7 +85,9 @@ export default {
             chevronBack,
             starOutline,
             star,
-            itemOptions
+            itemOptions,
+            currentPosition,
+            nearestStop
         }
     },
     async mounted(){
@@ -95,6 +103,29 @@ export default {
         // Fetch CTB and NWFB bus stop ids
         if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))){
             await this.getStopID();
+        }
+        // Get Coordinates
+        try {
+            this.currentPosition = await Geolocation.getCurrentPosition();
+            const stopDistance = this.item.stops.map(stop => { //Create an array hold all stops id and distance between current coord
+                const currentLat = this.currentPosition.coords.latitude;
+                const currentLong = this.currentPosition.coords.longitude;
+                const stopLat = stop.coord[1];
+                const stopLong = stop.coord[0];
+                return {
+                    id: stop.id,
+                    distance: getDistance({latitude: currentLat, longitude: currentLong}, {latitude: stopLat, longitude: stopLong})
+                }
+            })
+            this.nearestStop = stopDistance.reduce((acc, cur) => { // Reduce the distance array for nearest id and distance
+                if (cur.distance < acc.distance){
+                    return cur
+                } else {
+                    return acc
+                }
+            });
+        } catch (err) {
+            console.error(err);
         }
     },
     computed:{
@@ -180,6 +211,13 @@ export default {
                 }
             }
             // console.log(this.item.stops[clickedIndex]);
+        },
+        nearestStop(stopId) {
+            if (this.nearestStop && this.nearestStop.id === stopId && this.nearestStop.distance <= 1000) {
+                return true
+            } else {
+                return false
+            }
         }
     },
     beforeUnmount(){
@@ -187,7 +225,10 @@ export default {
     }
 };
 </script>
-<style scoped>
+<style>
+.nearest h5{
+    color: var(--ion-color-primary);
+}
 .tabs{
     height: calc(100vh - 100px);
 }

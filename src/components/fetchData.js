@@ -110,7 +110,8 @@ function createRoute(item, type){
 }
 
 function presentDownloadProgress(progressEvent){
-    console.log(Math.floor(progressEvent.progress * 100) + '%');
+    const loadingProgress = document.querySelector('#loading-progress');
+    loadingProgress.textContent = Math.floor(progressEvent.progress * 100) + '%'
 }
 
 async function fetchBuses(){

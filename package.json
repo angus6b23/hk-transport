@@ -24,6 +24,7 @@
     "axios-retry": "^3.4.0",
     "chromium": "^3.0.3",
     "core-js": "^3.6.5",
+    "geolib": "^3.3.3",
     "ionicons": "^6.0.3",
     "leaflet": "^1.9.2",
     "localforage": "^1.10.0",
