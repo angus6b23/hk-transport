@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import { IonList, IonItem, IonGrid, IonRow, IonCol } from '@ionic/vue';
-export default {
+export default defineComponent({
     name: "RouteInfo",
     components: { IonList, IonItem, IonGrid, IonRow, IonCol },
     props: ['item'],
@@ -39,7 +39,7 @@ export default {
             item
         }
     }
-}
+});
 </script>
 <style scoped>
 </style>

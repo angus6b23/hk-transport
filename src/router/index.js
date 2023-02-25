@@ -18,7 +18,7 @@ const routes = [
       },
       {
         path: 'bus',
-        component: () => import('@/views/search-view.vue')
+        component: () => import('@/views/bus.vue')
       },
       {
         path: 'minibus',
