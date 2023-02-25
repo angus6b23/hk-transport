@@ -66,13 +66,13 @@ import presentToast from '@/components/presentToast.js';
 export default {
     name: "ETAPopup",
     components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
-    props: ['item', 'busStarred'],
+    props: ['item', 'starred'],
     emits: ['closeModal', 'addStar', 'removeStar', 'saveData'],
     setup(props){
         const popupLoading = ref(false);
         const item = ref(props.item);
         const popupView = ref('default');
-        const busStarred = props.busStarred;
+        const starred = props.starred;
         const itemOptions = ref({clickable: false});
         const currentLocation = ref();
         const nearestStop = ref();
@@ -80,7 +80,7 @@ export default {
         return{
             popupLoading,
             item,
-            busStarred,
+            starred,
             popupView,
             chevronBack,
             starOutline,
@@ -129,12 +129,12 @@ export default {
         }
     },
     computed:{
-        checkbusStar(){ //Return true if bus is in busStarred array.
-            let busStarredClone = [...this.busStarred];
-            if (busStarredClone.length == 0){
+        checkbusStar(){ //Return true if bus is in starred array.
+            let starredClone = [...this.starred];
+            if (starredClone.length == 0){
                 return false
             } else {
-                let indexResult = busStarredClone.findIndex(x => x.routeId == this.item.routeId && x.routeDirection == this.item.routeDirection);
+                let indexResult = starredClone.findIndex(x => x.routeId == this.item.routeId && x.routeDirection == this.item.routeDirection && x.type === this.item.type);
                 if (indexResult == -1){
                     return false;
                 } else {
