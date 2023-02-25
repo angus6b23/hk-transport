@@ -139,7 +139,6 @@
 import { defineComponent, ref, onMounted, watch, computed } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonGrid, IonCol, IonRow, IonModal, IonIcon, IonButton, IonButtons, IonBadge, IonSegment, IonSegmentButton, IonSkeletonText, } from '@ionic/vue';
 import { map, hourglass, chevronBack, starOutline, star } from 'ionicons/icons';
-import { get_minibuses } from '@/components/fetch.js';
 import LeafletMap from '@/components/leaflet.vue';
 
 export default defineComponent({
