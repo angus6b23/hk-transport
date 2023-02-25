@@ -9,10 +9,12 @@
 			<ion-list>
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
-					<ion-label>搜尋巴士: {{ query }}</ion-label>
+					<ion-label v-if="type==='bus'">搜尋巴士: {{ query }}</ion-label>
+					<ion-label v-if="type==='minibus'">搜尋專線小巴: {{ query }}</ion-label>
 				</ion-list-header>
 				<ion-list-header v-else>
-					<ion-label>已標記的巴士</ion-label>
+					<ion-label v-if="type === 'bus'">已標記的巴士</ion-label>
+					<ion-label v-if="type === 'minibus'">已標記的專線小巴</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
@@ -25,28 +27,43 @@
 										<h3 v-else>-</h3>
 									</ion-col>
 									<ion-col size-xs="9" size-md="11">
-										<ion-badge v-if="route.company.includes('KMB')"
-											class="kmb-badge ion-margin-start">九巴</ion-badge>
-										<ion-badge v-if="route.company.includes('CTB')"
-											class="ctb-badge ion-margin-start">城巴</ion-badge>
-										<ion-badge v-if="route.company.includes('LWB')"
-											class="lwb-badge ion-margin-start">龍運</ion-badge>
-										<ion-badge v-if="route.company.includes('NWFB')"
-											class="nwfb-badge ion-margin-start">新巴</ion-badge>
-										<ion-badge v-if="route.company.includes('DB')"
-											class="db-badge ion-margin-start">愉景</ion-badge>
-										<ion-badge v-if="route.company.includes('NLB')"
-											class="nlb-badge ion-margin-start">大嶼</ion-badge>
-										<ion-badge v-if="route.company.includes('PI')"
-											class="pi-badge ion-margin-start">馬灣</ion-badge>
-										<ion-badge v-if="route.company.includes('XB')"
-											class="xb-badge ion-margin-start">過境</ion-badge>
-										<ion-badge v-if="route.company.includes('LRTFeeder')"
-											class="ltr-badge ion-margin-start">港鐵</ion-badge>
-										<ion-badge v-if="route.serviceMode.includes('N')"
-											class="night-badge ion-margin-start">晚間</ion-badge>
-										<ion-badge v-if="route.serviceMode == 'T'"
-											class="special-badge ion-margin-start">特別</ion-badge>
+										<!-- Badges for bus -->
+										<div v-if="route.type === 'bus'">
+											<ion-badge v-if="route.company.includes('KMB')"
+												class="kmb-badge ion-margin-start">九巴</ion-badge>
+											<ion-badge v-if="route.company.includes('CTB')"
+												class="ctb-badge ion-margin-start">城巴</ion-badge>
+											<ion-badge v-if="route.company.includes('LWB')"
+												class="lwb-badge ion-margin-start">龍運</ion-badge>
+											<ion-badge v-if="route.company.includes('NWFB')"
+												class="nwfb-badge ion-margin-start">新巴</ion-badge>
+											<ion-badge v-if="route.company.includes('DB')"
+												class="db-badge ion-margin-start">愉景</ion-badge>
+											<ion-badge v-if="route.company.includes('NLB')"
+												class="nlb-badge ion-margin-start">大嶼</ion-badge>
+											<ion-badge v-if="route.company.includes('PI')"
+												class="pi-badge ion-margin-start">馬灣</ion-badge>
+											<ion-badge v-if="route.company.includes('XB')"
+												class="xb-badge ion-margin-start">過境</ion-badge>
+											<ion-badge v-if="route.company.includes('LRTFeeder')"
+												class="ltr-badge ion-margin-start">港鐵</ion-badge>
+											<ion-badge v-if="route.serviceMode.includes('N')"
+												class="night-badge ion-margin-start">晚間</ion-badge>
+											<ion-badge v-if="route.serviceMode == 'T'"
+												class="special-badge ion-margin-start">特別</ion-badge>
+										</div>
+										<div v-if="route.type === 'minibus'">
+											<ion-badge v-if="route.district.includes('HKI')"
+												class="hki-badge ion-margin-start">港島</ion-badge>
+											<ion-badge v-if="route.district.includes('KLN')"
+												class="kln-badge ion-margin-start">九龍</ion-badge>
+											<ion-badge v-if="route.district.includes('NT')"
+												class="nt-badge ion-margin-start">新界</ion-badge>
+											<ion-badge v-if="route.serviceMode.includes('N')"
+												class="night-badge ion-margin-start">晚間</ion-badge>
+											<ion-badge v-if="route.serviceMode == 'T'"
+												class="special-badge ion-margin-start">特別</ion-badge>
+										</div>
 										<h3 class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
 									</ion-col>
 								</ion-row>
@@ -73,16 +90,16 @@
 </template>
 
 <script>
-import { defineComponent, ref} from 'vue';
+import { defineComponent, ref } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge } from '@ionic/vue';
 import { loadData, setData } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
 
 export default defineComponent({
-	name: 'Bus',
+	name: 'SearchView',
 	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, ETAPopup },
-	props: ['type'],
-	setup() {
+	props: ['dataType'],
+	setup(props) {
 		// Create ref for loading and show map for ui control
 		const query = ref(''); // Reference for two way bind of search bar value
 		const displayArray = ref([]);// Reference for displaying search results
@@ -90,7 +107,7 @@ export default defineComponent({
 		const modalIsOpen = ref(false);
 		const data = ref([]); // For storage of bus routes and stops
 		const starred = ref([]);
-		const type = ref('bus');
+		const type = ref(props.dataType);
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
 			modalIsOpen.value = false;
@@ -126,7 +143,7 @@ export default defineComponent({
 			await setData('starred', starredClone);
 		},
 		async saveData(data) {
-			if (this.type == 'bus'){
+			if (this.type == 'bus') {
 				// Link to currently displayed bus
 				const displayIndex = this.displayArray.findIndex(this.currentSelectedItem)
 				this.displayArray[displayIndex] = data;
@@ -134,7 +151,7 @@ export default defineComponent({
 				const index = this.data.findIndex(this.currentSelectedItem);
 				this.data[index] = JSON.parse(JSON.stringify(data));
 				// console.log(index);
-	
+
 				// Save to localforage
 				const key = 'busData-chunk' + Math.floor(index / 100);
 				const chunkIndex = index % 100;
@@ -163,13 +180,17 @@ export default defineComponent({
 		}
 	},
 	async mounted() {
-		this.data = await loadData(`${this.type}Data`, false, true);
+		if (this.type === 'bus') {
+			this.data = await loadData(`${this.type}Data`, false, true); //Only bus data are chunked
+		} else {
+			this.data = await loadData(`${this.type}Data`, false, false) //Other data are not chunked
+		}
 		this.starred = await loadData('starred', false, false);
 		if (!this.starred) {
 			this.starred = [];
 		} else {
 			this.starred = this.starred.map(route => {
-				if (route.type === this.type){
+				if (route.type === this.type) {
 					return route
 				}
 			})
@@ -192,6 +213,7 @@ export default defineComponent({
 	justify-content: center;
 }
 
+/* Bus Badges color */
 .kmb-badge {
 	--background: #e51f28;
 }
@@ -224,6 +246,20 @@ export default defineComponent({
 	--background: #ff67de;
 }
 
+/* Minibus Badges */
+.hki-badge {
+	--background: #e66dca;
+}
+
+.kln-badge {
+	--background: #6dcae6;
+}
+
+.nt-badge {
+	--background: #cae66d;
+}
+
+/* Common Badges */
 .night-badge {
 	--background: #36454f;
 }
@@ -234,5 +270,4 @@ export default defineComponent({
 
 .route-no {
 	display: flex;
-}
-</style>
+}</style>
