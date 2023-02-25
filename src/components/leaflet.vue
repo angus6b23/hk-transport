@@ -14,7 +14,7 @@ import L from "leaflet";
 
 export default {
     name: "LeafletMap",
-    props: ['routeLocations'],
+    props: ['routeLocations', 'currentLocation'],
     components: { IonSelect, IonSelectOption },
     data() {
         return {
@@ -46,6 +46,7 @@ export default {
     setup(props){
         const routeLocations = ref(props.routeLocations);
         const zoomIndex = ref('gps');
+        let currentLocation = props.currentLocation;
         return {
             routeLocations,
             zoomIndex
@@ -119,12 +120,23 @@ export default {
         // Set minimum zoom level to 10 to avoiding zooming out to world map
         toRaw(this.map).setMinZoom(10);
         // Try to get GPS location and set view
-        toRaw(this.map).locate({setView: true});
-        toRaw(this.map).on('locationfound', function(e){
-            var radius = e.accuracy;
-            L.marker(e.latlng, {icon: navIcon}).addTo(self.map);
-            L.circle(e.latlng, radius).addTo(self.map);
-        });
+        // Use passed currentlocation first
+        if (this.currentLocation){
+            // console.log(this.currentLocation);
+            const radius = this.currentLocation.coords.accuracy;
+            const latlng = {lat: this.currentLocation.coords.latitude, lng: this.currentLocation.coords.longitude}
+            L.marker(latlng, {icon: navIcon}).addTo(self.map);
+            L.circle(latlng, radius).addTo(self.map);
+            toRaw(this.map).setView(latlng, 18);
+        } else { // If prop not a/v, use leaflet location
+            toRaw(this.map).locate({ setView: true });
+            toRaw(this.map).on('locationfound', function(e){
+                console.log(e.latlng);
+                const radius = e.accuracy;
+                L.marker(e.latlng, {icon: navIcon}).addTo(self.map);
+                L.circle(e.latlng, radius).addTo(self.map);
+            });
+        }
     },
     beforeUnmount() {
         if (this.map) {

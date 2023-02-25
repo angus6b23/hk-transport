@@ -44,7 +44,7 @@
        <RouteInfo :item="item"></RouteInfo>
     </ion-content>
     <ion-content v-else-if="popupView == 'map'" class="tabs">
-        <LeafletMap :routeLocations="item.stops" />
+        <LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation"/>
     </ion-content>
 </template>
 
@@ -74,7 +74,7 @@ export default {
         const popupView = ref('default');
         const busStarred = props.busStarred;
         const itemOptions = ref({clickable: false});
-        const currentPosition = ref();
+        const currentLocation = ref();
         const nearestStop = ref();
         
         return{
@@ -86,7 +86,7 @@ export default {
             starOutline,
             star,
             itemOptions,
-            currentPosition,
+            currentLocation,
             nearestStop
         }
     },
@@ -106,10 +106,10 @@ export default {
         }
         // Get Coordinates
         try {
-            this.currentPosition = await Geolocation.getCurrentPosition();
+            this.currentLocation = await Geolocation.getCurrentPosition();
             const stopDistance = this.item.stops.map(stop => { //Create an array hold all stops id and distance between current coord
-                const currentLat = this.currentPosition.coords.latitude;
-                const currentLong = this.currentPosition.coords.longitude;
+                const currentLat = this.currentLocation.coords.latitude;
+                const currentLong = this.currentLocation.coords.longitude;
                 const stopLat = stop.coord[1];
                 const stopLong = stop.coord[0];
                 return {
