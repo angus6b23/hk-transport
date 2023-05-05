@@ -3,10 +3,10 @@
         <ion-grid>
             <ion-row class="ion-align-items-center">
                 <ion-col size-xs="2" size-md="2">
-                    <h5 class="ion-margin-start">{{ stop.seq }}</h5>
+                    <h5 class="ion-margin-start highlight">{{ stop.seq }}</h5>
                 </ion-col>
                 <ion-col size-xs="7" size-md="7">
-                    <h5 class="ion-margin-start">{{ stop.nameTC }}</h5>
+                    <h5 class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
                 </ion-col>
                 <ion-col size-xs="3" size-md="3">
                     <p class="ion-no-margin ion-text-right">
@@ -46,7 +46,7 @@ export default {
         const options = ref(props.options);
         return{
             stop,
-            options
+            options,
         }
     },
     methods: {

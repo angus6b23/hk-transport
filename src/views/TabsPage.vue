@@ -87,7 +87,7 @@ export default defineComponent({
             // Initiate loading after selection
             try{
                 this.loading = true;
-                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br>';
+                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br><span id="loading-progress">Progress<span>';
                 // loadData(key, forceReload, chunk);
                 await loadData('busData', false, true);
                 await loadData('minibusData', false, false);
