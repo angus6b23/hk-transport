@@ -1,57 +1,6 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry'
-/* Classes do not work with dataforage
-class route{
-    constructor(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
-        this.company = company;
-        this.routeNo = routeNo;
-        this.routeId = routeId;
-        this.originEN = originEN;
-        this.originTC = originTC;
-        this.serviceMode = serviceMode;
-        this.specialType = specialType;
-        this.fullFare = fullFare;
-        this.routeDirection = routeDirection;
-        this.journeyTime = journeyTime;
-        this.infoLink = infoLink;
-        this.stops = [];
-        this.starred = false;
-        this.toggleStar = () => {this.starred = !this.starred}
-    }
-}
-class stop{
-    constructor(nameTC, nameEN, id, seq, coord){
-        this.nameTC = nameTC.replace('<br>' , '');
-        this.nameEN = nameEN.replace('<br>' , '');
-        this.id = id;
-        this.seq = seq;
-        this.coord = coord;
-    }
-}
-class busRoute extends route{
-    constructor(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink){
-        super(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
-        this.etas = [];
-        this.type = 'bus';
-    }
-}
-class minibusRoute extends route{
-    constructor(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink, district){
-        super(company, routeNo, routeId, originEN, originTC, destEN, destTC, serviceMode, specialType, fullFare, routeDirection, journeyTime, infoLink);
-        this.type = 'minibus';
-        this.district = district;
-        this.getStops = async () =>{
-            try{
-                let minibusStopsResponse = await fetch(`https://data.etagmb.gov.hk/route-stop/${this.routeId}/${this.routeDirection}`);
-                let minibusStops = await minibusStopsResponse.json();
-                this.stops = minibusStops.data.route_stops;
-            } catch(err){
-                console.error(err)
-            }
-        }
-    };
-}
-*/
+
 function createStop(item){
     let {stopNameC: nameTC, stopNameE: nameEN, stopId: id, stopSeq: seq } = item.properties;
     let {coordinates: coord} = item.geometry;
