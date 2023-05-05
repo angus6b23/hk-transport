@@ -160,6 +160,10 @@ async function fetchMinibuses(){
     }
 }
 
+const fetchAll = async () => {
+    await Promise.all([fetchBuses, fetchMinibuses]);
+    
+}
 export { fetchBuses, fetchMinibuses }
 /* TEST ONLY */
 /*

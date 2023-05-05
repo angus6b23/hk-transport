@@ -1,4 +1,4 @@
-import { fetchBuses, fetchMinibuses } from '@/components/fetchData.js';
+import { fetchBuses, fetchMinibuses } from '@/fetch/fetchHKGovData.js';
 import localforage from 'localforage';
 
 async function loadData(key, forceReload = false, chunk = false, progressProxy = null){
