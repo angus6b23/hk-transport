@@ -36,7 +36,7 @@
                 <SkeletonItems />
             </ion-list>
             <ion-list v-else>
-                <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" @getETA="getCTBETA"></StopItems>
+                <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :class="{nearest: nearestStop(stop.id)}" @getETA="getCTBETA"></StopItems>
             </ion-list>
     </ion-content>
     <!-- Route Info -->
@@ -44,14 +44,17 @@
        <RouteInfo :item="item"></RouteInfo>
     </ion-content>
     <ion-content v-else-if="popupView == 'map'" class="tabs">
-        <LeafletMap :routeLocations="item.stops" />
+        <LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation"/>
     </ion-content>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
+import { Geolocation } from '@capacitor/geolocation';
+import { getDistance } from 'geolib';
+
 import { fetchKMBETA, fetchCTBETA } from '@/components/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/components/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
@@ -63,23 +66,28 @@ import presentToast from '@/components/presentToast.js';
 export default {
     name: "ETAPopup",
     components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
-    props: ['item', 'busStarred'],
+    props: ['item', 'starred'],
     emits: ['closeModal', 'addStar', 'removeStar', 'saveData'],
     setup(props){
         const popupLoading = ref(false);
         const item = ref(props.item);
         const popupView = ref('default');
-        const busStarred = props.busStarred;
-        const itemOptions = ref({clickable: false}); 
+        const starred = props.starred;
+        const itemOptions = ref({clickable: false});
+        const currentLocation = ref();
+        const nearestStop = ref();
+        
         return{
             popupLoading,
             item,
-            busStarred,
+            starred,
             popupView,
             chevronBack,
             starOutline,
             star,
-            itemOptions
+            itemOptions,
+            currentLocation,
+            nearestStop
         }
     },
     async mounted(){
@@ -96,14 +104,37 @@ export default {
         if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))){
             await this.getStopID();
         }
+        // Get Coordinates
+        try {
+            this.currentLocation = await Geolocation.getCurrentPosition();
+            const stopDistance = this.item.stops.map(stop => { //Create an array hold all stops id and distance between current coord
+                const currentLat = this.currentLocation.coords.latitude;
+                const currentLong = this.currentLocation.coords.longitude;
+                const stopLat = stop.coord[1];
+                const stopLong = stop.coord[0];
+                return {
+                    id: stop.id,
+                    distance: getDistance({latitude: currentLat, longitude: currentLong}, {latitude: stopLat, longitude: stopLong})
+                }
+            })
+            this.nearestStop = stopDistance.reduce((acc, cur) => { // Reduce the distance array for nearest id and distance
+                if (cur.distance < acc.distance){
+                    return cur
+                } else {
+                    return acc
+                }
+            });
+        } catch (err) {
+            console.error(err);
+        }
     },
     computed:{
-        checkbusStar(){ //Return true if bus is in busStarred array.
-            let busStarredClone = [...this.busStarred];
-            if (busStarredClone.length == 0){
+        checkbusStar(){ //Return true if bus is in starred array.
+            let starredClone = [...this.starred];
+            if (starredClone.length == 0){
                 return false
             } else {
-                let indexResult = busStarredClone.findIndex(x => x.routeId == this.item.routeId && x.routeDirection == this.item.routeDirection);
+                let indexResult = starredClone.findIndex(x => x.routeId == this.item.routeId && x.routeDirection == this.item.routeDirection && x.type === this.item.type);
                 if (indexResult == -1){
                     return false;
                 } else {
@@ -180,6 +211,13 @@ export default {
                 }
             }
             // console.log(this.item.stops[clickedIndex]);
+        },
+        nearestStop(stopId) {
+            if (this.nearestStop && this.nearestStop.id === stopId && this.nearestStop.distance <= 1000) {
+                return true
+            } else {
+                return false
+            }
         }
     },
     beforeUnmount(){
@@ -187,7 +225,10 @@ export default {
     }
 };
 </script>
-<style scoped>
+<style>
+.nearest h5{
+    color: var(--ion-color-primary);
+}
 .tabs{
     height: calc(100vh - 100px);
 }
