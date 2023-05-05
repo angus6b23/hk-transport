@@ -55,8 +55,8 @@ import { star, starOutline, chevronBack } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
-import { fetchKMBETA, fetchCTBETA } from '@/components/fetchETA.js';
-import { fetchBusStopID, reconstructBusStops } from '@/components/fetchStopID.js';
+import { fetchKMBETA, fetchCTBETA } from '@/fetch/fetchETA.js';
+import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
 import RouteInfo from '@/components/RouteInfo.vue';

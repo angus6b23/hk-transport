@@ -3,19 +3,7 @@
         <ion-loading :is-open="loading" :message="loadingMessage" :translucent="true">
         </ion-loading>
         <div v-if="!settingFound" id="init">
-            <ion-card id="welcome_card">
-                <div>
-                    <ion-card-header>
-                        <ion-card-title class="ion-text-center">歡迎 Welcome</ion-card-title>
-                        <ion-card-subtitle class="ion-margin-top">請選擇語言</ion-card-subtitle>
-                        <ion-card-subtitle>Please select language</ion-card-subtitle>
-                    </ion-card-header>
-                    <ion-card-content>
-                        <ion-button expand="block" class="ion-margin-top" @click="set_language('zh')">正體中文</ion-button>
-                        <ion-button expand="block" class="ion-margin-top" @click="set_language('en')">English</ion-button>
-                    </ion-card-content>
-                </div>
-            </ion-card>
+            <Landing @finishConfig="finishConfig"></Landing>
         </div>
         <div v-else>
             <ion-tabs @ionTabsDidChange="afterTabChange">
@@ -48,10 +36,11 @@ import { defineComponent, ref } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar } from '@ionic/vue';
 import { square, bus, busOutline, speedometer, speedometerOutline } from 'ionicons/icons';
 import { loadData, setData } from '@/components/loadData.js'
+import Landing from '@/views/Landing.vue'
 
 export default defineComponent({
     name: 'TabsPage',
-    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar },
+    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar, Landing },
     setup() {
         const settingFound = ref(false);
         const setting = ref({});
@@ -59,10 +48,10 @@ export default defineComponent({
         const loadingMessage = ref('請稍侯...<br>Please Wait...');
         const currentTab = ref('');
         const downloadProgress = ref('1%');
-        const afterTabChange = (e) => {
-            // do something after tab change
-            currentTab.value = e.tab;
-        }
+        // const afterTabChange = (e) => {
+        //     // do something after tab change
+        //     currentTab.value = e.tab;
+        // }
         return {
             speedometer,
             speedometerOutline,
@@ -74,8 +63,7 @@ export default defineComponent({
             loading,
             loadingMessage,
             currentTab,
-            downloadProgress,
-            afterTabChange
+            downloadProgress
         }
     },
     methods:{
@@ -98,6 +86,13 @@ export default defineComponent({
             }
             this.settingFound = true;
         },
+        afterTabChange(e){
+            this.currentTab.value = e.tab
+        },
+        finishConfig(config){
+            console.log('finish config emmited');
+            this.settingFound = true;
+        }
     },
     async mounted(){
         try{
@@ -114,20 +109,5 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-#init{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-}
-#welcome_card{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    width: 40vh;
-    height: 40vh;
-}
+
 </style>
