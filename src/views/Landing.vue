@@ -23,20 +23,20 @@
                 <div v-if="lang == 'zh'">
                     <ion-title>請選擇資料來源</ion-title>
                     <form @submit.prevent="finishConfig()">
-                        <ion-list>
+                        <ion-list class="ion-margin-top">
                             <ion-radio-group v-model="radioSelect">
                                 <ion-item>
-                                    <ion-label>預先整理好的資料(建議)</ion-label>
+                                    <ion-label class="ion-text-wrap">預先整理好的資料(建議)</ion-label>
                                     <ion-radio slot="end" value="default" checked></ion-radio>
                                 </ion-item>
         
                                 <ion-item>
-                                    <ion-label>直接從gov.hk API 獲取</ion-label>
+                                    <ion-label class="ion-text-wrap">直接從gov.hk API 獲取</ion-label>
                                     <ion-radio slot="end" value="hkgov"></ion-radio>
                                 </ion-item>
         
                                 <ion-item>
-                                    <ion-label>使用自後搭建的後台</ion-label>
+                                    <ion-label class="ion-text-wrap">使用自後搭建的後台</ion-label>
                                     <ion-radio slot="end" value="self"></ion-radio>
                                 </ion-item>
                             </ion-radio-group>
@@ -60,20 +60,20 @@
                 <div v-else>
                     <ion-title>Please select data source</ion-title>
                     <form @submit.prevent="finishConfig()">
-                        <ion-list>
+                        <ion-list class="ion-margin-top">
                             <ion-radio-group v-model="radioSelect">
                                 <ion-item>
-                                    <ion-label>Pre-fetched data from backend(Recommended)</ion-label>
+                                    <ion-label class="ion-text-wrap">Pre-fetched data from backend (Recommended)</ion-label>
                                     <ion-radio slot="end" value="default" checked></ion-radio>
                                 </ion-item>
         
                                 <ion-item>
-                                    <ion-label>Direct from gov.hk</ion-label>
+                                    <ion-label class="ion-text-wrap">Direct from api.gov.hk</ion-label>
                                     <ion-radio slot="end" value="hkgov"></ion-radio>
                                 </ion-item>
         
                                 <ion-item>
-                                    <ion-label>Use self-hosted backend</ion-label>
+                                    <ion-label class="ion-text-wrap">Use self-hosted backend</ion-label>
                                     <ion-radio slot="end" value="self"></ion-radio>
                                 </ion-item>
                             </ion-radio-group>

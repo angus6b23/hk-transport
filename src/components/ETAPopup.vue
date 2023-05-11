@@ -29,27 +29,31 @@
             </ion-segment-button>
         </ion-segment>
     </ion-header>
-    <!-- Segment for route etas -->
-    <ion-content v-if="popupView == 'default'" class="tabs">
+    <ion-content class="ion-padding-bottom">
+        <!-- Segment for route etas -->
+        <section v-if="popupView == 'default'" class="tabs">
             <!-- Skeleton view for loading -->
             <ion-list v-if="popupLoading">
                 <SkeletonItems />
             </ion-list>
+            <!-- Show list view for stops and etas -->
             <ion-list v-else>
                 <StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :class="{nearest: nearestStop(stop.id)}" @getETA="getCTBETA"></StopItems>
             </ion-list>
-    </ion-content>
-    <!-- Route Info -->
-    <ion-content v-else-if="popupView == 'info'" class="tabs">
-       <RouteInfo :item="item"></RouteInfo>
-    </ion-content>
-    <ion-content v-else-if="popupView == 'map'" class="tabs">
-        <LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation"/>
+        </section>
+        <!-- Route Info -->
+        <section v-if="popupView == 'info'" class="tabs">
+            <RouteInfo :item="item"></RouteInfo>
+        </section>
+        <!-- Map View -->
+        <section v-if="popupView == 'map'" class="tabs">
+            <LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation"/>
+        </section>
     </ion-content>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar} from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
@@ -76,7 +80,6 @@ export default {
         const itemOptions = ref({clickable: false});
         const currentLocation = ref();
         const nearestStop = ref();
-        
         return{
             popupLoading,
             item,
@@ -93,7 +96,7 @@ export default {
     async mounted(){
         // Show loading for minibus
         if (this.item.type == 'minibus'){
-            this.popupLoading = true;
+            
         }
         // Fetch KMB ETAs
         if (this.item.type == 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))){
@@ -129,12 +132,12 @@ export default {
         }
     },
     computed:{
-        checkbusStar(){ //Return true if bus is in starred array.
+        checkbusStar(){ //Return true if route is in starred array.
             let starredClone = [...this.starred];
             if (starredClone.length == 0){
                 return false
             } else {
-                let indexResult = starredClone.findIndex(x => x.routeId == this.item.routeId && x.routeDirection == this.item.routeDirection && x.type === this.item.type);
+                let indexResult = starredClone.findIndex(x => x.routeId == this.item.routeId && x.direction == this.item.direction);
                 if (indexResult == -1){
                     return false;
                 } else {
@@ -229,7 +232,10 @@ export default {
 .nearest h5{
     color: var(--ion-color-primary);
 }
-.tabs{
+.extended-padding-bottom{
+    padding-bottom: 100vh;
+}
+/* .tabs{
     height: calc(100vh - 100px);
 }
 @media only screen and (min-width: 768px) and (min-height: 600px){
@@ -237,5 +243,5 @@ export default {
         --offset-bottom: -100px !important;
         height: 600px !important;
     }
-}
+} */
 </style>

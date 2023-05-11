@@ -6,7 +6,7 @@ import TabsPage from '../views/TabsPage.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/tabs/bus'
+    redirect: '/tabs'
   },
   {
     path: '/tabs/',
@@ -14,7 +14,7 @@ const routes = [
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/tabs/bus'
       },
       {
         path: 'bus',
@@ -23,6 +23,14 @@ const routes = [
       {
         path: 'minibus',
         component: () => import('@/views/minibus.vue')
+      },
+      {
+        path: 'ferry',
+        component: () => import('@/views/ferry.vue')
+      },
+      {
+        path: 'tram',
+        component: () => import('@/views/tram.vue')
       },
       {
         path: 'tab3',
