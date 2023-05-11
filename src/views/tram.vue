@@ -1,13 +1,13 @@
 <template>
-	<SearchView dataType="tram"></SearchView>
+	<ListView dataType="tram"></ListView>
 </template>
 
 <script>
 import { defineComponent } from 'vue';
-import SearchView from '@/views/search-view.vue'
+import ListView from '@/views/list-view.vue'
 
 export default defineComponent({
 	name: 'tram',
-	components: { SearchView }
+	components: { ListView }
 })
 </script>
