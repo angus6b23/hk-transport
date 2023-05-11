@@ -3,18 +3,25 @@
 		<ion-header>
 			<ion-toolbar>
 				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線或目的地"></ion-searchbar>
+				<ion-button v-if="this.type == 'ferry'" @click="listAll" fill="clear">
+					<ion-icon slot="icon-only" :icon="listOutline"></ion-icon>
+				</ion-button>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
-			<ion-list>
+			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
-					<ion-label v-if="type==='bus'">搜尋巴士: {{ query }}</ion-label>
-					<ion-label v-if="type==='minibus'">搜尋專線小巴: {{ query }}</ion-label>
+					<ion-label v-if="type === 'bus'">搜尋巴士: {{ query }}</ion-label>
+					<ion-label v-if="type === 'minibus'">搜尋專線小巴: {{ query }}</ion-label>
+					<ion-label v-if="type === 'ferry'">搜尋渡輪: {{ query }}</ion-label>
+					<ion-label v-if="type === 'tram'">搜尋電車: {{ query }}</ion-label>
 				</ion-list-header>
 				<ion-list-header v-else>
 					<ion-label v-if="type === 'bus'">已標記的巴士</ion-label>
 					<ion-label v-if="type === 'minibus'">已標記的專線小巴</ion-label>
+					<ion-label v-if="type === 'ferry'">已標記的渡輪</ion-label>
+					<ion-label v-if="type === 'tram'">已標記的電車</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
@@ -24,7 +31,7 @@
 								<ion-row class="open-modal" expand="block" @click="openModal(index)">
 									<ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
 										<h3 v-if="route.routeNo.length < 10">{{ route.routeNo }}</h3>
-										<h3 v-else>-</h3>
+										<h3 v-else> </h3>
 									</ion-col>
 									<ion-col size-xs="9" size-md="11">
 										<!-- Badges for bus -->
@@ -64,7 +71,20 @@
 											<ion-badge v-if="route.serviceMode == 'T'"
 												class="special-badge ion-margin-start">特別</ion-badge>
 										</div>
-										<h3 class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
+										<div v-if="route.type === 'ferry'">
+											<ion-badge v-if="route.district == 'KAITO'"
+												class="hki-badge ion-margin-start">街渡</ion-badge>
+											<ion-badge v-if="route.district == 'OUTLYING'"
+												class="kln-badge ion-margin-start">離島</ion-badge>
+											<ion-badge v-if="route.district == 'INNER'"
+												class="nt-badge ion-margin-start">內陸</ion-badge>
+											<ion-badge v-if="route.direction == 1"
+												class="direction1-badge ion-margin-start">順行</ion-badge>
+											<ion-badge v-if="route.direction == 2"
+												class="direction2-badge ion-margin-start">逆行</ion-badge>
+										</div>
+										<h3 v-if="type == 'ferry'" class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h3>
+										<h3 v-else class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
 									</ion-col>
 								</ion-row>
 							</ion-grid>
@@ -91,13 +111,15 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge } from '@ionic/vue';
-import { loadData, setData } from '@/components/loadData.js'
+import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon } from '@ionic/vue';
+import {listOutline} from 'ionicons/icons'
+import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
+import localforage from 'localforage';
 
 export default defineComponent({
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, ETAPopup },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon, ETAPopup },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -108,6 +130,7 @@ export default defineComponent({
 		const data = ref([]); // For storage of bus routes and stops
 		const starred = ref([]);
 		const type = ref(props.dataType);
+		const dataReady = ref(false)
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
 			modalIsOpen.value = false;
@@ -119,7 +142,9 @@ export default defineComponent({
 			itemSelected,
 			modalIsOpen,
 			starred,
-			type
+			type,
+			dataReady,
+			listOutline
 		}
 	},
 	methods: {
@@ -133,14 +158,27 @@ export default defineComponent({
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
-			const starredClone = JSON.parse(JSON.stringify(this.starred));
-			await setData('starred', starredClone);
+			const starredOriginal = await localforage.getItem('starred');
+			const starredClone = {
+				...starredOriginal,
+				[this.type]: JSON.parse(JSON.stringify(this.starred))
+			};
+			await localforage.setItem('starred', starredClone);
 		},
 		async removeStar() {
-			const removeIndex = this.starred.findIndex(this.currentSelectedItem)
-			this.starred.splice(removeIndex, 1);
-			const starredClone = JSON.parse(JSON.stringify(this.starred));
-			await setData('starred', starredClone);
+			const changeDisplay = (this.displayArray == this.starred) ? true : false;
+			console.log(changeDisplay);
+			this.starred = this.starred.filter(route => route.routeId != this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+			console.log(this.starred)
+			const starredOriginal = await localforage.getItem('starred');
+			const starredClone = {
+				...starredOriginal,
+				[this.type]: JSON.parse(JSON.stringify(this.starred))
+			};
+			await localforage.setItem('starred', starredClone);
+			if (changeDisplay){
+				this.displayArray = this.starred
+			}
 		},
 		async saveData(data) {
 			if (this.type == 'bus') {
@@ -151,7 +189,6 @@ export default defineComponent({
 				const index = this.data.findIndex(this.currentSelectedItem);
 				this.data[index] = JSON.parse(JSON.stringify(data));
 				// console.log(index);
-
 				// Save to localforage
 				const key = 'busData-chunk' + Math.floor(index / 100);
 				const chunkIndex = index % 100;
@@ -167,36 +204,49 @@ export default defineComponent({
 			if (newQuery === '') {
 				this.displayArray = this.starred; //Show starred bus if query is empty
 			} else {
-				// Limit small number query
-				this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
-					this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)); // Filter by route numbers and destinations.
-				this.displayArray.sort(function (a, b) {
-					a = Number(a.routeNo.replace(/[A-Z]/g, 0));
-					b = Number(b.routeNo.replace(/[A-Z]/g, 0));
-					return a - b;
-				});
-				this.displayArray.splice(50);// Only show first 50 results
+				if (this.type == 'ferry'){
+					this.displayArray = this.data.filter(x => x.routeNameTC.includes(newQuery) || x.routeNameEN.includes(newQuery));
+				} else {
+					// Limit small number query
+					this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
+						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)); // Filter by route numbers and destinations.
+					this.displayArray.sort(function (a, b) {
+						a = Number(a.routeNo.replace(/[A-Z]/g, 0));
+						b = Number(b.routeNo.replace(/[A-Z]/g, 0));
+						return a - b;
+					});
+					this.displayArray.splice(50);// Only show first 50 results
+				}
+			}
+		},
+		listAll() {
+			if (this.displayArray.length > 1){
+				this.displayArray = this.starred
+			} else {
+				this.displayArray = this.data;
 			}
 		}
 	},
 	async mounted() {
-		if (this.type === 'bus') {
-			this.data = await loadData(`${this.type}Data`, false, true); //Only bus data are chunked
+		this.data = await loadChunk(this.type)
+		// switch (this.type) {
+		// 	case ('bus'):
+		// 		this.data = await loadChunk('bus');
+		// 		break;
+		// 	case ('minibus'):
+		// 		this.data = await loadChunk('minibus')
+		// 		break;
+		// }
+		let starStorage = await localforage.getItem('starred');
+		if (!starStorage || !starStorage[this.type]) {
+			this.starred = []
 		} else {
-			this.data = await loadData(`${this.type}Data`, false, false) //Other data are not chunked
+			this.starred = starStorage[this.type];
 		}
-		this.starred = await loadData('starred', false, false);
-		if (!this.starred) {
-			this.starred = [];
-		} else {
-			this.starred = this.starred.map(route => {
-				if (route.type === this.type) {
-					return route
-				}
-			})
-			this.displayArray = this.starred;
-		}
-	},
+		this.displayArray = this.starred
+		this.dataReady = true;
+	}
+	,
 	watch: {
 		query(newQuery) { //Update bus array upon change of bus query
 			this.updateQuery(newQuery);
@@ -267,7 +317,13 @@ export default defineComponent({
 .special-badge {
 	--background: #663399;
 }
-
+.direction1-badge{
+	--background: #5E6FA1;
+}
+.direction2-badge{
+	--background: #A1905E;
+}
 .route-no {
 	display: flex;
-}</style>
+}
+</style>

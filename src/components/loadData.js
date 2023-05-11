@@ -1,6 +1,30 @@
 import { fetchBuses, fetchMinibuses } from '@/fetch/fetchHKGovData.js';
 import localforage from 'localforage';
 
+/*
+async function loadAllChunk(){
+    return data = {
+        bus: await loadChunk('bus'),
+        minibus: await loadChunk('minibus'),
+        ferry: await loadChunk('ferry'),
+        mtr: await loadChunk('mtr'),
+        tram: await loadChunk('tram'),
+        lightRail: await loadChunk('light-rail')
+    };
+}
+*/
+
+async function loadChunk(type){
+    let data = []
+    let keys = await localforage.keys();
+    keys = keys.filter(key => key.indexOf(type) == 0);
+    for (let key of keys){
+        const keyData = await localforage.getItem(key);
+        data = [...data, ...keyData];
+    }
+    return data
+}
+
 async function loadData(key, forceReload = false, chunk = false, progressProxy = null){
     let data;
     if (chunk){
@@ -52,17 +76,25 @@ async function setData(key, value, chunk = false){
     }
 }
 
-async function saveChunk(key, value = []){
-    let arrayLength = value.length;
-    let chunkIndex = 0;
-    while (arrayLength > 0){
-        let keyName = key + '-chunk' + chunkIndex;
-        // array.slice(start index, end index);
-        let spliceArray = value.slice(chunkIndex * 100, chunkIndex * 100 + 100);
-        arrayLength -= 100;
-        chunkIndex++
-        await localforage.setItem(keyName, spliceArray);
+async function saveChunk(key, value, chunkSize = 50){
+    let chunkCounter = 0
+    for (let i = 0; i < value.length; i += 50){
+        let keyName = `${key}-chunk${chunkCounter}`;
+        let slicedArray = value.slice(i, i+50);
+        await localforage.setItem(keyName, slicedArray);
+        chunkCounter += 1
     }
+    // Old Working code
+    // let arrayLength = value.length;
+    // let chunkIndex = 0;
+    // while (arrayLength > 0){
+    //     let keyName = key + '-chunk' + chunkIndex;
+    //     // array.slice(start index, end index);
+    //     let spliceArray = value.slice(chunkIndex * 50, chunkIndex * 50 + 50);
+    //     arrayLength -= 50;
+    //     chunkIndex++
+    //     await localforage.setItem(keyName, spliceArray);
+    // }
 }
 
-export { loadData, setData }
+export { loadData, setData, loadChunk }
