@@ -3,25 +3,17 @@
 		<ion-header>
 			<ion-toolbar>
 				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線或目的地"></ion-searchbar>
-				<ion-button v-if="this.type == 'ferry'" @click="listAll" fill="clear">
-					<ion-icon slot="icon-only" :icon="listOutline"></ion-icon>
-				</ion-button>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
-					<ion-label v-if="type === 'bus'">搜尋巴士: {{ query }}</ion-label>
-					<ion-label v-if="type === 'minibus'">搜尋專線小巴: {{ query }}</ion-label>
-					<ion-label v-if="type === 'ferry'">搜尋渡輪: {{ query }}</ion-label>
-					<ion-label v-if="type === 'tram'">搜尋電車: {{ query }}</ion-label>
+					<ion-label>搜尋{{ typeTC }}: {{ query }}</ion-label>
+					<ion-button fill="clear" @click="clearQuery">清除搜尋</ion-button>
 				</ion-list-header>
 				<ion-list-header v-else>
-					<ion-label v-if="type === 'bus'">已標記的巴士</ion-label>
-					<ion-label v-if="type === 'minibus'">已標記的專線小巴</ion-label>
-					<ion-label v-if="type === 'ferry'">已標記的渡輪</ion-label>
-					<ion-label v-if="type === 'tram'">已標記的電車</ion-label>
+					<ion-label>已標記的{{ typeTC }}</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
@@ -29,7 +21,7 @@
 						<ion-item button>
 							<ion-grid>
 								<ion-row class="open-modal" expand="block" @click="openModal(index)">
-									<ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
+									<ion-col v-if="type != 'ferry'" size-xs="3" size-md="1" class="route-no ion-align-items-center">
 										<h3 v-if="route.routeNo.length < 10">{{ route.routeNo }}</h3>
 										<h3 v-else> </h3>
 									</ion-col>
@@ -98,6 +90,7 @@
 					<ion-text color="medium">
 						<p>可於搜尋後標記星號以方便使用</p>
 					</ion-text>
+					<ion-button v-if="type == 'ferry'" fill="clear" @click="listAll">顯示所有渡輪</ion-button>
 				</div>
 			</ion-list>
 		</ion-content>
@@ -111,15 +104,14 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon } from '@ionic/vue';
-import {listOutline} from 'ionicons/icons'
+import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton } from '@ionic/vue';
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
 import localforage from 'localforage';
 
 export default defineComponent({
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon, ETAPopup },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, ETAPopup },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -130,6 +122,7 @@ export default defineComponent({
 		const data = ref([]); // For storage of bus routes and stops
 		const starred = ref([]);
 		const type = ref(props.dataType);
+		const typeTC = ref('');
 		const dataReady = ref(false)
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
@@ -144,7 +137,6 @@ export default defineComponent({
 			starred,
 			type,
 			dataReady,
-			listOutline
 		}
 	},
 	methods: {
@@ -166,7 +158,6 @@ export default defineComponent({
 			await localforage.setItem('starred', starredClone);
 		},
 		async removeStar() {
-			const changeDisplay = (this.displayArray == this.starred) ? true : false;
 			const removeIndex = this.starred.findIndex(route => route.routeId != this.itemSelected.routeId && route.direction != this.itemSelected.direction)
 			this.starred.splice(removeIndex, 1);
 			const starredOriginal = await localforage.getItem('starred');
@@ -175,9 +166,6 @@ export default defineComponent({
 				[this.type]: JSON.parse(JSON.stringify(this.starred))
 			};
 			await localforage.setItem('starred', starredClone);
-			if (changeDisplay){
-				this.displayArray = this.starred
-			}
 		},
 		async saveData(data) {
 			if (this.type == 'bus') {
@@ -218,24 +206,32 @@ export default defineComponent({
 				}
 			}
 		},
-		listAll() {
-			if (this.displayArray.length > 1){
-				this.displayArray = this.starred
-			} else {
-				this.displayArray = this.data;
+		getTypeTranslate(type) {
+			switch (type) {
+				case 'bus':
+					return '巴士'
+					break;
+				case 'minibus':
+					return '專線小巴'
+					break;
+				case 'ferry':
+					return '渡輪'
+					break;
+				default:
+					return '未知'
+					break;
 			}
+		},
+		listAll() {
+			this.query = ' '
+		},
+		clearQuery(){
+			this.query = ''
 		}
 	},
 	async mounted() {
 		this.data = await loadChunk(this.type)
-		// switch (this.type) {
-		// 	case ('bus'):
-		// 		this.data = await loadChunk('bus');
-		// 		break;
-		// 	case ('minibus'):
-		// 		this.data = await loadChunk('minibus')
-		// 		break;
-		// }
+		this.typeTC = this.getTypeTranslate(this.type);
 		let starStorage = await localforage.getItem('starred');
 		if (!starStorage || !starStorage[this.type]) {
 			this.starred = []
