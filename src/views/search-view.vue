@@ -167,9 +167,8 @@ export default defineComponent({
 		},
 		async removeStar() {
 			const changeDisplay = (this.displayArray == this.starred) ? true : false;
-			console.log(changeDisplay);
-			this.starred = this.starred.filter(route => route.routeId != this.itemSelected.routeId && route.direction != this.itemSelected.direction);
-			console.log(this.starred)
+			const removeIndex = this.starred.findIndex(route => route.routeId != this.itemSelected.routeId && route.direction != this.itemSelected.direction)
+			this.starred.splice(removeIndex, 1);
 			const starredOriginal = await localforage.getItem('starred');
 			const starredClone = {
 				...starredOriginal,
