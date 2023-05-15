@@ -2,16 +2,16 @@
 	<!-- Header -->
 	<ion-header>
 		<!-- Toolbar -->
-		<ion-toolbar>
+		<ion-toolbar class="ion-padding-top">
 			<ion-title v-if="item.type == 'bus' || item.type == 'minibus'">
 				{{ item.routeNo }}
 				<span class="ion-margin-start">{{ item.destTC }}</span>
 			</ion-title>
 			<ion-title v-else>{{ item.routeNameTC }}</ion-title>
-			<ion-buttons slot="start">
+			<ion-buttons slot="start" class="top-buttons">
 				<ion-button @click="closeModal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
 			</ion-buttons>
-			<ion-buttons v-if="starred != undefined" slot="end">
+			<ion-buttons v-if="starred != undefined" slot="end" class="top-buttons">
 				<ion-button v-if="checkbusStar" @click="removeStar">
 					<ion-icon :icon="star" />
 				</ion-button>
@@ -20,45 +20,49 @@
 				</ion-button>
 			</ion-buttons>
 		</ion-toolbar>
-		<!-- Segment select -->
-		<ion-segment v-model="popupView">
-			<ion-segment-button value="default">
-				<ion-label>預報</ion-label>
-			</ion-segment-button>
-			<ion-segment-button value="info">
-				<ion-label>資訊</ion-label>
-			</ion-segment-button>
-			<ion-segment-button value="map">
-				<ion-label>地圖</ion-label>
-			</ion-segment-button>
-		</ion-segment>
 	</ion-header>
 	<ion-content class="ion-padding-bottom">
-		<!-- Segment for route etas -->
-		<section v-if="popupView == 'default'" class="tabs">
-			<!-- Skeleton view for loading -->
-			<ion-list v-if="popupLoading">
-				<SkeletonItems />
-			</ion-list>
-			<!-- Show list view for stops and etas -->
-			<ion-list v-else>
-				<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions"
-					:class="{ nearest: nearestStop(stop.id) }" @getETA="getCTBETA"></StopItems>
-			</ion-list>
+		<!-- Segment select -->
+		<section slot="fixed" class="popup-segment">
+			<ion-segment v-model="popupView">
+				<ion-segment-button value="default">
+					<ion-label>預報</ion-label>
+				</ion-segment-button>
+				<ion-segment-button value="info">
+					<ion-label>資訊</ion-label>
+				</ion-segment-button>
+				<ion-segment-button value="map">
+					<ion-label>地圖</ion-label>
+				</ion-segment-button>
+			</ion-segment>
 		</section>
-		<!-- Route Info -->
-		<section v-if="popupView == 'info'" class="tabs">
-			<RouteInfo :item="item"></RouteInfo>
-		</section>
-		<!-- Map View -->
-		<section v-if="popupView == 'map'" class="tabs">
-			<LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation" />
-		</section>
+		<div class="segment-content">
+			<!-- Segment for route etas -->
+			<section v-if="popupView == 'default'" class="tabs">
+				<!-- Skeleton view for loading -->
+				<ion-list v-if="popupLoading">
+					<SkeletonItems />
+				</ion-list>
+				<!-- Show list view for stops and etas -->
+				<ion-list v-else>
+					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions"
+					:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
+				</ion-list>
+			</section>
+			<!-- Route Info -->
+			<section v-if="popupView == 'info'" class="tabs">
+				<RouteInfo :item="item"></RouteInfo>
+			</section>
+			<!-- Map View -->
+			<section v-if="popupView == 'map'" class="tabs">
+				<LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation" />
+			</section>
+		</div>
 	</ion-content>
 </template>
 
 <script>
-import { ref, defineComponent } from 'vue';
+import { ref } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar } from '@ionic/vue';
 import { star, starOutline, chevronBack } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
@@ -121,7 +125,7 @@ export default {
 				const stopLat = stop.coord[1];
 				const stopLong = stop.coord[0];
 				return {
-					id: stop.id,
+					id: stop.stopId,
 					distance: getDistance({ latitude: currentLat, longitude: currentLong }, { latitude: stopLat, longitude: stopLong })
 				}
 			})
@@ -132,6 +136,7 @@ export default {
 					return acc
 				}
 			});
+			console.log(this.nearestStop);
 		} catch (err) {
 			console.error(err);
 		}
@@ -238,11 +243,17 @@ export default {
 .nearest h5 {
 	color: var(--ion-color-primary);
 }
-
 .extended-padding-bottom {
 	padding-bottom: 100vh;
 }
-
+.popup-segment{
+	background-color: var(--ion-color-primary-contrast);
+	width: 100%;
+}
+.segment-content{
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
 /* .tabs{
     height: calc(100vh - 100px);
 }
