@@ -1,7 +1,7 @@
 <template>
 	<ion-page>
 		<ion-header>
-			<ion-toolbar>
+			<ion-toolbar class="small-padding">
 				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線或目的地"></ion-searchbar>
 			</ion-toolbar>
 		</ion-header>
@@ -257,7 +257,10 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 }
-
+.small-padding{
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 /* Bus Badges color */
 .kmb-badge {
 	--background: #e51f28;
