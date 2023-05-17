@@ -96,14 +96,14 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :starred="starred" @closeModal="closeModal" @addStar="addStar"
+			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" @closeModal="closeModal" @addStar="addStar"
 				@removeStar="removeStar" @saveData="saveData" />
 		</ion-modal>
 	</ion-page>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton } from '@ionic/vue';
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
@@ -245,6 +245,15 @@ export default defineComponent({
 	watch: {
 		query(newQuery) { //Update bus array upon change of bus query
 			this.updateQuery(newQuery);
+		}
+	},
+	computed: {
+		checkNoEta(){
+			if (this.type == 'ferry' || this.type == 'tram'){
+				return true
+			} else {
+				return false
+			}
 		}
 	}
 });

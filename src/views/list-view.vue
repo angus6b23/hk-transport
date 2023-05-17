@@ -16,7 +16,8 @@
 					<ion-item button>
 						<ion-grid>
 							<ion-row class="open-modal" expand="block" @click="openModal(index)">
-								<ion-col v-if="this.type != 'tram'" size-xs="3" size-md="1" class="route-no ion-align-items-center">
+								<ion-col v-if="this.type != 'tram'" size-xs="3" size-md="1"
+									class="route-no ion-align-items-center">
 									<h3>{{ route.routeNo }}</h3>
 								</ion-col>
 								<ion-col size-xs="9" size-md="11">
@@ -38,13 +39,13 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" @closeModal="closeModal" />
+			<ETAPopup :item="itemSelected" :noEta="checkNoEta" @closeModal="closeModal" />
 		</ion-modal>
 	</ion-page>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle } from '@ionic/vue';
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
@@ -86,8 +87,8 @@ export default defineComponent({
 		currentSelectedItem(x) { // For finding index of currently selected bus
 			return x.routeId == this.itemSelected.routeId && x.routeDirection == this.itemSelected.routeDirection
 		},
-		getTypeTranslate(type){
-			switch(type){
+		getTypeTranslate(type) {
+			switch (type) {
 				case 'tram':
 					return '電車'
 					break;
@@ -97,7 +98,7 @@ export default defineComponent({
 				case 'mtr':
 					return '港鐵'
 					break;
-				default: 
+				default:
 					return '未知'
 					break;
 			}
@@ -107,8 +108,16 @@ export default defineComponent({
 		this.data = await loadChunk(this.type)
 		this.typeTC = this.getTypeTranslate(this.type);
 		this.dataReady = true;
+	},
+	computed: {
+		checkNoEta() {
+			if (this.type == 'ferry' || this.type == 'tram') {
+				return true
+			} else {
+				return false
+			}
+		}
 	}
-	,
 });
 </script>
 <style scoped>
