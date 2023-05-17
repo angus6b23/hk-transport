@@ -152,10 +152,16 @@ export default defineComponent({
     display: flex;
     overflow-x: auto;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .scrollable-item {
     min-width: 75px;
+}
+@media screen and (min-width: 1000px) {
+    .scrollable-bar{
+        justify-content: center;
+    }
+    
 }
 </style>
