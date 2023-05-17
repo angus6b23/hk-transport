@@ -254,7 +254,7 @@ export default {
 }
 
 .popup-segment {
-	background-color: var(--ion-color-primary-contrast);
+	background-color: var(--background);
 	width: 100%;
 }
 
