@@ -5,10 +5,13 @@
                 <ion-col size-xs="2" size-md="2">
                     <h5 class="ion-margin-start highlight">{{ stop.seq }}</h5>
                 </ion-col>
-                <ion-col size-xs="7" size-md="7">
+                <ion-col size-xs="10" size-md="10" v-if="noEta">
                     <h5 class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
                 </ion-col>
-                <ion-col size-xs="3" size-md="3">
+                <ion-col size-xs="7" size-md="7" v-else>
+                    <h5 class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
+                </ion-col>
+                <ion-col size-xs="3" size-md="3" v-if="!noEta">
                     <p class="ion-no-margin ion-text-right">
                         <div v-if="stop.etaMessage == 'N/A'">
                             <ion-text color="medium">
@@ -39,14 +42,16 @@ import { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText } from '@ionic/vu
 export default {
     name: "StopItems",
     components: { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText },
-    props: ['stop', 'options'],
+    props: ['stop', 'options', 'noEta'],
     emits: ['getETA'],
     setup(props){
         const stop = ref(props.stop);
         const options = ref(props.options);
+        const noEta = ref(props.noEta);
         return{
             stop,
             options,
+            noEta
         }
     },
     methods: {

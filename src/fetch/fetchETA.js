@@ -18,7 +18,7 @@ export async function fetchKMBETA(route){
     }
     try {
         const serviceType = (route.specialType == 0) ? 1 : route.specialType; //Service type: R => 1, others => 2 ???
-        const direction = (route.routeDirection == 1) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
+        const direction = (route.direction == 1) ? 'O' : 'I'; //Direction 1 = outbound, 2 = inbound
         const routeResponse = await axios(`https://data.etabus.gov.hk/v1/transport/kmb/route-eta/${route.routeNo}/${serviceType}`);
         let routeEta = routeResponse.data;
         // Filter for currently selected direction

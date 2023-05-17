@@ -45,8 +45,7 @@
 				</ion-list>
 				<!-- Show list view for stops and etas -->
 				<ion-list v-else>
-					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions"
-					:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
+					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :noEta="noEta"	:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
 				</ion-list>
 			</section>
 			<!-- Route Info -->
@@ -79,13 +78,14 @@ import presentToast from '@/components/presentToast.js';
 export default {
 	name: "ETAPopup",
 	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
-	props: ['item', 'starred'],
+	props: ['item', 'starred', 'noEta'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData'],
 	setup(props) {
 		const popupLoading = ref(false);
 		const item = ref(props.item);
 		const popupView = ref('default');
 		const starred = props.starred;
+		const noEta = ref(props.noEta);
 		const itemOptions = ref({ clickable: false });
 		const currentLocation = ref();
 		const nearestStop = ref();
@@ -99,10 +99,15 @@ export default {
 			star,
 			itemOptions,
 			currentLocation,
-			nearestStop
+			nearestStop,
+			noEta
 		}
 	},
 	async mounted() {
+		// Show Toast if no eta is avaliable
+		if (this.noEta) {
+			presentToast('info', '此路線未提供到站報時服務')
+		}
 		// Show loading for minibus
 		if (this.item.type == 'minibus') {
 
@@ -136,7 +141,7 @@ export default {
 					return acc
 				}
 			});
-			console.log(this.nearestStop);
+			// console.log(this.nearestStop);
 		} catch (err) {
 			console.error(err);
 		}
@@ -243,17 +248,21 @@ export default {
 .nearest h5 {
 	color: var(--ion-color-primary);
 }
+
 .extended-padding-bottom {
 	padding-bottom: 100vh;
 }
-.popup-segment{
+
+.popup-segment {
 	background-color: var(--ion-color-primary-contrast);
 	width: 100%;
 }
-.segment-content{
+
+.segment-content {
 	margin-top: 50px;
 	margin-bottom: 50px;
 }
+
 /* .tabs{
     height: calc(100vh - 100px);
 }
