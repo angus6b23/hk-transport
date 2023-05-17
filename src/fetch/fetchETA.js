@@ -68,7 +68,7 @@ export async function fetchCTBETA(route, stopId){
         let stopEta = etaResponse.data.data;
         // console.log(etaResponse);
         stopEta = stopEta.filter(x => { //Filter the result with the direction requested
-            if (route.routeDirection == 1) {
+            if (route.direction == 1) {
                 return x.dir == 'O'
             } else {
                 return x.dir == 'I'
