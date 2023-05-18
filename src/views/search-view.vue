@@ -21,7 +21,8 @@
 						<ion-item button>
 							<ion-grid>
 								<ion-row class="open-modal" expand="block" @click="openModal(index)">
-									<ion-col v-if="type != 'ferry'" size-xs="3" size-md="1" class="route-no ion-align-items-center">
+									<ion-col v-if="type != 'ferry'" size-xs="3" size-md="1"
+										class="route-no ion-align-items-center">
 										<h3 v-if="route.routeNo.length < 10">{{ route.routeNo }}</h3>
 										<h3 v-else> </h3>
 									</ion-col>
@@ -75,7 +76,8 @@
 											<ion-badge v-if="route.direction == 2"
 												class="direction2-badge ion-margin-start">逆行</ion-badge>
 										</div>
-										<h3 v-if="type == 'ferry'" class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h3>
+										<h3 v-if="type == 'ferry'" class="ion-no-margin ion-margin-start">{{
+											route.routeNameTC }}</h3>
 										<h3 v-else class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
 									</ion-col>
 								</ion-row>
@@ -96,8 +98,8 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" @closeModal="closeModal" @addStar="addStar"
-				@removeStar="removeStar" @saveData="saveData" />
+			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" @closeModal="closeModal"
+				@addStar="addStar" @removeStar="removeStar" @saveData="saveData"   @swapDirection="swapDirection"/>
 		</ion-modal>
 	</ion-page>
 </template>
@@ -107,7 +109,9 @@ import { defineComponent, ref, computed } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton } from '@ionic/vue';
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
+import sleep from '@/components/sleep.js'
 import localforage from 'localforage';
+import presentToast from '@/components/presentToast.js'
 
 export default defineComponent({
 	name: 'SearchView',
@@ -191,7 +195,7 @@ export default defineComponent({
 			if (newQuery === '') {
 				this.displayArray = this.starred; //Show starred bus if query is empty
 			} else {
-				if (this.type == 'ferry'){
+				if (this.type == 'ferry') {
 					this.displayArray = this.data.filter(x => x.routeNameTC.includes(newQuery) || x.routeNameEN.includes(newQuery));
 				} else {
 					// Limit small number query
@@ -225,8 +229,19 @@ export default defineComponent({
 		listAll() {
 			this.query = ' '
 		},
-		clearQuery(){
+		clearQuery() {
 			this.query = ''
+		},
+		async swapDirection() {
+			let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+			if (swapFilter.length == 0) {
+				presentToast('error', '此路線未有對頭車')
+			} else {
+				this.modalIsOpen = false;
+				await sleep(100);
+				this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
+				this.modalIsOpen = true;
+			}
 		}
 	},
 	async mounted() {
@@ -248,8 +263,8 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		checkNoEta(){
-			if (this.type == 'ferry' || this.type == 'tram'){
+		checkNoEta() {
+			if (this.type == 'ferry' || this.type == 'tram') {
 				return true
 			} else {
 				return false
@@ -266,10 +281,12 @@ export default defineComponent({
 	align-items: center;
 	justify-content: center;
 }
-.small-padding{
+
+.small-padding {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
+
 /* Bus Badges color */
 .kmb-badge {
 	--background: #e51f28;
@@ -324,13 +341,15 @@ export default defineComponent({
 .special-badge {
 	--background: #663399;
 }
-.direction1-badge{
+
+.direction1-badge {
 	--background: #5E6FA1;
 }
-.direction2-badge{
+
+.direction2-badge {
 	--background: #A1905E;
 }
+
 .route-no {
 	display: flex;
-}
-</style>
+}</style>

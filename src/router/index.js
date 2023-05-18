@@ -33,6 +33,10 @@ const routes = [
         component: () => import('@/views/tram.vue')
       },
       {
+        path: 'mtr',
+        component: () => import('@/views/mtr.vue')
+      },
+      {
         path: 'tab3',
         component: () => import('@/views/Tab3Page.vue')
       }
