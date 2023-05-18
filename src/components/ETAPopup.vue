@@ -38,7 +38,7 @@
 		</section>
 		<div class="segment-content">
 			<!-- Segment for route etas -->
-			<section v-if="popupView == 'default'" class="tabs">
+			<section v-if="popupView == 'default'">
 				<!-- Skeleton view for loading -->
 				<ion-list v-if="popupLoading">
 					<SkeletonItems />
@@ -49,11 +49,11 @@
 				</ion-list>
 			</section>
 			<!-- Route Info -->
-			<section v-if="popupView == 'info'" class="tabs">
+			<section v-if="popupView == 'info'">
 				<RouteInfo :item="item"></RouteInfo>
 			</section>
 			<!-- Map View -->
-			<section v-if="popupView == 'map'" class="tabs">
+			<section v-if="popupView == 'map'" class="max-size">
 				<LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation" />
 			</section>
 		</div>
@@ -262,14 +262,4 @@ export default {
 	margin-top: 50px;
 	margin-bottom: 50px;
 }
-
-/* .tabs{
-    height: calc(100vh - 100px);
-}
-@media only screen and (min-width: 768px) and (min-height: 600px){
-    .tabs{
-        --offset-bottom: -100px !important;
-        height: 600px !important;
-    }
-} */
 </style>
