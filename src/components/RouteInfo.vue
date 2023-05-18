@@ -25,9 +25,6 @@
         </ion-item>
         <ion-item v-if="item.timetable">
             <ion-grid>
-                <ion-row>
-                    <ion-text>時間表：</ion-text>
-                </ion-row>
                 <ion-row v-for="(section, index) in item.timetable" :key="index">
                     <ion-card class="timetable-card ion-padding">
                         <ion-card-title v-if="section.title == 'MF'">星期一至五</ion-card-title>

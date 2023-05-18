@@ -5,7 +5,7 @@ import sha256 from 'sha256'
 
 axiosRetry(axios, { retry: 3 });
 
-const fetchAPIData = async (baseURL = 'http://127.0.0.1:5000/hk-transport') => {
+const fetchAPIData = async (baseURL = 'https://api.12a.app/hk-transport') => {
 	try{
 		// Generate hashes from localForage
 		let localHashes = {}
