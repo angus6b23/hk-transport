@@ -13,22 +13,18 @@
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-for="(route, index) in data" :key="route.id">
-					<ion-item button>
+					<ion-item v-if="route.direction == 1" button>
 						<ion-grid>
 							<ion-row class="open-modal" expand="block" @click="openModal(index)">
-								<ion-col v-if="this.type != 'tram'" size-xs="3" size-md="1"
+								<ion-col v-if="route.type == 'mtr' || route.type == 'lightRail'" size-xs="3" size-md="1"
 									class="route-no ion-align-items-center">
+									<div v-if="route.type == 'mtr'" class="line-color-indicator"
+										:style="{ 'background-color': '#' + route.color}"></div>
 									<h3>{{ route.routeNo }}</h3>
 								</ion-col>
 								<ion-col size-xs="9" size-md="11">
-									<!-- Badges for bus -->
-									<div v-if="route.type === 'tram'">
-										<ion-badge v-if="route.direction == 1"
-											class="direction1-badge ion-margin-start">西行</ion-badge>
-										<ion-badge v-if="route.direction == 2"
-											class="direction2-badge ion-margin-start">東行</ion-badge>
-									</div>
-									<h3 class="ion-no-margin ion-margin-start">{{ route.routeNameTC
+									<!-- Badges for tram -->
+									<h3 class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC
 									}}</h3>
 								</ion-col>
 							</ion-row>
@@ -39,16 +35,17 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :noEta="checkNoEta" @closeModal="closeModal" />
+			<ETAPopup :item="itemSelected" :noEta="checkNoEta" @closeModal="closeModal" @swapDirection="swapDirection" />
 		</ion-modal>
 	</ion-page>
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle } from '@ionic/vue';
 import { loadChunk } from '@/components/loadData.js'
-import ETAPopup from '@/components/ETAPopup.vue'
+import ETAPopup from '@/components/ETAPopup.vue';
+import sleep from '@/components/sleep.js'
 
 export default defineComponent({
 	name: 'ListView',
@@ -91,16 +88,23 @@ export default defineComponent({
 			switch (type) {
 				case 'tram':
 					return '電車'
-					break;
 				case 'lightRail':
 					return '輕鐵'
-					break;
 				case 'mtr':
 					return '港鐵'
-					break;
 				default:
 					return '未知'
-					break;
+			}
+		},
+		async swapDirection(){
+			let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);			
+			if (swapFilter.length == 0){
+				presentToast('error', '此路線未有對頭車')
+			} else {
+				this.modalIsOpen = false;
+				await sleep(100);
+				this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
+				this.modalIsOpen = true;
 			}
 		}
 	},
@@ -129,7 +133,12 @@ export default defineComponent({
 	--background: #A1905E;
 }
 
+.line-color-indicator {
+	height: 15px;
+	width: 80%;
+	border-radius: 10px;
+}
+
 .route-no {
 	display: flex;
-}
-</style>
+}</style>

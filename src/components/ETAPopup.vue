@@ -2,7 +2,7 @@
 	<!-- Header -->
 	<ion-header>
 		<!-- Toolbar -->
-		<ion-toolbar class="ion-padding-top">
+		<ion-toolbar>
 			<ion-title v-if="item.type == 'bus' || item.type == 'minibus'">
 				{{ item.routeNo }}
 				<span class="ion-margin-start">{{ item.destTC }}</span>
@@ -11,13 +11,18 @@
 			<ion-buttons slot="start" class="top-buttons">
 				<ion-button @click="closeModal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
 			</ion-buttons>
-			<ion-buttons v-if="starred != undefined" slot="end" class="top-buttons">
-				<ion-button v-if="checkbusStar" @click="removeStar">
-					<ion-icon :icon="star" />
+			<ion-buttons slot="end" class="top-buttons">
+				<ion-button @click="swapDirection">
+					<ion-icon :icon="swapHorizontalOutline" />
 				</ion-button>
-				<ion-button v-else @click="addStar">
-					<ion-icon :icon="starOutline" />
-				</ion-button>
+				<span v-if="starred != undefined">
+					<ion-button v-if="checkbusStar" @click="removeStar">
+						<ion-icon :icon="star" />
+					</ion-button>
+					<ion-button v-else @click="addStar">
+						<ion-icon :icon="starOutline" />
+					</ion-button>
+				</span>
 			</ion-buttons>
 		</ion-toolbar>
 	</ion-header>
@@ -45,7 +50,8 @@
 				</ion-list>
 				<!-- Show list view for stops and etas -->
 				<ion-list v-else>
-					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :noEta="noEta"	:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
+					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :noEta="noEta"
+						:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
 				</ion-list>
 			</section>
 			<!-- Route Info -->
@@ -63,7 +69,7 @@
 <script>
 import { ref } from 'vue';
 import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar } from '@ionic/vue';
-import { star, starOutline, chevronBack } from 'ionicons/icons'
+import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
@@ -79,7 +85,7 @@ export default {
 	name: "ETAPopup",
 	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
 	props: ['item', 'starred', 'noEta'],
-	emits: ['closeModal', 'addStar', 'removeStar', 'saveData'],
+	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
 		const popupLoading = ref(false);
 		const item = ref(props.item);
@@ -94,13 +100,14 @@ export default {
 			item,
 			starred,
 			popupView,
-			chevronBack,
-			starOutline,
-			star,
 			itemOptions,
 			currentLocation,
 			nearestStop,
-			noEta
+			noEta,
+			chevronBack,
+			starOutline,
+			star,
+			swapHorizontalOutline
 		}
 	},
 	async mounted() {
@@ -172,6 +179,9 @@ export default {
 		},
 		removeStar() {
 			this.$emit('removeStar');
+		},
+		swapDirection() {
+			this.$emit('swapDirection')
 		},
 		async getStopID() { //Fetch Stop ids of CTB and NWFB bus from api
 			if (!('stopId' in this.item.stops[0])) {
