@@ -51,7 +51,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar } from '@ionic/vue';
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading } from '@ionic/vue';
 import { square, bus, busOutline, speedometer, speedometerOutline, boat, boatOutline, train, trainOutline } from 'ionicons/icons';
 import { BIconTruckFrontFill, BIconTruckFront, BIconTrainFront, BIconTrainFrontFill, BIconTrainLightrailFront, BIconTrainLightrailFrontFill } from 'bootstrap-icons-vue'
 import localforage from 'localforage';
@@ -61,7 +61,7 @@ import Landing from '@/views/Landing.vue';
 
 export default defineComponent({
     name: 'TabsPage',
-    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonProgressBar, BIconTruckFrontFill, BIconTruckFront, BIconTrainFront, BIconTrainFrontFill, BIconTrainLightrailFront, BIconTrainLightrailFrontFill, Landing },
+    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, BIconTruckFrontFill, BIconTruckFront, BIconTrainFront, BIconTrainFrontFill, BIconTrainLightrailFront, BIconTrainLightrailFrontFill, Landing },
     setup() {
         const settingFound = ref(true);
         const config = ref({});
@@ -96,7 +96,7 @@ export default defineComponent({
         async finishConfig(config) { //Save config and fetch data after initial setup
             try {
                 this.loading = true;
-                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br><span id="loading-progress">Progress<span>';
+                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br><span id="loading-progress"><span>';
                 let isSuccess = false
                 switch (config.fetchMethod) {
                     case 'default':
@@ -111,7 +111,7 @@ export default defineComponent({
                 }
                 if (isSuccess) {
                     this.loading = false;
-                    await localforage.setItem('config', config);
+                    await localforage.setItem('config', {...config, dataFilled: true});
                     this.settingFound = true;
                 } else {
                     this.loading = false;
@@ -130,7 +130,7 @@ export default defineComponent({
     async mounted() {
         try {
             const config = await localforage.getItem('config')
-            if (config) {
+            if (config && config.dataFilled) {
                 this.config = config
                 this.settingFound = true
             } else {

@@ -14,6 +14,7 @@
     "@capacitor/android": "4.3.0",
     "@capacitor/app": "4.0.1",
     "@capacitor/core": "4.3.0",
+    "@capacitor/dialog": "^4.1.0",
     "@capacitor/geolocation": "^4.1.0",
     "@capacitor/haptics": "4.0.1",
     "@capacitor/keyboard": "4.0.1",
@@ -30,8 +31,8 @@
     "leaflet": "^1.9.2",
     "localforage": "^1.10.0",
     "sha256": "^0.2.0",
-    "vue": "^3.2.21",
-    "vue-router": "^4.0.12"
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.1"
   },
   "devDependencies": {
     "@capacitor/cli": "4.3.0",

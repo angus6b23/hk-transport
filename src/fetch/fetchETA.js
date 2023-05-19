@@ -7,6 +7,7 @@ class etaResult{
         this.note = note;
     }
 }
+
 function getTimeDifference(DateA, DateB){
     return Math.abs(Math.ceil((DateA - DateB) / 60000));
 }
@@ -85,6 +86,45 @@ export async function fetchCTBETA(route, stopId){
         console.error(err);
         etaData.status = 'error';
         etaData.data = err;
+        return etaData
+    }
+}
+
+export async function fetchMtrBusEta(route){
+    let etaData = {
+        status: '',
+        data: []
+    }
+    try{
+        const { data } = await axios.post(`https://rt.data.gov.hk/v1/transport/mtr/bus/getSchedule`, {
+            "language": "zh",
+            "routeName": route.routeNo
+        });
+        let filteredStops = []
+        if (route.direction == 1){
+            filteredStops = data.busStop.filter(item => item.busStopId.includes('-D'))
+        } else {
+            filteredStops = data.busStop.filter(item => item.busStopId.includes('-U'))
+        }
+        if (filteredStops.length > 0){
+            // Loop all stops
+            for (let i = 0; i < filteredStops.length; i++){
+                let targetStop = filteredStops[i]
+                let arrivalTimes = []
+                for (let j = 0; j < 3; j++){
+                    let time = (targetStop.bus[j].arrivalTimeInSecond == 108000) ? Math.floor(targetStop.bus[j].departureTimeInSecond / 60) : Math.floor(targetStop.bus[j].arrivalTimeInSecond / 60);
+                    time = (time < 0) ? 0 : time;
+                    arrivalTimes.push(time)
+                }
+                etaData.data.push(new etaResult(i, arrivalTimes, ''))
+            }
+            etaData.status = 'success'
+            console.log(etaData);
+        }
+    } catch(err){
+        console.error(err);
+        etaData.status = 'error'
+        etaData.data = err
         return etaData
     }
 }
