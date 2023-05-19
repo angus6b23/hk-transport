@@ -1,11 +1,32 @@
 <template>
 	<ion-page>
 		<ion-header>
-			<ion-toolbar class="small-padding">
-				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線或目的地"></ion-searchbar>
+			<ion-toolbar>
+				<ion-title>
+					{{ typeTC }}路線
+				</ion-title>
+				<ion-buttons slot="end">
+					<ion-button id="open-modal" expand="block">
+						<ion-icon :icon="cog" ></ion-icon>
+					</ion-button>
+				</ion-buttons>
+			</ion-toolbar>
+			<ion-toolbar>
+				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線號碼或目的地"></ion-searchbar>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
+			<ion-modal ref="modal" trigger="open-modal">
+				<ion-toolbar>
+					<ion-buttons slot="start">
+						<ion-button @click="closeOption">
+							<ion-icon :icon="chevronBack"></ion-icon>
+						</ion-button>
+					</ion-buttons>
+				</ion-toolbar>
+				<Option />
+			</ion-modal>
+			
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
@@ -13,7 +34,7 @@
 					<ion-button fill="clear" @click="clearQuery">清除搜尋</ion-button>
 				</ion-list-header>
 				<ion-list-header v-else>
-					<ion-label>已標記的{{ typeTC }}</ion-label>
+					<ion-label v-if="starred.length > 0">已標記的{{ typeTC }}</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
@@ -99,23 +120,25 @@
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
 			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" @closeModal="closeModal"
-				@addStar="addStar" @removeStar="removeStar" @saveData="saveData"   @swapDirection="swapDirection"/>
+				@addStar="addStar" @removeStar="removeStar" @saveData="saveData" @swapDirection="swapDirection" />
 		</ion-modal>
 	</ion-page>
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton } from '@ionic/vue';
-import { loadChunk } from '@/components/loadData.js'
-import ETAPopup from '@/components/ETAPopup.vue'
+import { defineComponent, ref } from 'vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon, IonTitle, IonButtons } from '@ionic/vue';
+import { cog, chevronBack } from 'ionicons/icons'
+import { loadChunk } from '@/components/loadData.js';
+import ETAPopup from '@/components/ETAPopup.vue';
+import Option from '@/views/Option.vue'
 import sleep from '@/components/sleep.js'
 import localforage from 'localforage';
 import presentToast from '@/components/presentToast.js'
 
 export default defineComponent({
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, ETAPopup },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -123,6 +146,7 @@ export default defineComponent({
 		const displayArray = ref([]);// Reference for displaying search results
 		const itemSelected = ref({}); // Reference for selected bus on query
 		const modalIsOpen = ref(false);
+		const optionIsOpen = ref(false);
 		const data = ref([]); // For storage of bus routes and stops
 		const starred = ref([]);
 		const type = ref(props.dataType);
@@ -138,9 +162,13 @@ export default defineComponent({
 			displayArray,
 			itemSelected,
 			modalIsOpen,
+			optionIsOpen,
 			starred,
 			type,
 			dataReady,
+			typeTC,
+			cog,
+			chevronBack
 		}
 	},
 	methods: {
@@ -151,6 +179,12 @@ export default defineComponent({
 		},
 		closeModal() {
 			this.modalIsOpen = false;
+		},
+		openOption(){
+			this.optionIsOpen = true;
+		},
+		closeOption(){
+			this.$refs.modal.$el.dismiss();
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
@@ -352,4 +386,5 @@ export default defineComponent({
 
 .route-no {
 	display: flex;
-}</style>
+}
+</style>

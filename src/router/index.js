@@ -18,23 +18,27 @@ const routes = [
       },
       {
         path: 'bus',
-        component: () => import('@/views/bus.vue')
+        component: () => import('@/views/Bus.vue')
       },
       {
         path: 'minibus',
-        component: () => import('@/views/minibus.vue')
+        component: () => import('@/views/Minibus.vue')
       },
       {
         path: 'ferry',
-        component: () => import('@/views/ferry.vue')
+        component: () => import('@/views/Ferry.vue')
       },
       {
         path: 'tram',
-        component: () => import('@/views/tram.vue')
+        component: () => import('@/views/Tram.vue')
       },
       {
         path: 'mtr',
-        component: () => import('@/views/mtr.vue')
+        component: () => import('@/views/Mtr.vue')
+      },
+      {
+        path: 'light-rail',
+        component: () => import('@/views/Light-rail.vue')
       },
       {
         path: 'tab3',

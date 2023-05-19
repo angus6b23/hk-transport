@@ -4,7 +4,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-import SearchView from '@/views/search-view.vue'
+import SearchView from '@/views/Search-view.vue'
 
 export default defineComponent({
     name: 'minibus',
