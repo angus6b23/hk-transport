@@ -6,7 +6,7 @@
 					{{ typeTC }}路線
 				</ion-title>
 				<ion-buttons slot="end">
-					<ion-button id="open-modal" expand="block">
+					<ion-button @click="openOption">
 						<ion-icon :icon="cog" ></ion-icon>
 					</ion-button>
 				</ion-buttons>
@@ -16,15 +16,8 @@
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
-			<ion-modal ref="modal" trigger="open-modal">
-				<ion-toolbar>
-					<ion-buttons slot="start">
-						<ion-button @click="closeOption">
-							<ion-icon :icon="chevronBack"></ion-icon>
-						</ion-button>
-					</ion-buttons>
-				</ion-toolbar>
-				<Option />
+			<ion-modal ref="modal" :is-open="optionIsOpen" @WillDismiss="closeOption" >
+				<Option  @closeOption="closeOption" />
 			</ion-modal>
 			
 			<ion-list v-if="dataReady">
@@ -184,7 +177,7 @@ export default defineComponent({
 			this.optionIsOpen = true;
 		},
 		closeOption(){
-			this.$refs.modal.$el.dismiss();
+			this.optionIsOpen = false;
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
@@ -311,7 +304,7 @@ export default defineComponent({
 .no-content {
 	display: flex;
 	flex-direction: column;
-	height: 70vh;
+	height: 65vh;
 	align-items: center;
 	justify-content: center;
 }

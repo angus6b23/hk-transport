@@ -73,7 +73,7 @@ import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
-import { fetchKMBETA, fetchCTBETA } from '@/fetch/fetchETA.js';
+import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta } from '@/fetch/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
@@ -116,17 +116,21 @@ export default {
 			presentToast('info', '此路線未提供到站報時服務')
 		}
 		// Show loading for minibus
-		if (this.item.type == 'minibus') {
+		if (this.item.type === 'minibus') {
 
 		}
 		// Fetch KMB ETAs
-		if (this.item.type == 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
+		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
 			this.getKMB();
 			this.interval = setInterval(() => this.getKMB(), 10000);
 		}
 		// Fetch CTB and NWFB bus stop ids
-		if (this.item.type == 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
+		if (this.item.type === 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
 			await this.getStopID();
+		}
+		// Fetch MTR Buses ETAs
+		if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
+			fetchMtrBusEta(this.item);
 		}
 		// Get Coordinates
 		try {

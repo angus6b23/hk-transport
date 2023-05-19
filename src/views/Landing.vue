@@ -140,6 +140,7 @@ export default defineComponent({
                 lang: this.lang,
                 fetchMethod: this.radioSelect,
                 apiBaseUrl: (this.radioSelect == 'self') ? this.hostUrl : '',
+                dataFilled: false
             }
             this.$emit('finishConfig', config)
         }

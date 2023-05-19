@@ -4,13 +4,16 @@
 			<ion-toolbar>
 				<ion-title>所有{{ typeTC }}路線</ion-title>
 				<ion-buttons slot="end">
-					<ion-button>
+					<ion-button @click="openOption">
 						<ion-icon :icon="cog"></ion-icon>
 					</ion-button>
 				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
+			<ion-modal ref="modal" :is-open="optionIsOpen" @WillDismiss="closeOption">
+				<Option  @closeOption="closeOption" />
+			</ion-modal>
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header>
@@ -52,16 +55,18 @@ import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonItem, IonLabel,
 import { cog } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue';
+import Option from '@/views/Option.vue'
 import sleep from '@/components/sleep.js'
 
 export default defineComponent({
 	name: 'ListView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup, Option },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
 		const itemSelected = ref({}); // Reference for selected bus on query
 		const modalIsOpen = ref(false);
+		const optionIsOpen = ref(false);
 		const data = ref([]); // For storage of routes and stops
 		const type = ref(props.dataType);
 		const dataReady = ref(false)
@@ -74,6 +79,7 @@ export default defineComponent({
 			data,
 			itemSelected,
 			modalIsOpen,
+			optionIsOpen,
 			type,
 			dataReady,
 			typeTC,
@@ -88,6 +94,12 @@ export default defineComponent({
 		},
 		closeModal() {
 			this.modalIsOpen = false;
+		},
+		openOption(){
+			this.optionIsOpen = true;
+		},
+		closeOption(){
+			this.optionIsOpen = false;
 		},
 		currentSelectedItem(x) { // For finding index of currently selected bus
 			return x.routeId == this.itemSelected.routeId && x.routeDirection == this.itemSelected.routeDirection
