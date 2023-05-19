@@ -3,13 +3,18 @@
 		<ion-header>
 			<ion-toolbar>
 				<ion-title>所有{{ typeTC }}路線</ion-title>
+				<ion-buttons slot="end">
+					<ion-button>
+						<ion-icon :icon="cog"></ion-icon>
+					</ion-button>
+				</ion-buttons>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header>
-					<ion-label>請選擇路線以查看詳情</ion-label>
+					<ion-label>請選擇路線</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-for="(route, index) in data" :key="route.id">
@@ -19,12 +24,13 @@
 								<ion-col v-if="route.type == 'mtr' || route.type == 'lightRail'" size-xs="3" size-md="1"
 									class="route-no ion-align-items-center">
 									<div v-if="route.type == 'mtr'" class="line-color-indicator"
-										:style="{ 'background-color': '#' + route.color}"></div>
-									<h3>{{ route.routeNo }}</h3>
+										:style="{ 'background-color': '#' + route.color }"></div>
+									<h3 v-else>{{ route.routeId }}</h3>
 								</ion-col>
 								<ion-col size-xs="9" size-md="11">
 									<!-- Badges for tram -->
-									<h3 class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC
+									<h3 v-if="route.type == 'lightRail'" class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.originTC }} - {{ route.destTC }}</h3>
+									<h3 v-else class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC
 									}}</h3>
 								</ion-col>
 							</ion-row>
@@ -42,14 +48,15 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton } from '@ionic/vue';
+import { cog } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue';
 import sleep from '@/components/sleep.js'
 
 export default defineComponent({
 	name: 'ListView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, ETAPopup },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -69,7 +76,8 @@ export default defineComponent({
 			modalIsOpen,
 			type,
 			dataReady,
-			typeTC
+			typeTC,
+			cog
 		}
 	},
 	methods: {
@@ -96,9 +104,9 @@ export default defineComponent({
 					return '未知'
 			}
 		},
-		async swapDirection(){
-			let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);			
-			if (swapFilter.length == 0){
+		async swapDirection() {
+			let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+			if (swapFilter.length == 0) {
 				presentToast('error', '此路線未有對頭車')
 			} else {
 				this.modalIsOpen = false;
@@ -141,4 +149,5 @@ export default defineComponent({
 
 .route-no {
 	display: flex;
-}</style>
+}
+</style>

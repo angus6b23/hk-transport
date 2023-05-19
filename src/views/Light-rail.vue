@@ -1,13 +1,13 @@
 <template>
-	<ListView dataType="mtr"></ListView>
+	<ListView dataType="lightRail"></ListView>
 </template>
 
 <script>
 import { defineComponent } from 'vue';
-import ListView from '@/views/list-view.vue'
+import ListView from '@/views/List-view.vue'
 
 export default defineComponent({
-	name: 'mtr',
+	name: 'lightRail',
 	components: { ListView }
 })
 </script>
