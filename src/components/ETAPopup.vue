@@ -250,11 +250,11 @@ export default {
 			const etaData = await fetchMtrBusEta(this.item);
 			console.log(etaData);
 			if(etaData.status == 'success' && etaData.data.length > 0){
-				etaData.data.forEach(element => {
-					const index = this.item.stops.findIndex(x => x.seq == element.seq);
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stationId);
 					if (index != -1) {
-						this.item.stops[index].etaMessage = element.note;
-						this.item.stops[index].etas = [...element.etas];
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItem.etas];
 					}
 				})
 			}

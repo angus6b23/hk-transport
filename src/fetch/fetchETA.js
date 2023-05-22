@@ -100,6 +100,23 @@ export async function fetchMtrBusEta(route) {
             "language": "zh",
             "routeName": route.routeNo
         });
+        let stopItems = data.busStop;
+        for (let item of stopItems){
+            let arrivalTimes = []
+            for (let i = 0; i < 3; i++){
+                let time = (item.bus[i].arrivalTimeInSecond == 108000) ? Math.floor(item.bus[i].departureTimeInSecond / 60) : Math.floor(item.bus[i].arrivalTimeInSecond / 60);
+                time = (time < 0) ? 0 : time;
+                arrivalTimes.push(time)
+            }
+            etaData.data.push({
+                stationId: item.busStopId,
+                etas: arrivalTimes,
+                note: ''
+            })
+        }
+        etaData.status = 'success'
+        return etaData
+        /*
         let filteredStops = []
         if (route.destEN.toLowerCase().includes('circular')){
             filteredStops = data.busStop
@@ -127,6 +144,7 @@ export async function fetchMtrBusEta(route) {
             etaData.status = 'success'
             return etaData
         }
+        */
     } catch (err) {
         console.error(err);
         etaData.status = 'error'
