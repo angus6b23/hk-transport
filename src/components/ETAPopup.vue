@@ -130,7 +130,8 @@ export default {
 		}
 		// Fetch MTR Buses ETAs
 		if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
-			fetchMtrBusEta(this.item);
+			this.getMtrBus();
+			this.interval = setInterval(() => this.getMtrBus(), 10000);
 		}
 		// Get Coordinates
 		try {
@@ -244,6 +245,19 @@ export default {
 				}
 			}
 			// console.log(this.item.stops[clickedIndex]);
+		},
+		async getMtrBus() {
+			const etaData = await fetchMtrBusEta(this.item);
+			console.log(etaData);
+			if(etaData.status == 'success' && etaData.data.length > 0){
+				etaData.data.forEach(element => {
+					const index = this.item.stops.findIndex(x => x.seq == element.seq);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = element.note;
+						this.item.stops[index].etas = [...element.etas];
+					}
+				})
+			}
 		},
 		nearestStop(stopId) {
 			if (this.nearestStop && this.nearestStop.id === stopId && this.nearestStop.distance <= 1000) {
