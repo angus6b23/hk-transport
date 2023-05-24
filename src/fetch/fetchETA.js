@@ -104,14 +104,16 @@ export async function fetchMtrBusEta(route) {
         for (let item of stopItems){
             let arrivalTimes = []
             for (let i = 0; i < 3; i++){
-                let time = (item.bus[i].arrivalTimeInSecond == 108000) ? Math.floor(item.bus[i].departureTimeInSecond / 60) : Math.floor(item.bus[i].arrivalTimeInSecond / 60);
-                time = (time < 0) ? 0 : time;
-                arrivalTimes.push(time)
+                if (item.bus[i]) {
+                    let time = (item.bus[i].arrivalTimeInSecond == 108000) ? Math.floor(item.bus[i].departureTimeInSecond / 60) : Math.floor(item.bus[i].arrivalTimeInSecond / 60);
+                    time = (time < 0) ? 0 : time;
+                    arrivalTimes.push(time)
+                }
             }
             etaData.data.push({
                 stationId: item.busStopId,
                 etas: arrivalTimes,
-                note: ''
+                note: (arrivalTimes.length == 0) ? 'N/A' : ''
             })
         }
         etaData.status = 'success'
@@ -154,49 +156,87 @@ export async function fetchMtrBusEta(route) {
 }
     /*
 if (route.company.includes('CTB') || route.company.includes('NWFB') || route.company.includes('NLB')) {
-    let company = (route.company.includes('CTB')) ? 'CTB' :
-        (route.company.includes('NWFB')) ? 'NWFB' :
-            (route.company.includes('NLB')) ? 'NLB' : null;
-    let direction = (route.routeDirection == 1) ? 'outbound' : 'inbound'; //Direction 1 = outbound, 2 = inbound
-    try {
-        if (route.stops[0].stop_id == '') {
-            // Get Bus stop ids first
-            let route_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/route-stop/${company}/${route.routeNo}/${direction}`);
-            let route_data = await route_response.json();
-            route_data = route_data.data;
-            // Insert the stop ids into bus object
-            for (stop of route.stops) {
-                let index = route_data.findIndex(x => x.seq == stop.seq);
-                stop.stop_id = route_data[index].stop;
-            }
+let company = (route.company.includes('CTB')) ? 'CTB' :
+    (route.company.includes('NWFB')) ? 'NWFB' :
+        (route.company.includes('NLB')) ? 'NLB' : null;
+let direction = (route.routeDirection == 1) ? 'outbound' : 'inbound'; //Direction 1 = outbound, 2 = inbound
+try {
+    if (route.stops[0].stop_id == '') {
+        // Get Bus stop ids first
+        let route_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/route-stop/${company}/${route.routeNo}/${direction}`);
+        let route_data = await route_response.json();
+        route_data = route_data.data;
+        // Insert the stop ids into bus object
+        for (stop of route.stops) {
+            let index = route_data.findIndex(x => x.seq == stop.seq);
+            stop.stop_id = route_data[index].stop;
         }
-        // Get etas
-        direction = (route.routeDirection == 1) ? 'O' : 'I';
-        for (const stop of route.stops) {
-            let eta_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/eta/${company}/${stop.stop_id}/${route.routeNo}`);
-            let eta_data = await eta_response.json();
-            eta_data = eta_data.data.filter((x) => x.dir == direction);
-            // console.log(eta_data);
-            for (const eta of eta_data) {
-                if (eta.eta != '') {
-                    let current_time = new Date(eta.data_timestamp);
-                    let eta_time = new Date(eta.eta);
-                    let eta_duration = Math.ceil((eta_time - current_time) / 60000);
-                    (eta_duration < 0) ? eta_duration = 0 : null;
-                    stop.etas.push(eta_duration)
-                }
-            }
-        }
-        // console.log(route_data);
-    } catch (err) {
-        console.error(err);
     }
+    // Get etas
+    direction = (route.routeDirection == 1) ? 'O' : 'I';
+    for (const stop of route.stops) {
+        let eta_response = await fetch(`https://rt.data.gov.hk/v1.1/transport/citybus-nwfb/eta/${company}/${stop.stop_id}/${route.routeNo}`);
+        let eta_data = await eta_response.json();
+        eta_data = eta_data.data.filter((x) => x.dir == direction);
+        // console.log(eta_data);
+        for (const eta of eta_data) {
+            if (eta.eta != '') {
+                let current_time = new Date(eta.data_timestamp);
+                let eta_time = new Date(eta.eta);
+                let eta_duration = Math.ceil((eta_time - current_time) / 60000);
+                (eta_duration < 0) ? eta_duration = 0 : null;
+                stop.etas.push(eta_duration)
+            }
+        }
+    }
+    // console.log(route_data);
+} catch (err) {
+    console.error(err);
+}
 }
 for (stop of route.stops) {
-    if (stop.etas.length == 0) {
-        stop.eta_message = 'no_available_bus'
-    } else {
-        stop.etas.sort((a, b) => a - b);
-        stop.eta_display = [...stop.etas];
-    }
+if (stop.etas.length == 0) {
+    stop.eta_message = 'no_available_bus'
+} else {
+    stop.etas.sort((a, b) => a - b);
+    stop.eta_display = [...stop.etas];
+}
 } */
+export async function fetchNLBEta(route) {
+    let etaData = {
+        status: '',
+        data: []
+    }
+    try {
+        const routeId = route.routeId;
+        const stopIds = route.stops.map(stop => stop.stopId)
+        let NLBResponses = stopIds.map(id => {
+            if (id != '') {
+                return axios(`https://rt.data.gov.hk/v2/transport/nlb/stop.php?action=estimatedArrivals&routeId=${routeId}&stopId=${id}&language=zh`)
+            }
+        })
+        NLBResponses = await axios.all(NLBResponses);
+        // console.log(NLBResponses);
+        for (let response of NLBResponses) {
+            let stopIdRegex = /stopId\=.*\&/
+            let stopId = response.config.url.match(stopIdRegex)[0].replace('stopId=', '').replace('&', '')
+            let arrivalTimes = [];
+            for (let item of response.data.estimatedArrivals) {
+                if (item) {
+                    let time = getTimeDifference(new Date(item.estimatedArrivalTime), new Date(item.generateTime))
+                    arrivalTimes.push(time)
+                }
+            }
+            etaData.data.push({
+                stopId: stopId,
+                etas: arrivalTimes,
+                note: (arrivalTimes.length == 0) ? 'N/A' : ''
+            })
+        }
+        etaData.status = 'success'
+        return etaData
+    } catch (err) {
+        etaData.status = 'fail'
+        return etaData;
+    }
+}

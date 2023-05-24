@@ -6,7 +6,7 @@
 					{{ typeTC }}路線
 				</ion-title>
 				<ion-buttons slot="end">
-					<ion-button @click="openOption">
+					<ion-button id="open-modal" expand="block">
 						<ion-icon :icon="cog" ></ion-icon>
 					</ion-button>
 				</ion-buttons>
@@ -16,8 +16,15 @@
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
-			<ion-modal ref="modal" :is-open="optionIsOpen" @WillDismiss="closeOption" >
-				<Option  @closeOption="closeOption" />
+			<ion-modal ref="modal" trigger="open-modal">
+				<ion-toolbar>
+					<ion-buttons slot="start">
+						<ion-button @click="closeOption">
+							<ion-icon :icon="chevronBack"></ion-icon>
+						</ion-button>
+					</ion-buttons>
+				</ion-toolbar>
+				<Option />
 			</ion-modal>
 			
 			<ion-list v-if="dataReady">
@@ -177,7 +184,7 @@ export default defineComponent({
 			this.optionIsOpen = true;
 		},
 		closeOption(){
-			this.optionIsOpen = false;
+			this.$refs.modal.$el.dismiss();
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
@@ -260,7 +267,12 @@ export default defineComponent({
 			this.query = ''
 		},
 		async swapDirection() {
-			let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+			let swapFilter = [];
+			if (this.itemSelected.company.includes('NLB')) { // NLB use different routeNo for different directions
+				swapFilter = this.data.filter(route => route.company.includes('NLB') && route.routeNo == this.itemSelected.routeNo && route.direction != this.itemSelected.direction);
+			} else {
+				swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+			}
 			if (swapFilter.length == 0) {
 				presentToast('error', '此路線未有對頭車')
 			} else {
@@ -304,7 +316,7 @@ export default defineComponent({
 .no-content {
 	display: flex;
 	flex-direction: column;
-	height: 65vh;
+	height: 70vh;
 	align-items: center;
 	justify-content: center;
 }
