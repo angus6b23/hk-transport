@@ -73,7 +73,7 @@ import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
-import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta } from '@/fetch/fetchETA.js';
+import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta, fetchNLBEta } from '@/fetch/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
@@ -132,6 +132,10 @@ export default {
 		if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
 			this.getMtrBus();
 			this.interval = setInterval(() => this.getMtrBus(), 10000);
+		}
+		// Fetch NLB Buses ETAs
+		if (this.item.type === 'bus' && this.item.company.includes('NLB')){
+			this.getNLB();
 		}
 		// Get Coordinates
 		try {
@@ -248,10 +252,23 @@ export default {
 		},
 		async getMtrBus() {
 			const etaData = await fetchMtrBusEta(this.item);
-			console.log(etaData);
+			// console.log(etaData);
 			if(etaData.status == 'success' && etaData.data.length > 0){
 				etaData.data.forEach(etaItem => {
 					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stationId);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItem.etas];
+					}
+				})
+			}
+		},
+		async getNLB(){
+			const etaData = await fetchNLBEta(this.item);
+			// console.log(etaData)
+			if(etaData.status == 'success' && etaData.data.length > 0){
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
 					if (index != -1) {
 						this.item.stops[index].etaMessage = etaItem.note;
 						this.item.stops[index].etas = [...etaItem.etas];
