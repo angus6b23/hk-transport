@@ -73,7 +73,7 @@ import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
-import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta, fetchNLBEta } from '@/fetch/fetchETA.js';
+import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta } from '@/fetch/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
@@ -137,17 +137,26 @@ export default {
 		if (this.item.type === 'bus' && this.item.company.includes('NLB')){
 			this.getNLB();
 		}
+		if (this.item.type === 'minibus'){
+			this.getMinibus();
+		}
 		// Get Coordinates
 		try {
 			this.currentLocation = await Geolocation.getCurrentPosition();
 			const stopDistance = this.item.stops.map(stop => { //Create an array hold all stops id and distance between current coord
-				const currentLat = this.currentLocation.coords.latitude;
-				const currentLong = this.currentLocation.coords.longitude;
-				const stopLat = stop.coord[1];
-				const stopLong = stop.coord[0];
-				return {
-					id: stop.stopId,
-					distance: getDistance({ latitude: currentLat, longitude: currentLong }, { latitude: stopLat, longitude: stopLong })
+				if (stop.coord && stop.coord.length > 0) {
+					const currentLat = this.currentLocation.coords.latitude;
+					const currentLong = this.currentLocation.coords.longitude;
+					const stopLat = stop.coord[1];
+					const stopLong = stop.coord[0];
+					return {
+						id: stop.stopId,
+						distance: getDistance({ latitude: currentLat, longitude: currentLong }, { latitude: stopLat, longitude: stopLong })
+					}
+				} else {
+					return {
+						distance: 9999999
+					}
 				}
 			})
 			this.nearestStop = stopDistance.reduce((acc, cur) => { // Reduce the distance array for nearest id and distance
@@ -253,7 +262,7 @@ export default {
 		async getMtrBus() {
 			const etaData = await fetchMtrBusEta(this.item);
 			// console.log(etaData);
-			if(etaData.status == 'success' && etaData.data.length > 0){
+			if (etaData.status == 'success' && etaData.data.length > 0) {
 				etaData.data.forEach(etaItem => {
 					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stationId);
 					if (index != -1) {
@@ -263,10 +272,22 @@ export default {
 				})
 			}
 		},
-		async getNLB(){
+		async getNLB() {
 			const etaData = await fetchNLBEta(this.item);
 			// console.log(etaData)
-			if(etaData.status == 'success' && etaData.data.length > 0){
+			if (etaData.status == 'success' && etaData.data.length > 0) {
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItem.etas];
+					}
+				})
+			}
+		},
+		async getMinibus() {
+			const etaData = await fetchMinibusEta(this.item);
+			if (etaData.status == 'success' && etaData.data.length > 0) {
 				etaData.data.forEach(etaItem => {
 					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
 					if (index != -1) {

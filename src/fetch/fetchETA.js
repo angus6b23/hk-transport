@@ -240,3 +240,36 @@ export async function fetchNLBEta(route) {
         return etaData;
     }
 }
+
+export async function fetchMinibusEta(route) {
+    let etaData = {
+        status: '',
+        data: []
+    }
+    try {
+        const routeId = route.routeId;
+        const direction = route.direction;
+        let minibusResponse = route.stops.map(stop => axios(`https://data.etagmb.gov.hk/eta/route-stop/${routeId}/${direction}/${stop.seq}`));
+        minibusResponse = await axios.all(minibusResponse)
+        for (let response of minibusResponse) {
+            let arrivalTimes = []
+            let etas = response.data.data.eta
+            let stopId = response.data.data.stop_id
+            for (let item of etas) {
+                arrivalTimes.push(item.diff)
+            }
+            etaData.data.push({
+                stopId: stopId,
+                etas: arrivalTimes,
+                note: (arrivalTimes.length == 0) ? 'N/A' : ''
+            })
+        }
+        etaData.status = 'success'
+        return etaData
+    } catch (err) {
+        console.error(err);
+        etaData.status = 'failed'
+        etaData.data = err;
+        return etaData
+    }
+}
