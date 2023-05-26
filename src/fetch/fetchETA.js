@@ -273,3 +273,85 @@ export async function fetchMinibusEta(route) {
         return etaData
     }
 }
+
+export async function fetchMtrEta(route) {
+    let etaData = {
+        status: '',
+        data: []
+    }
+    try {
+        const routeId = route.routeId;
+        const direction = route.direction;
+        let mtrResponse = route.stops.map(stop => axios(`https://rt.data.gov.hk/v1/transport/mtr/getSchedule.php?line=${routeId}&sta=${stop.code}`));
+        mtrResponse = await axios.all(mtrResponse);
+        let etaError = ''
+        for (let response of mtrResponse) {
+            let arrivalTimes = [];
+            let stopCode = response.config.url.match(/sta\=.*$/)[0].replace('sta=', '')
+            let etaArray = []
+            if (response.data.error){
+                etaError = response.data.error.errorMsg
+            }
+            else if (response.data.data) {
+                etaArray = (direction == 1) ? response.data.data[`${routeId}-${stopCode}`]['DOWN'] : response.data.data[`${routeId}-${stopCode}`]['UP']
+            }
+            if (etaArray) {
+                for (let item of etaArray) {
+                    arrivalTimes.push(item.ttnt);
+                }
+            }
+            arrivalTimes = arrivalTimes.slice(0, 3);
+            etaData.data.push({
+                stopId: stopCode,
+                etas: arrivalTimes,
+                note: (arrivalTimes.length == 0) ? 'N/A' : ''
+            })
+        }
+        etaData.status = (etaError == '') ? 'success' : 'api-error'
+        etaData.memo = etaError
+        return etaData
+    } catch (err) {
+        console.error(err);
+        etaData.status = 'failed'
+        etaData.data = err;
+        return etaData
+    }
+}
+export async function fetchLightRailEta(route) {
+    let etaData = {
+        status: '',
+        data: []
+    }
+    try {
+        const routeNo = route.routeNo;
+        const destEN = route.destEN;
+        let lrResponse = route.stops.map(stop => axios(`https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id=${stop.stopId}`));
+        lrResponse = await axios.all(lrResponse);
+        for (let response of lrResponse){
+            let routeLists = []
+            let arrivalTimes = [];
+            let stopId = response.config.url.match(/station\_id\=.*$/)[0].replace('station_id=', '');
+            routeLists = response.data.platform_list.forEach(platform => {
+                for (let item of platform.route_list){
+                    routeLists = [...routeLists, ...item]
+                }
+            }) 
+            routeLists = routeLists.filter(item => item.route_no == routeNo && item.dest_en == destEN);
+            for (let item of routeLists){
+                arrivalTimes.push(item.time_en.replace(' min', ''));
+            }
+            etaData.data.push({
+                stopId: stopId,
+                etas: arrivalTimes,
+                note: (arrivalTimes.length == 0) ? 'N/A' : ''
+            })
+        }
+        etaData.status = 'success';
+        return etaData
+    } catch (err) {
+        console.error(err);
+        etaData.status = 'failed'
+        etaData.data = err;
+        return etaData
+    }
+}

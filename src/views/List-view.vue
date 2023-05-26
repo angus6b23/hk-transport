@@ -125,6 +125,7 @@ export default defineComponent({
 				await sleep(100);
 				this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
 				this.modalIsOpen = true;
+				console.log(this.itemSelected)
 			}
 		}
 	},
