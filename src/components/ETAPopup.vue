@@ -73,7 +73,7 @@ import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
-import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta } from '@/fetch/fetchETA.js';
+import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta, fetchMtrEta, fetchLightRailEta } from '@/fetch/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
@@ -139,6 +139,12 @@ export default {
 		}
 		if (this.item.type === 'minibus'){
 			this.getMinibus();
+		}
+		if (this.item.type === 'mtr'){
+			this.getMtr();
+		}
+		if (this.item.type === 'lightRail'){
+			this.getLightRail();
 		}
 		// Get Coordinates
 		try {
@@ -287,6 +293,32 @@ export default {
 		},
 		async getMinibus() {
 			const etaData = await fetchMinibusEta(this.item);
+			if (etaData.status == 'success' && etaData.data.length > 0) {
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItem.etas];
+					}
+				})
+			}
+		},
+		async getMtr() {
+			const etaData = await fetchMtrEta(this.item);
+			if (etaData.status == 'success' && etaData.data.length > 0) {
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.code == etaItem.stopId);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItem.etas];
+					}
+				})
+			} else if (etaData.status == 'api-error') {
+				presentToast('error', etaData.memo)
+			}
+		},
+		async getLightRail() {
+			const etaData = await fetchLightRailEta(this.item);
 			if (etaData.status == 'success' && etaData.data.length > 0) {
 				etaData.data.forEach(etaItem => {
 					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
