@@ -91,11 +91,7 @@ export default defineComponent({
 	methods: {
 		openModal(index) {
 			this.itemSelected = JSON.parse(JSON.stringify(this.data[index])); //Use Deep copy to prevent problems when clicked again
-			if(this.type == 'tram'){
-				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeNo == this.itemSelected.routeNo && item.direction != this.itemSelected.direction)));
-			} else if (this.type =='mtr'){
-				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeId == this.itemSelected.routeId && item.direction != this.itemSelected.direction)));
-			}
+			this.getAltRoutes();
 			console.log(this.itemSelected);
 			console.log(this.altRoutes);
 			this.modalIsOpen = true;
@@ -124,16 +120,32 @@ export default defineComponent({
 					return '未知'
 			}
 		},
-		async swapDirection() {
-			let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
-			if (swapFilter.length == 0) {
-				presentToast('error', '此路線未有對頭車')
-			} else {
+		getAltRoutes(){
+			if(this.type == 'tram'){
+				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeNo == this.itemSelected.routeNo && item.direction != this.itemSelected.direction)));
+			} else if (this.type =='mtr'){
+				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeId == this.itemSelected.routeId && item.direction != this.itemSelected.direction)));
+			}
+		},
+		async swapDirection(route = undefined) {
+			if (route){
 				this.modalIsOpen = false;
 				await sleep(100);
-				this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
+				this.itemSelected = JSON.parse(JSON.stringify(route));
+				this.getAltRoutes();
 				this.modalIsOpen = true;
-				console.log(this.itemSelected)
+				console.log(this.itemSelected);
+			} else {
+				let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+				if (swapFilter.length == 0) {
+					presentToast('error', '此路線未有對頭車')
+				} else {
+					this.modalIsOpen = false;
+					await sleep(100);
+					this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
+					this.modalIsOpen = true;
+					console.log(this.itemSelected)
+				}
 			}
 		}
 	},

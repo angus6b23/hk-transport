@@ -18,7 +18,7 @@
 					</ion-button>
 				</span>
 				<span v-if="altRoutes && altRoutes.length > 1">
-					<ion-button id="open-action-sheet">
+					<ion-button @click="presentActionSheet">
 						<ion-icon :icon="swapHorizontalOutline" />
 					</ion-button>
 				</span>
@@ -48,10 +48,6 @@
 				</ion-segment-button>
 			</ion-segment>
 		</section>
-		<!-- Action Sheet for altRoutes -->
-		<section>
-			<ion-action-sheet trigger="open-action-sheet" header="相關路線" :buttons="actionSheetButtons"></ion-action-sheet>
-		</section>
 		<div class="segment-content">
 			<!-- Segment for route etas -->
 			<section v-if="popupView == 'default'">
@@ -79,7 +75,7 @@
 
 <script>
 import { ref } from 'vue';
-import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, IonActionSheet } from '@ionic/vue';
+import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController } from '@ionic/vue';
 import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
@@ -94,7 +90,7 @@ import presentToast from '@/components/presentToast.js';
 
 export default {
 	name: "ETAPopup",
-	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, IonActionSheet, LeafletMap, SkeletonItems, StopItems, RouteInfo },
+	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
 	props: ['item', 'starred', 'noEta', 'altRoutes'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
@@ -103,11 +99,6 @@ export default {
 		const popupView = ref('default');
 		const starred = props.starred;
 		const altRoutes = ref(props.altRoutes);
-		const actionSheetButtons = altRoutes.value.map(route => {
-			return {
-				text: `${route.originTC} →  ${route.destTC}`
-			}
-		})
 		const noEta = ref(props.noEta);
 		const itemOptions = ref({ clickable: false });
 		const currentLocation = ref();
@@ -118,7 +109,6 @@ export default {
 			starred,
 			popupView,
 			altRoutes,
-			actionSheetButtons,
 			itemOptions,
 			currentLocation,
 			nearestStop,
@@ -347,6 +337,21 @@ export default {
 					}
 				})
 			}
+		},
+		async presentActionSheet(){
+			const actionButtons = this.altRoutes.map(route => {
+				return {
+					text: `${route.originTC} →  ${route.destTC}`,
+					data: route
+				}
+			});
+			const actionSheet = await actionSheetController.create({
+				header: '其他方向',
+				buttons: actionButtons
+			})
+			await actionSheet.present();
+			const {data: res} = await actionSheet.onDidDismiss();
+			this.$emit('swapDirection', res);
 		},
 		nearestStop(stopId) {
 			if (this.nearestStop && this.nearestStop.id === stopId && this.nearestStop.distance <= 1000) {
