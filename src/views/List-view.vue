@@ -44,7 +44,7 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :noEta="checkNoEta" @closeModal="closeModal" @swapDirection="swapDirection" />
+			<ETAPopup :item="itemSelected" :noEta="checkNoEta" :altRoutes="altRoutes" @closeModal="closeModal" @swapDirection="swapDirection" />
 		</ion-modal>
 	</ion-page>
 </template>
@@ -71,6 +71,7 @@ export default defineComponent({
 		const type = ref(props.dataType);
 		const dataReady = ref(false)
 		const typeTC = ref(''); //For saving TC translation for type of transport
+		const altRoutes = ref([]); // For saving directions with same routeNo, which will be passed to etaPopup
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
 			modalIsOpen.value = false;
@@ -78,18 +79,25 @@ export default defineComponent({
 		return {
 			data,
 			itemSelected,
+			altRoutes,
 			modalIsOpen,
 			optionIsOpen,
 			type,
 			dataReady,
 			typeTC,
-			cog
+			cog,
 		}
 	},
 	methods: {
 		openModal(index) {
 			this.itemSelected = JSON.parse(JSON.stringify(this.data[index])); //Use Deep copy to prevent problems when clicked again
+			if(this.type == 'tram'){
+				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeNo == this.itemSelected.routeNo && item.direction != this.itemSelected.direction)));
+			} else if (this.type =='mtr'){
+				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeId == this.itemSelected.routeId && item.direction != this.itemSelected.direction)));
+			}
 			console.log(this.itemSelected);
+			console.log(this.altRoutes);
 			this.modalIsOpen = true;
 		},
 		closeModal() {
