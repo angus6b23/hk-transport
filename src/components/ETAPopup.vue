@@ -12,9 +12,16 @@
 				<ion-button @click="closeModal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
 			</ion-buttons>
 			<ion-buttons slot="end" class="top-buttons">
-				<ion-button @click="swapDirection">
-					<ion-icon :icon="swapHorizontalOutline" />
-				</ion-button>
+				<span v-if="altRoutes && altRoutes.length == 1">
+					<ion-button @click="swapDirection">
+						<ion-icon :icon="swapHorizontalOutline" />
+					</ion-button>
+				</span>
+				<span v-if="altRoutes && altRoutes.length > 1">
+					<ion-button id="open-action-sheet">
+						<ion-icon :icon="swapHorizontalOutline" />
+					</ion-button>
+				</span>
 				<span v-if="starred != undefined">
 					<ion-button v-if="checkbusStar" @click="removeStar">
 						<ion-icon :icon="star" />
@@ -40,6 +47,10 @@
 					<ion-label>地圖</ion-label>
 				</ion-segment-button>
 			</ion-segment>
+		</section>
+		<!-- Action Sheet for altRoutes -->
+		<section>
+			<ion-action-sheet trigger="open-action-sheet" header="相關路線" :buttons="actionSheetButtons"></ion-action-sheet>
 		</section>
 		<div class="segment-content">
 			<!-- Segment for route etas -->
@@ -68,7 +79,7 @@
 
 <script>
 import { ref } from 'vue';
-import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar } from '@ionic/vue';
+import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, IonActionSheet } from '@ionic/vue';
 import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
@@ -83,14 +94,20 @@ import presentToast from '@/components/presentToast.js';
 
 export default {
 	name: "ETAPopup",
-	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
-	props: ['item', 'starred', 'noEta'],
+	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, IonActionSheet, LeafletMap, SkeletonItems, StopItems, RouteInfo },
+	props: ['item', 'starred', 'noEta', 'altRoutes'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
 		const popupLoading = ref(false);
 		const item = ref(props.item);
 		const popupView = ref('default');
 		const starred = props.starred;
+		const altRoutes = ref(props.altRoutes);
+		const actionSheetButtons = altRoutes.value.map(route => {
+			return {
+				text: `${route.originTC} →  ${route.destTC}`
+			}
+		})
 		const noEta = ref(props.noEta);
 		const itemOptions = ref({ clickable: false });
 		const currentLocation = ref();
@@ -100,6 +117,8 @@ export default {
 			item,
 			starred,
 			popupView,
+			altRoutes,
+			actionSheetButtons,
 			itemOptions,
 			currentLocation,
 			nearestStop,
