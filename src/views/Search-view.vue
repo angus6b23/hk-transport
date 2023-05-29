@@ -6,8 +6,8 @@
 					{{ typeTC }}路線
 				</ion-title>
 				<ion-buttons slot="end">
-					<ion-button id="open-modal" expand="block">
-						<ion-icon :icon="cog" ></ion-icon>
+					<ion-button @click="openOption">
+						<ion-icon :icon="cog"></ion-icon>
 					</ion-button>
 				</ion-buttons>
 			</ion-toolbar>
@@ -16,17 +16,10 @@
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
-			<ion-modal ref="modal" trigger="open-modal">
-				<ion-toolbar>
-					<ion-buttons slot="start">
-						<ion-button @click="closeOption">
-							<ion-icon :icon="chevronBack"></ion-icon>
-						</ion-button>
-					</ion-buttons>
-				</ion-toolbar>
-				<Option />
+			<ion-modal ref="modal" :is-open="optionIsOpen" @WillDismiss="closeOption">
+				<Option @closeOption="closeOption" />
 			</ion-modal>
-			
+
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
@@ -119,8 +112,9 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" @closeModal="closeModal"
-				@addStar="addStar" @removeStar="removeStar" @saveData="saveData" @swapDirection="swapDirection" />
+			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes"
+				@closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData"
+				@swapDirection="swapDirection" />
 		</ion-modal>
 	</ion-page>
 </template>
@@ -145,6 +139,7 @@ export default defineComponent({
 		const query = ref(''); // Reference for two way bind of search bar value
 		const displayArray = ref([]);// Reference for displaying search results
 		const itemSelected = ref({}); // Reference for selected bus on query
+		const altRoutes = ref([]);
 		const modalIsOpen = ref(false);
 		const optionIsOpen = ref(false);
 		const data = ref([]); // For storage of bus routes and stops
@@ -161,6 +156,7 @@ export default defineComponent({
 			query,
 			displayArray,
 			itemSelected,
+			altRoutes,
 			modalIsOpen,
 			optionIsOpen,
 			starred,
@@ -175,15 +171,19 @@ export default defineComponent({
 		openModal(index) {
 			this.itemSelected = JSON.parse(JSON.stringify(this.displayArray[index])); //Use Deep copy to prevent problems when clicked again
 			console.log(this.itemSelected)
+			this.getAltRoutes();
 			this.modalIsOpen = true;
 		},
 		closeModal() {
 			this.modalIsOpen = false;
 		},
-		openOption(){
+		openOption() {
 			this.optionIsOpen = true;
 		},
-		closeOption(){
+		closeOption() {
+			this.optionIsOpen = false;
+		},
+		closeOption() {
 			this.$refs.modal.$el.dismiss();
 		},
 		async addStar() {
@@ -266,21 +266,36 @@ export default defineComponent({
 		clearQuery() {
 			this.query = ''
 		},
-		async swapDirection() {
+		async swapDirection(route = undefined) {
 			let swapFilter = [];
-			if (this.itemSelected.company.includes('NLB')) { // NLB use different routeNo for different directions
-				swapFilter = this.data.filter(route => route.company.includes('NLB') && route.routeNo == this.itemSelected.routeNo && route.direction != this.itemSelected.direction);
-			} else {
-				swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
-			}
-			if (swapFilter.length == 0) {
-				presentToast('error', '此路線未有對頭車')
-			} else {
+			if (route) {
 				this.modalIsOpen = false;
 				await sleep(100);
-				this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
+				this.itemSelected = JSON.parse(JSON.stringify(route));
+				this.getAltRoutes();
 				this.modalIsOpen = true;
+				console.log(this.itemSelected);
+			} else {
+				if (this.itemSelected.company.includes('NLB')) { // NLB use different routeNo for different directions
+					swapFilter = this.data.filter(route => route.company.includes('NLB') && route.routeNo == this.itemSelected.routeNo && route.direction != this.itemSelected.direction);
+				} else {
+					swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
+				}
+				if (swapFilter.length == 0) {
+					presentToast('error', '此路線未有對頭車')
+				} else {
+					this.modalIsOpen = false;
+					await sleep(100);
+					this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
+					this.modalIsOpen = true;
+				}
 			}
+		},
+		getAltRoutes() {
+			if (this.itemSelected.type == 'bus' && this.itemSelected.company.includes('KMB')) {
+				this.altRoutes = this.data.filter(altRoute => altRoute.routeNo == this.itemSelected.routeNo && altRoute.company.join('') == this.itemSelected.company.join('') && (altRoute.direction != this.itemSelected.direction || altRoute.serviceMode != this.itemSelected.serviceMode || altRoute.specialType != this.itemSelected.specialType));
+			}
+			console.log(this.altRoutes);
 		}
 	},
 	async mounted() {
