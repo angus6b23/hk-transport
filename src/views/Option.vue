@@ -15,31 +15,51 @@
 		</ion-list-header>
 		<ion-list>
 			<ion-item button @click='presentLangAction'>
+				<ion-icon :icon="languageOutline" slot="start" />
 				<ion-label>
 					<h5>語言 / Language</h5>
 					<p v-if="config.lang == 'zh'">正體中文</p>
 					<p v-else-if="config.lang == 'en'">English</p>
 				</ion-label>
 			</ion-item>
-			<ion-item button>
+			<ion-item button @click='presentSourceAction'>
+				<ion-icon :icon="serverOutline" slot="start" />
 				<ion-label>
 					<h5>資料來源</h5>
 					<p v-if="config.fetchMethod == 'default'">預設</p>
 					<p v-else-if="config.fetchMethod == 'hkgov'">來自 gov.hk</p>
-					<p v-else-if="config.fetchMethod == 'self'">自行搭建來源: {{ config.apiBaseUrl }}</p>
+					<p v-else-if="config.fetchMethod == 'self'">自行搭建來源</p>
 				</ion-label>
+			</ion-item>
+			<ion-item v-if="config.fetchMethod == 'self'">
+				<ion-label position="stacked">資料來源URL</ion-label>
+				<ion-input placeholder="https://your.api" v-model='apiBaseUrl'></ion-input>
 			</ion-item>
 		</ion-list>
 		<ion-list-header>
-			<ion-label>資料管理</ion-label>
+			<ion-label>管理資料</ion-label>
 		</ion-list-header>
 		<ion-list>
+			<ion-item button @click="updateData">
+				<ion-icon :icon="cloudDownloadOutline" slot="start" />
+				<ion-label>
+					<h5>更新路線資料</h5>
+				</ion-label>
+			</ion-item>
+			<ion-item button @click="downloadData">
+				<ion-icon :icon="reloadOutline" slot="start" />
+				<ion-label>
+					<h5>重新下載路線資料</h5>
+				</ion-label>
+			</ion-item>
 			<ion-item button @click="clearStarred">
+				<ion-icon :icon="starHalfOutline" slot="start" />
 				<ion-label>
 					<h5>清除所有已標記的路線</h5>
 				</ion-label>
 			</ion-item>
 			<ion-item button @click="confirmClearData">
+				<ion-icon :icon="trashOutline" slot="start" />
 				<ion-label>
 					<h5>重設所有設定</h5>
 				</ion-label>
@@ -51,28 +71,40 @@
 <script>
 import { ref } from 'vue';
 import { Dialog } from '@capacitor/dialog'
-import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController} from '@ionic/vue';
-import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
+import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonToolbar, IonInput, actionSheetController} from '@ionic/vue';
+import { chevronBack, languageOutline, serverOutline, cloudDownloadOutline, reloadOutline, starHalfOutline, trashOutline} from 'ionicons/icons'
 import presentToast from '@/components/presentToast.js';
 import localforage from 'localforage';
 
 export default {
-	name: "Option",
-	components: { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem,  IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar },
-	emits: ['closeOption'],
+	name: "Option-popup",
+	components: { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem,  IonIcon, IonButton, IonButtons, IonToolbar, IonInput },
+	emits: ['closeOption', 'updateData', 'downloadData'],
 	setup() {
 		const config = ref({})
+		const apiBaseUrl = ref('');
 		return {
 			chevronBack,
-			config
+			languageOutline,
+			serverOutline,
+			cloudDownloadOutline,
+			reloadOutline,
+			starHalfOutline,
+			trashOutline,
+			config,
+			apiBaseUrl
 		}
 	},
 	async mounted() {
 		this.config = await localforage.getItem('config');
+		this.apiBaseUrl = this.config.apiBaseUrl;
 	},
 	methods: {
 		closeOption() {
 			this.$emit('closeOption');
+		},
+		async updateApiUrl(){
+			await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
 		},
 		async clearStarred() {
 			const {value} = await Dialog.confirm({
@@ -101,19 +133,58 @@ export default {
 		async presentLangAction(){
 			const langActions = [{
 				text: '正體中文',
-				data: { action: 'lang-zh' }
+				data: { action: 'zh' }
 			},
 			{
 				text: 'English',
-				data: { action: 'lang-en' }
+				data: { action: 'en' }
 			}];
 			const langSheet = await actionSheetController.create({
-				header: 'Select Language / 請選擇語言',
+				header: '請選擇語言 / Select Language ',
 				buttons: langActions
 			});
 			await langSheet.present();
 			const res = await langSheet.onDidDismiss();
-			console.log(res.data.action);
+			if (res.data){
+				if (this.config.lang != res.data.action){
+					this.config.lang = res.data.action
+					await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
+				}
+			}
+		},
+		async presentSourceAction(){
+			const sourceActions = [{
+				text: '預設',
+				data: { action: 'default' }
+			},
+				{
+					text: '來自gov.hk',
+					data: {action: 'hkgov'}
+				},
+				{
+					text: '自行搭建來源',
+					data: {action: 'self'}
+				}];
+			const sourceSheet = await actionSheetController.create({
+				header: '請選擇資料來源',
+				buttons: sourceActions
+			});
+			await sourceSheet.present();
+			const res = await sourceSheet.onDidDismiss();
+			if (res.data && this.config.fetchMethod != res.data.action){
+				this.config.fetchMethod = res.data.action;
+				await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
+				await presentToast('info', '請按管理資料 > 重新下載路線資料 以反映設定')
+			}
+		}
+	},
+	watch:{
+		async apiBaseUrl(){
+			this.config = {
+				...this.config,
+				apiBaseUrl: this.apiBaseUrl
+			}
+			await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));	
 		}
 	}
 };
