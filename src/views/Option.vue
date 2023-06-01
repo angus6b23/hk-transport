@@ -14,7 +14,7 @@
 			<ion-label>基本</ion-label>
 		</ion-list-header>
 		<ion-list>
-			<ion-item button>
+			<ion-item button @click='presentLangAction'>
 				<ion-label>
 					<h5>語言 / Language</h5>
 					<p v-if="config.lang == 'zh'">正體中文</p>
@@ -51,7 +51,7 @@
 <script>
 import { ref } from 'vue';
 import { Dialog } from '@capacitor/dialog'
-import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar } from '@ionic/vue';
+import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController} from '@ionic/vue';
 import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import presentToast from '@/components/presentToast.js';
 import localforage from 'localforage';
@@ -68,7 +68,7 @@ export default {
 		}
 	},
 	async mounted() {
-		this.config = await localforage.getItem('config')
+		this.config = await localforage.getItem('config');
 	},
 	methods: {
 		closeOption() {
@@ -97,6 +97,23 @@ export default {
 				presentToast('info', '已重設所有設定，將會在3秒後重新載入');
 				setTimeout(()=>{ location.reload() }, 3000)
 			}
+		},
+		async presentLangAction(){
+			const langActions = [{
+				text: '正體中文',
+				data: { action: 'lang-zh' }
+			},
+			{
+				text: 'English',
+				data: { action: 'lang-en' }
+			}];
+			const langSheet = await actionSheetController.create({
+				header: 'Select Language / 請選擇語言',
+				buttons: langActions
+			});
+			await langSheet.present();
+			const res = await langSheet.onDidDismiss();
+			console.log(res.data.action);
 		}
 	}
 };
