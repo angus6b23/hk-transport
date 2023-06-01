@@ -183,9 +183,6 @@ export default defineComponent({
 		closeOption() {
 			this.optionIsOpen = false;
 		},
-		closeOption() {
-			this.$refs.modal.$el.dismiss();
-		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
 			const starredOriginal = await localforage.getItem('starred');
