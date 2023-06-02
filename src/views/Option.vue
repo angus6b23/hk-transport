@@ -71,8 +71,9 @@
 <script>
 import { ref } from 'vue';
 import { Dialog } from '@capacitor/dialog'
-import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonToolbar, IonInput, actionSheetController} from '@ionic/vue';
+import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonToolbar, IonInput, actionSheetController, loadingController } from '@ionic/vue';
 import { chevronBack, languageOutline, serverOutline, cloudDownloadOutline, reloadOutline, starHalfOutline, trashOutline} from 'ionicons/icons'
+import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js';
 import localforage from 'localforage';
 
@@ -129,6 +130,38 @@ export default {
 				presentToast('info', '已重設所有設定，將會在3秒後重新載入');
 				setTimeout(()=>{ location.reload() }, 3000)
 			}
+		},
+		async updateData(){
+			const loading = await loadingController.create({
+				message: '正在更新資料<br><span id="loading-progress"><span>',
+			});
+			loading.present();
+			if (this.config.fetchMethod == 'self'){
+				await fetchApiData(this.config.apiBaseUrl);
+			} else {
+				await fetchApiData();
+			}
+			loading.dismiss();
+			location.reload();
+		},
+		async downloadData(){
+			const loading = await loadingController.create({
+				message: '正在重新下載資料<br><span id="loading-progress"><span>',
+			});
+			loading.present();
+			let keys = await localforage.keys();
+			for (let key of keys){
+				if (key !== 'config' && key != 'starred'){
+					await localforage.removeItem(key);
+				}
+			}
+			if (this.config.fetchMethod == 'self'){
+				await fetchApiData(this.config.apiBaseUrl);
+			} else {
+				await fetchApiData();
+			}
+			loading.dismiss();
+			location.reload();
 		},
 		async presentLangAction(){
 			const langActions = [{
