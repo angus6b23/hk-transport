@@ -51,7 +51,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading } from '@ionic/vue';
+import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, IonLoading } from '@ionic/vue';
 import { square, bus, busOutline, speedometer, speedometerOutline, boat, boatOutline, train, trainOutline } from 'ionicons/icons';
 import { BIconTruckFrontFill, BIconTruckFront, BIconTrainFront, BIconTrainFrontFill, BIconTrainLightrailFront, BIconTrainLightrailFrontFill } from 'bootstrap-icons-vue'
 import localforage from 'localforage';
@@ -61,7 +61,7 @@ import Landing from '@/views/Landing.vue';
 
 export default defineComponent({
     name: 'TabsPage',
-    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, BIconTruckFrontFill, BIconTruckFront, BIconTrainFront, BIconTrainFrontFill, BIconTrainLightrailFront, BIconTrainLightrailFrontFill, Landing },
+    components: { IonLabel, IonTabs, IonTabBar, IonTabButton, IonIcon, IonPage, IonRouterOutlet, IonLoading, BIconTruckFrontFill, BIconTruckFront, BIconTrainFront, BIconTrainFrontFill, BIconTrainLightrailFront, BIconTrainLightrailFrontFill, Landing },
     setup() {
         const settingFound = ref(true);
         const config = ref({});
@@ -156,8 +156,9 @@ export default defineComponent({
 }
 
 .scrollable-item {
-    min-width: 75px;
+    min-width: 96px;
 }
+
 @media screen and (min-width: 1000px) {
     .scrollable-bar{
         justify-content: center;
