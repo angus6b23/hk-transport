@@ -264,7 +264,6 @@ export default defineComponent({
 			this.query = ''
 		},
 		async swapDirection(route = undefined) {
-			let swapFilter = [];
 			if (route) {
 				this.modalIsOpen = false;
 				await sleep(100);
@@ -273,24 +272,21 @@ export default defineComponent({
 				this.modalIsOpen = true;
 				console.log(this.itemSelected);
 			} else {
-				if (this.itemSelected.company.includes('NLB')) { // NLB use different routeNo for different directions
-					swapFilter = this.data.filter(route => route.company.includes('NLB') && route.routeNo == this.itemSelected.routeNo && route.direction != this.itemSelected.direction);
-				} else {
-					swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
-				}
-				if (swapFilter.length == 0) {
 					presentToast('error', '此路線未有對頭車')
-				} else {
-					this.modalIsOpen = false;
-					await sleep(100);
-					this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
-					this.modalIsOpen = true;
-				}
 			}
 		},
 		getAltRoutes() {
-			if (this.itemSelected.type == 'bus' && this.itemSelected.company.includes('KMB')) {
+			if (this.itemSelected.type == 'bus' && this.itemSelected.company.includes('KMB')) { //Filter for KMB: Same company, same routeNo (different direction / servicemode / specialtype)
 				this.altRoutes = this.data.filter(altRoute => altRoute.routeNo == this.itemSelected.routeNo && altRoute.company.join('') == this.itemSelected.company.join('') && (altRoute.direction != this.itemSelected.direction || altRoute.serviceMode != this.itemSelected.serviceMode || altRoute.specialType != this.itemSelected.specialType));
+			} else if (this.itemSelected.type == 'bus' && this.itemSelected.company.includes('NLB')) { // Filter for NLB: Same routeNo with different routeId
+				this.altRoutes = this.data.filter(altRoute => altRoute.company.includes('NLB') && altRoute.routeNo == this.itemSelected.routeNo && altRoute.routeId != this.itemSelected.routeId)
+			} else if (this.itemSelected.type == 'bus'){
+				this.altRoutes = this.data.filter(altRoute => altRoute.company.join('') == this.itemSelected.company.join('') && altRoute.routeNo == this.itemSelected.routeNo && (altRoute.routeId != this.itemSelected.routeId || altRoute.direction != this.itemSelected.direction));
+			}
+			else if (this.itemSelected.type == 'minibus'){ // Filter for minibus: Same district, same routeNo, different routeId / direction
+				this.altRoutes = this.data.filter(altRoute => altRoute.routeNo == this.itemSelected.routeNo && altRoute.district == this.itemSelected.district && (altRoute.routeId != this.itemSelected.routeId || altRoute.direction != this.itemSelected.direction))
+			} else {
+				this.altRoutes = this.data.filter(altRoute => altRoute.routeId == this.itemSelected.routeId && altRoute.direction != this.itemSelected.direction);
 			}
 			console.log(this.altRoutes);
 		}
