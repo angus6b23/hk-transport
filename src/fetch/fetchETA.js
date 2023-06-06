@@ -43,7 +43,6 @@ export async function fetchKMBETA(route) {
                 }
             }
         });
-        console.log(etaData);
     } catch (err) {
         console.error(err);
         etaData.status = 'netError'
@@ -54,7 +53,6 @@ export async function fetchKMBETA(route) {
         element.etas.sort((a, b) => a - b);
     })
     etaData.status = 'success';
-    console.log(etaData);
     return etaData;
 }
 
