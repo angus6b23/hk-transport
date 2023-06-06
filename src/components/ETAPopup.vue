@@ -217,12 +217,12 @@ export default {
 			this.$emit('swapDirection', this.altRoutes[0])
 		},
 		populateETABySeq(etaData){
-			if (etaData.status == 'success' && etaData.length > 0) {
+			if (etaData.status == 'success' && etaData.data.length > 0) {
 				etaData.data.forEach(etaItem => {
 					const index = this.item.stops.findIndex(x => x.seq == etaItem.seq);
 					if (index != -1) {
 						this.item.stops[index].etaMessage = etaItem.note;
-						this.item.stops[index].etas = [...etaItemetas];
+						this.item.stops[index].etas = [...etaItem.etas];
 					}
 				})
 			}
