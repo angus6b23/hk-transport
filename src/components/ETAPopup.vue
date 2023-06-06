@@ -214,7 +214,29 @@ export default {
 			this.$emit('removeStar');
 		},
 		swapDirection() {
-			this.$emit('swapDirection')
+			this.$emit('swapDirection', this.altRoutes[0])
+		},
+		populateETABySeq(etaData){
+			if (etaData.status == 'success' && etaData.length > 0) {
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.seq == etaItem.seq);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItemetas];
+					}
+				})
+			}
+		},
+		populateETAById(etaData){
+			if (etaData.status == 'success' && etaData.data.length > 0) {
+				etaData.data.forEach(etaItem => {
+					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId || x.stopId == etaItem.stationId);
+					if (index != -1) {
+						this.item.stops[index].etaMessage = etaItem.note;
+						this.item.stops[index].etas = [...etaItem.etas];
+					}
+				})
+			}
 		},
 		async getStopID() { //Fetch Stop ids of CTB and NWFB bus from api
 			if (!('stopId' in this.item.stops[0])) {
@@ -250,15 +272,7 @@ export default {
 		},
 		async getKMB() { //Get KMB route etas from api
 			const etaData = await fetchKMBETA(this.item);
-			if (etaData.status == 'success') {
-				etaData.data.forEach(element => {
-					const index = this.item.stops.findIndex(x => x.seq == element.seq);
-					if (index != -1) {
-						this.item.stops[index].etaMessage = element.note;
-						this.item.stops[index].etas = [...element.etas];
-					}
-				})
-			}
+			this.populateETABySeq(etaData);
 		},
 		async getCTBETA(seq) {
 			const clickedIndex = this.item.stops.findIndex(x => x.seq == seq);
@@ -276,41 +290,15 @@ export default {
 		},
 		async getMtrBus() {
 			const etaData = await fetchMtrBusEta(this.item);
-			// console.log(etaData);
-			if (etaData.status == 'success' && etaData.data.length > 0) {
-				etaData.data.forEach(etaItem => {
-					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stationId);
-					if (index != -1) {
-						this.item.stops[index].etaMessage = etaItem.note;
-						this.item.stops[index].etas = [...etaItem.etas];
-					}
-				})
-			}
+			this.populateETAById(etaData);
 		},
 		async getNLB() {
 			const etaData = await fetchNLBEta(this.item);
-			// console.log(etaData)
-			if (etaData.status == 'success' && etaData.data.length > 0) {
-				etaData.data.forEach(etaItem => {
-					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
-					if (index != -1) {
-						this.item.stops[index].etaMessage = etaItem.note;
-						this.item.stops[index].etas = [...etaItem.etas];
-					}
-				})
-			}
+			this.populateETAById(etaData);
 		},
 		async getMinibus() {
 			const etaData = await fetchMinibusEta(this.item);
-			if (etaData.status == 'success' && etaData.data.length > 0) {
-				etaData.data.forEach(etaItem => {
-					const index = this.item.stops.findIndex(x => x.stopId == etaItem.stopId);
-					if (index != -1) {
-						this.item.stops[index].etaMessage = etaItem.note;
-						this.item.stops[index].etas = [...etaItem.etas];
-					}
-				})
-			}
+			this.populateETAById(etaData);
 		},
 		async getMtr() {
 			const etaData = await fetchMtrEta(this.item);
