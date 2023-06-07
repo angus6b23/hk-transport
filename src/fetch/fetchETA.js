@@ -106,16 +106,22 @@ export async function fetchBulkCTBETA(route){
         const etaRes = await axios.all(etaReq);
         for (let stopEta of etaRes){
             let data = stopEta.data.data;
-            let ETAs = [];
+            if (route.CTBDirection){
+                data = data.filter( item => item.dir == route.CTBDirection);
+            } else {
+                let direction = (route.direction) == 1 ? 'O' : 'I'
+                data = data.filter(item => item.dir ==  direction);
+            }
+            let arrivalTimes = [];
             for (let item of data){
                 if (item.eta !== ''){
-                    ETAs.push(getTimeDifference(new Date(item.eta), new Date(item.data_timestamp)))
+                    arrivalTimes.push(getTimeDifference(new Date(item.eta), new Date(item.data_timestamp)))
                 }
             }
             etaData.data.push({
                 stopId: data[0] ? data[0].stop : undefined,
-                etas: ETAs,
-                note: (ETAs.length == 0) ? 'N/A' : ''
+                etas: arrivalTimes,
+                note: (arrivalTimes.length == 0) ? 'N/A' : ''
             })
         }
         etaData.status = 'success';

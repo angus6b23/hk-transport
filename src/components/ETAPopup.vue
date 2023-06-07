@@ -58,7 +58,7 @@
 				<!-- Show list view for stops and etas -->
 				<ion-list v-else>
 					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :noEta="noEta"
-						:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
+				:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
 				</ion-list>
 			</section>
 			<!-- Route Info -->
@@ -124,38 +124,38 @@ export default {
 		if (this.noEta) {
 			presentToast('info', '此路線未提供到站報時服務')
 		}
-		// Show loading for minibus
-		if (this.item.type === 'minibus') {
-
-		}
 		// Fetch KMB ETAs
 		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
 			this.getKMB();
 			this.interval = setInterval(() => this.getKMB(), 10000);
 		}
 		// Fetch CTB and NWFB bus stop ids
-		if (this.item.type === 'bus' && (this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
+		else if (this.item.type === 'bus' && this.item.company.length == 1 &&(this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
 			await this.getStopID();
 			this.getCTB();
 		}
+		// Fetch Bus routes operated by multiple companies
+		else if (this.item.type === 'bus' && this.item.company.length >= 2){
+			this.getMultiple();
+		}
 		// Fetch MTR Buses ETAs
-		if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
+		else if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
 			this.getMtrBus();
 			this.interval = setInterval(() => this.getMtrBus(), 10000);
 		}
 		// Fetch NLB Buses ETAs
-		if (this.item.type === 'bus' && this.item.company.includes('NLB')){
+		else if (this.item.type === 'bus' && this.item.company.includes('NLB')){
 			this.getNLB();
 		}
-		if (this.item.type === 'minibus'){
+		else if (this.item.type === 'minibus'){
 			this.getMinibus();
 		}
-		if (this.item.type === 'mtr'){
+		else if (this.item.type === 'mtr'){
 			this.getMtr();
 		}
- //		if (this.item.type === 'lightRail'){
- //			this.getLightRail();
- //		}
+		//		if (this.item.type === 'lightRail'){
+		//			this.getLightRail();
+		//		}
 		// Get Coordinates
 		try {
 			this.currentLocation = await Geolocation.getCurrentPosition();
@@ -245,7 +245,7 @@ export default {
 			}
 		},
 		async getStopID() { //Fetch Stop ids of CTB and NWFB bus from api
-			if (!('stopId' in this.item.stops[0])) {
+			if (this.item.stops.length > 0 && !('stopId' in this.item.stops[0])) {
 				const stopData = await fetchBusStopID(this.item);
 				// console.log(stopData);
 				if (stopData.status == 'success') {
@@ -296,8 +296,70 @@ export default {
 		},
 		async getCTB(){
 			const etaData = await fetchBulkCTBETA(this.item);
-			console.log(etaData);
 			this.populateETAById(etaData);
+		},
+		async getMultiple(){
+			const kmbReq = fetchKMBETA(this.item);
+			const ctbReq = fetchBulkCTBETA(this.item);
+			let data = await Promise.all([kmbReq, ctbReq]);
+			let [kmbData, ctbData] = data;
+			let combinedList = [];
+			//combined item = { seq: number, data:[{tag: string, eta: number, note}]};
+			if (kmbData.status === 'success'){
+				for (let kmb of kmbData.data){
+					let etaArray = kmb.etas.map(item => {
+						return {
+							tag: 'KMB',
+							eta: item,
+							note: kmb.note
+						}
+					});
+					combinedList.push({
+						seq: kmb.seq,
+						data: etaArray
+					})
+				}
+			}
+			console.log(ctbData);
+			if (ctbData.status === 'success'){
+				const companyCode = this.item.company.includes('CTB') ? 'CTB' : 'NWFB';
+				for (let ctb of ctbData.data){
+					let index = this.item.stops.findIndex(stop => stop.altId == ctb.stopId);
+					if (index != -1){
+						let seq = this.item.stops[index].seq;
+						let combinedListIndex = combinedList.findIndex( item => item.seq == seq);
+						let etaArray = ctb.etas.map(item => {
+							return {
+								tag: companyCode,
+								eta: item,
+								note: ctb.note
+							}
+						});
+						if (combinedListIndex != -1) {
+							combinedList[combinedListIndex].data = [...combinedList[combinedListIndex].data, ...etaArray]
+						} else {
+							combinedList.push({
+								seq: seq,
+								data: etaArray
+							});
+						}
+					}
+				}
+			}
+			// Sort the etas inside every stop in combined list
+			for (let stop of combinedList){
+				stop.data.sort((a,b) => a.eta - b.eta);
+			}
+			// Populate the combined List
+			console.log(combinedList)
+			for (let i = 0; i < combinedList.length; i++){
+				let targetItem = combinedList[i];
+				let targetStopIndex = this.item.stops.findIndex(stop => stop.seq == targetItem.seq);
+				if (targetStopIndex != -1){
+					let etaArray = targetItem.data.map(item => item.eta);
+					this.item.stops[targetStopIndex].etas = etaArray.slice(0, 3);
+				}
+			}
 		},
 		async getMtrBus() {
 			const etaData = await fetchMtrBusEta(this.item);
