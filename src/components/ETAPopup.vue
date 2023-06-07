@@ -152,9 +152,9 @@ export default {
 		if (this.item.type === 'mtr'){
 			this.getMtr();
 		}
-		if (this.item.type === 'lightRail'){
-			this.getLightRail();
-		}
+ //		if (this.item.type === 'lightRail'){
+ //			this.getLightRail();
+ //		}
 		// Get Coordinates
 		try {
 			this.currentLocation = await Geolocation.getCurrentPosition();
