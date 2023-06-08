@@ -245,16 +245,12 @@ export default defineComponent({
 			switch (type) {
 				case 'bus':
 					return '巴士'
-					break;
 				case 'minibus':
 					return '專線小巴'
-					break;
 				case 'ferry':
 					return '渡輪'
-					break;
 				default:
 					return '未知'
-					break;
 			}
 		},
 		listAll() {

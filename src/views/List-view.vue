@@ -23,18 +23,29 @@
 				<div v-for="(route, index) in data" :key="route.id">
 					<ion-item v-if="route.direction == 1" button>
 						<ion-grid>
-							<ion-row class="open-modal" expand="block" @click="openModal(index)">
-								<ion-col v-if="route.type == 'mtr' || route.type == 'lightRail'" size-xs="3" size-md="1"
-									class="route-no ion-align-items-center">
+							<!-- Row Button for MTR and lightRail -->
+							<ion-row v-if="route.type == 'mtr' || route.type == 'lightRail'" class="open-modal" expand="block" @click="openModal(index)">
+								<ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
 									<div v-if="route.type == 'mtr'" class="line-color-indicator"
 										:style="{ 'background-color': '#' + route.color }"></div>
 									<h3 v-else>{{ route.routeId }}</h3>
 								</ion-col>
 								<ion-col size-xs="9" size-md="11">
-									<!-- Badges for tram -->
 									<h3 v-if="route.type == 'lightRail'" class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.originTC }} - {{ route.destTC }}</h3>
 									<h3 v-else class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC
 									}}</h3>
+								</ion-col>
+							</ion-row>
+							<!-- Row Button for Tram -->
+							<ion-row v-if="route.type == 'tram'" class="open-modal" expand="block" @click="openModal(index)">
+								<ion-col size-xs="8" size-md="10">
+									<h5 class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC }}</h5>
+								</ion-col>
+								<ion-col size-xs="2" size-md="1" class="d-flex">
+									<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">西行</ion-button>
+								</ion-col>
+								<ion-col size-xs="2" size-md="1" class="d-flex">
+									<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">東行</ion-button>
 								</ion-col>
 							</ion-row>
 						</ion-grid>
@@ -51,16 +62,17 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton } from '@ionic/vue';
 import { cog } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
+import presentToast from '@/components/presentToast'
 import ETAPopup from '@/components/ETAPopup.vue';
 import Option from '@/views/Option.vue'
 import sleep from '@/components/sleep.js'
 
 export default defineComponent({
 	name: 'ListView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup, Option },
+	components: { IonHeader, IonToolbar, IonContent, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup, Option },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -96,6 +108,13 @@ export default defineComponent({
 			console.log(this.altRoutes);
 			this.modalIsOpen = true;
 		},
+		openAltModal(index){
+			let alt = this.data[index];
+			let targetIndex = this.data.findIndex(item => item.routeId == alt.routeId && item.direction != alt.direction); 
+			if (targetIndex != -1){
+				this.openModal(targetIndex);
+			}
+		},
 		closeModal() {
 			this.modalIsOpen = false;
 		},
@@ -123,7 +142,7 @@ export default defineComponent({
 		getAltRoutes(){
 			if(this.type == 'tram'){
 				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeNo == this.itemSelected.routeNo && item.direction != this.itemSelected.direction)));
-			} else if (this.type =='mtr'){
+			} else if (this.type =='mtr' || this.type == 'lightRail'){
 				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeId == this.itemSelected.routeId && item.direction != this.itemSelected.direction)));
 			}
 		},
@@ -136,16 +155,7 @@ export default defineComponent({
 				this.modalIsOpen = true;
 				console.log(this.itemSelected);
 			} else {
-				let swapFilter = this.data.filter(route => route.routeId == this.itemSelected.routeId && route.direction != this.itemSelected.direction);
-				if (swapFilter.length == 0) {
-					presentToast('error', '此路線未有對頭車')
-				} else {
-					this.modalIsOpen = false;
-					await sleep(100);
-					this.itemSelected = JSON.parse(JSON.stringify(swapFilter[0]));
-					this.modalIsOpen = true;
-					console.log(this.itemSelected)
-				}
+				presentToast('error', '此路線未有對頭車')
 			}
 		}
 	},
@@ -156,7 +166,7 @@ export default defineComponent({
 	},
 	computed: {
 		checkNoEta() {
-			if (this.type == 'ferry' || this.type == 'tram') {
+			if (this.type == 'ferry' || this.type == 'tram' || this.type == 'lightRail') {
 				return true
 			} else {
 				return false
@@ -179,7 +189,20 @@ export default defineComponent({
 	width: 80%;
 	border-radius: 10px;
 }
-
+.d-flex{
+	display: flex;
+}
+.direction-button{
+	width: 100%;
+	align-self: center;
+	justify-self: center;
+}
+.direction1-button{
+	--background: #5E6FA1;
+}
+.direction2-button{
+	--background: #A1905E;
+}
 .route-no {
 	display: flex;
 }

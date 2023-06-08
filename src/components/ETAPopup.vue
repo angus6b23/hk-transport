@@ -7,6 +7,10 @@
 				{{ item.routeNo }}
 				<span class="ion-margin-start">{{ item.destTC }}</span>
 			</ion-title>
+			<ion-title v-else-if="item.type == 'lightRail'">
+				{{ item.routeNameEN }}
+				<span class="ion-margin-start">{{ item.originTC }} - {{ item.destTC }}</span>
+			</ion-title>
 			<ion-title v-else>{{ item.routeNameTC }}</ion-title>
 			<ion-buttons slot="start" class="top-buttons">
 				<ion-button @click="closeModal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
@@ -75,7 +79,7 @@
 
 <script>
 import { ref } from 'vue';
-import { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController } from '@ionic/vue';
+import { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController } from '@ionic/vue';
 import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
@@ -90,14 +94,14 @@ import presentToast from '@/components/presentToast.js';
 
 export default {
 	name: "ETAPopup",
-	components: { IonPage, IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
+	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
 	props: ['item', 'starred', 'noEta', 'altRoutes'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
 		const popupLoading = ref(false);
 		const item = ref(props.item);
 		const popupView = ref('default');
-		const starred = props.starred;
+		const starred = ref(props.starred);
 		const altRoutes = ref(props.altRoutes);
 		const noEta = ref(props.noEta);
 		const itemOptions = ref({ clickable: false });
