@@ -34,65 +34,28 @@
 					<div v-for="(route, index) in displayArray" :key="route.id">
 						<ion-item button>
 							<ion-grid>
-								<ion-row class="open-modal" expand="block" @click="openModal(index)">
-									<ion-col v-if="type != 'ferry'" size-xs="3" size-md="1"
-										class="route-no ion-align-items-center">
+								<!-- Rows for Bus and minibus -->
+								<ion-row v-if="type == 'bus' || type == 'minibus'" class="open-modal" expand="block" @click="openModal(index)">
+									<ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
 										<h3 v-if="route.routeNo.length < 10">{{ route.routeNo }}</h3>
-										<h3 v-else> </h3>
+										<h3 v-else> </h3> <!-- Hide Route with long route number -->
 									</ion-col>
 									<ion-col size-xs="9" size-md="11">
-										<!-- Badges for bus -->
-										<div v-if="route.type === 'bus'">
-											<ion-badge v-if="route.company.includes('KMB')"
-												class="kmb-badge ion-margin-start">九巴</ion-badge>
-											<ion-badge v-if="route.company.includes('CTB')"
-												class="ctb-badge ion-margin-start">城巴</ion-badge>
-											<ion-badge v-if="route.company.includes('LWB')"
-												class="lwb-badge ion-margin-start">龍運</ion-badge>
-											<ion-badge v-if="route.company.includes('NWFB')"
-												class="nwfb-badge ion-margin-start">新巴</ion-badge>
-											<ion-badge v-if="route.company.includes('DB')"
-												class="db-badge ion-margin-start">愉景</ion-badge>
-											<ion-badge v-if="route.company.includes('NLB')"
-												class="nlb-badge ion-margin-start">大嶼</ion-badge>
-											<ion-badge v-if="route.company.includes('PI')"
-												class="pi-badge ion-margin-start">馬灣</ion-badge>
-											<ion-badge v-if="route.company.includes('XB')"
-												class="xb-badge ion-margin-start">過境</ion-badge>
-											<ion-badge v-if="route.company.includes('LRTFeeder')"
-												class="ltr-badge ion-margin-start">港鐵</ion-badge>
-											<ion-badge v-if="route.serviceMode.includes('N')"
-												class="night-badge ion-margin-start">晚間</ion-badge>
-											<ion-badge v-if="route.serviceMode == 'T'"
-												class="special-badge ion-margin-start">特別</ion-badge>
-										</div>
-										<div v-if="route.type === 'minibus'">
-											<ion-badge v-if="route.district.includes('HKI')"
-												class="hki-badge ion-margin-start">港島</ion-badge>
-											<ion-badge v-if="route.district.includes('KLN')"
-												class="kln-badge ion-margin-start">九龍</ion-badge>
-											<ion-badge v-if="route.district.includes('NT')"
-												class="nt-badge ion-margin-start">新界</ion-badge>
-											<ion-badge v-if="route.serviceMode.includes('N')"
-												class="night-badge ion-margin-start">晚間</ion-badge>
-											<ion-badge v-if="route.serviceMode == 'T'"
-												class="special-badge ion-margin-start">特別</ion-badge>
-										</div>
-										<div v-if="route.type === 'ferry'">
-											<ion-badge v-if="route.district == 'KAITO'"
-												class="hki-badge ion-margin-start">街渡</ion-badge>
-											<ion-badge v-if="route.district == 'OUTLYING'"
-												class="kln-badge ion-margin-start">離島</ion-badge>
-											<ion-badge v-if="route.district == 'INNER'"
-												class="nt-badge ion-margin-start">內陸</ion-badge>
-											<ion-badge v-if="route.direction == 1"
-												class="direction1-badge ion-margin-start">順行</ion-badge>
-											<ion-badge v-if="route.direction == 2"
-												class="direction2-badge ion-margin-start">逆行</ion-badge>
-										</div>
-										<h3 v-if="type == 'ferry'" class="ion-no-margin ion-margin-start">{{
-											route.routeNameTC }}</h3>
-										<h3 v-else class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
+										<Badges :route="route" />
+										<h3 class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
+									</ion-col>
+								</ion-row>
+								<!-- Rows for Ferry -->
+								<ion-row v-else class="open-modal" expand="block" @click="openModal(index)">
+									<ion-col size-xs="8" size-md="10">
+										<Badges :route="route" />
+										<h3 class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h3>
+									</ion-col>
+									<ion-col size-xs="2" size-md="1" class="d-flex">
+										<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">順行</ion-button>
+									</ion-col>
+									<ion-col size-xs="2" size-md="1" class="d-flex">
+										<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">逆行</ion-button>
 									</ion-col>
 								</ion-row>
 							</ion-grid>
@@ -113,26 +76,27 @@
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
 			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes"
-				@closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData"
-				@swapDirection="swapDirection" />
+	   @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData"
+	   @swapDirection="swapDirection" />
 		</ion-modal>
 	</ion-page>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon, IonTitle, IonButtons } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonTitle, IonButtons } from '@ionic/vue';
 import { cog, chevronBack } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js';
 import ETAPopup from '@/components/ETAPopup.vue';
-import Option from '@/views/Option.vue'
+import Option from '@/views/Option.vue';
+import Badges from '@/components/Badges';
 import sleep from '@/components/sleep.js'
 import localforage from 'localforage';
 import presentToast from '@/components/presentToast.js'
 
 export default defineComponent({
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -173,6 +137,19 @@ export default defineComponent({
 			console.log(this.itemSelected)
 			this.getAltRoutes();
 			this.modalIsOpen = true;
+		},
+		openAltModal(index){
+			let alt = this.displayArray[index];
+			let targetIndex = this.data.findIndex(item => item.routeId === alt.routeId && item.direction != alt.direction); 
+			if (targetIndex != -1){
+				this.itemSelected = JSON.parse(JSON.stringify(this.data[targetIndex]));
+				console.log(this.itemSelected);
+				this.getAltRoutes();
+				this.modalIsOpen = true
+			} else {
+				presentToast('info', '未找到相關方向，正在顯示順行');
+				this.openModal(index);
+			}
 		},
 		closeModal() {
 			this.modalIsOpen = false;
@@ -227,7 +204,7 @@ export default defineComponent({
 				this.displayArray = this.starred; //Show starred bus if query is empty
 			} else {
 				if (this.type == 'ferry') {
-					this.displayArray = this.data.filter(x => x.routeNameTC.includes(newQuery) || x.routeNameEN.includes(newQuery));
+					this.displayArray = this.data.filter(x => x.direction == 1 && (x.routeNameTC.includes(newQuery) || x.routeNameEN.includes(newQuery)));
 				} else {
 					// Limit small number query
 					this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
@@ -268,7 +245,7 @@ export default defineComponent({
 				this.modalIsOpen = true;
 				console.log(this.itemSelected);
 			} else {
-					presentToast('error', '此路線未有對頭車')
+				presentToast('error', '此路線未有對頭車')
 			}
 		},
 		getAltRoutes() {
@@ -284,7 +261,6 @@ export default defineComponent({
 			} else {
 				this.altRoutes = this.data.filter(altRoute => altRoute.routeId == this.itemSelected.routeId && altRoute.direction != this.itemSelected.direction);
 			}
-			console.log(this.altRoutes);
 		}
 	},
 	async mounted() {
@@ -330,70 +306,22 @@ export default defineComponent({
 	padding-bottom: 10px;
 }
 
-/* Bus Badges color */
-.kmb-badge {
-	--background: #e51f28;
-}
-
-.lwb-badge {
-	--background: #f05323;
-}
-
-.ctb-badge {
-	--background: #0563ad;
-}
-
-.nwfb-badge {
-	--background: #6e449d;
-}
-
-.nlb-badge {
-	--background: #00897b;
-}
-
-.pi-badge {
-	--background: #febc22;
-}
-
-.db-badge {
-	--background: #e7222b;
-}
-
-.xb-badge {
-	--background: #ff67de;
-}
-
-/* Minibus Badges */
-.hki-badge {
-	--background: #e66dca;
-}
-
-.kln-badge {
-	--background: #6dcae6;
-}
-
-.nt-badge {
-	--background: #cae66d;
-}
-
-/* Common Badges */
-.night-badge {
-	--background: #36454f;
-}
-
-.special-badge {
-	--background: #663399;
-}
-
-.direction1-badge {
-	--background: #5E6FA1;
-}
-
-.direction2-badge {
-	--background: #A1905E;
-}
-
 .route-no {
 	display: flex;
+}
+
+.d-flex{
+	display: flex;
+}
+.direction-button{
+	width: 100%;
+	align-self: center;
+	justify-self: center;
+}
+.direction1-button{
+	--background: #5E6FA1;
+}
+.direction2-button{
+	--background: #A1905E;
 }
 </style>

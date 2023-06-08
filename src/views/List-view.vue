@@ -105,7 +105,6 @@ export default defineComponent({
 			this.itemSelected = JSON.parse(JSON.stringify(this.data[index])); //Use Deep copy to prevent problems when clicked again
 			this.getAltRoutes();
 			console.log(this.itemSelected);
-			console.log(this.altRoutes);
 			this.modalIsOpen = true;
 		},
 		openAltModal(index){
@@ -113,6 +112,9 @@ export default defineComponent({
 			let targetIndex = this.data.findIndex(item => item.routeId == alt.routeId && item.direction != alt.direction); 
 			if (targetIndex != -1){
 				this.openModal(targetIndex);
+			} else {
+				presentToast('info', '未找到相關方向，正在顯示順行');
+				this.openModal(index);
 			}
 		},
 		closeModal() {
