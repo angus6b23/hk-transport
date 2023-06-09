@@ -53,12 +53,13 @@ export default defineComponent({
 	name: 'Badges',
 	props: ['route'],
 	components: { IonBadge },
-	setup(props){
+	mount(props){
+		console.log('setup called');
 		const route = ref(props.route);
 		return {
 			route
 		}
-	}
+	},
 })
 </script>
 <style scoped>
