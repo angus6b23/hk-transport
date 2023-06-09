@@ -324,7 +324,6 @@ export default {
 					})
 				}
 			}
-			console.log(ctbData);
 			if (ctbData.status === 'success'){
 				const companyCode = this.item.company.includes('CTB') ? 'CTB' : 'NWFB';
 				for (let ctb of ctbData.data){
@@ -361,7 +360,11 @@ export default {
 				let targetStopIndex = this.item.stops.findIndex(stop => stop.seq == targetItem.seq);
 				if (targetStopIndex != -1){
 					let etaArray = targetItem.data.map(item => item.eta);
-					this.item.stops[targetStopIndex].etas = etaArray.slice(0, 3);
+					if (etaArray.length > 0){
+						this.item.stops[targetStopIndex].etas = etaArray.slice(0, 3);
+					} else {
+						this.item.stops[targetStopIndex].etaMessage = 'N/A';
+					}
 				}
 			}
 		},
