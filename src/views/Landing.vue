@@ -138,6 +138,7 @@ export default defineComponent({
         finishConfig(){
             let config = {
                 lang: this.lang,
+                theme: 'system',
                 fetchMethod: this.radioSelect,
                 apiBaseUrl: (this.radioSelect == 'self') ? this.hostUrl : '',
                 dataFilled: false
