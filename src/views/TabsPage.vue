@@ -68,6 +68,7 @@ export default defineComponent({
         const loading = ref(false);
         const loadingMessage = ref('請稍侯...<br>Please Wait...');
         const currentTab = ref('');
+        const body = document.body
         // const afterTabChange = (e) => {
         //     // do something after tab change
         //     currentTab.value = e.tab;
@@ -87,6 +88,7 @@ export default defineComponent({
             loading,
             loadingMessage,
             currentTab,
+            body
         }
     },
     methods: {
@@ -133,6 +135,13 @@ export default defineComponent({
             if (config && config.dataFilled) {
                 this.config = config
                 this.settingFound = true
+                if (config.theme && config.theme == 'dark'){
+                    this.body.classList.toggle('dark', true);
+                } else if (config.theme && config.theme == 'light'){
+                    this.body.classList.toggle('dark', false);
+                } else if (window.matchMedia("(prefers-color-scheme: dark)").matches){
+                    this.body.classList.toggle('dark', true);
+                }
             } else {
                 this.settingFound = false
             }

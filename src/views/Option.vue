@@ -16,20 +16,29 @@
 		<ion-list>
 			<ion-item button @click='presentLangAction'>
 				<ion-icon :icon="languageOutline" slot="start" />
-				<ion-label>
-					<h5>語言 / Language</h5>
-					<p v-if="config.lang == 'zh'">正體中文</p>
-					<p v-else-if="config.lang == 'en'">English</p>
-				</ion-label>
+					<ion-label>
+						<h5>語言 / Language</h5>
+						<p v-if="config.lang == 'zh'">正體中文</p>
+						<p v-else-if="config.lang == 'en'">English</p>
+					</ion-label>
+			</ion-item>
+			<ion-item button @click='presentThemeAction'>
+				<ion-icon :icon="colorPaletteOutline" slot="start" />
+					<ion-label>
+						<h5>主題</h5>
+						<p v-if="config.theme == 'light'">亮色</p>
+						<p v-else-if="config.theme == 'dark'">暗色</p>
+						<p v-else-if="config.theme == 'system'">系統預設</p>
+					</ion-label>
 			</ion-item>
 			<ion-item button @click='presentSourceAction'>
 				<ion-icon :icon="serverOutline" slot="start" />
-				<ion-label>
-					<h5>資料來源</h5>
-					<p v-if="config.fetchMethod == 'default'">預設</p>
-					<p v-else-if="config.fetchMethod == 'hkgov'">來自 gov.hk</p>
-					<p v-else-if="config.fetchMethod == 'self'">自行搭建來源</p>
-				</ion-label>
+					<ion-label>
+						<h5>資料來源</h5>
+						<p v-if="config.fetchMethod == 'default'">預設</p>
+						<p v-else-if="config.fetchMethod == 'hkgov'">來自 gov.hk</p>
+						<p v-else-if="config.fetchMethod == 'self'">自行搭建來源</p>
+					</ion-label>
 			</ion-item>
 			<ion-item v-if="config.fetchMethod == 'self'">
 				<ion-label position="stacked">資料來源URL</ion-label>
@@ -42,27 +51,27 @@
 		<ion-list>
 			<ion-item button @click="updateData">
 				<ion-icon :icon="cloudDownloadOutline" slot="start" />
-				<ion-label>
-					<h5>更新路線資料</h5>
-				</ion-label>
+					<ion-label>
+						<h5>更新路線資料</h5>
+					</ion-label>
 			</ion-item>
 			<ion-item button @click="downloadData">
 				<ion-icon :icon="reloadOutline" slot="start" />
-				<ion-label>
-					<h5>重新下載路線資料</h5>
-				</ion-label>
+					<ion-label>
+						<h5>重新下載路線資料</h5>
+					</ion-label>
 			</ion-item>
 			<ion-item button @click="clearStarred">
 				<ion-icon :icon="starHalfOutline" slot="start" />
-				<ion-label>
-					<h5>清除所有已標記的路線</h5>
-				</ion-label>
+					<ion-label>
+						<h5>清除所有已標記的路線</h5>
+					</ion-label>
 			</ion-item>
 			<ion-item button @click="confirmClearData">
 				<ion-icon :icon="trashOutline" slot="start" />
-				<ion-label>
-					<h5>重設所有設定</h5>
-				</ion-label>
+					<ion-label>
+						<h5>重設所有設定</h5>
+					</ion-label>
 			</ion-item>
 		</ion-list>
 	</ion-content>
@@ -72,7 +81,7 @@
 import { ref } from 'vue';
 import { Dialog } from '@capacitor/dialog'
 import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonToolbar, IonInput, actionSheetController, loadingController } from '@ionic/vue';
-import { chevronBack, languageOutline, serverOutline, cloudDownloadOutline, reloadOutline, starHalfOutline, trashOutline} from 'ionicons/icons'
+import { chevronBack, languageOutline, serverOutline, cloudDownloadOutline, reloadOutline, starHalfOutline, trashOutline, colorPaletteOutline} from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js';
 import localforage from 'localforage';
@@ -84,6 +93,7 @@ export default {
 	setup() {
 		const config = ref({})
 		const apiBaseUrl = ref('');
+		const body = document.body;
 		return {
 			chevronBack,
 			languageOutline,
@@ -92,8 +102,10 @@ export default {
 			reloadOutline,
 			starHalfOutline,
 			trashOutline,
+			colorPaletteOutline,
 			config,
-			apiBaseUrl
+			apiBaseUrl,
+			body
 		}
 	},
 	async mounted() {
@@ -132,17 +144,26 @@ export default {
 			}
 		},
 		async updateData(){
-			const loading = await loadingController.create({
-				message: '正在更新資料<br><span id="loading-progress"><span>',
-			});
-			loading.present();
-			if (this.config.fetchMethod == 'self'){
-				await fetchApiData(this.config.apiBaseUrl);
-			} else {
-				await fetchApiData();
+			const loading = await loadingController.create({ message: '正在更新資料<br><span id="loading-progress"><span>'});
+			try{
+				let res;
+				loading.present();
+				if (this.config.fetchMethod == 'self'){
+					res = await fetchApiData(this.config.apiBaseUrl);
+				} else {
+					res = await fetchApiData();
+				}
+				if (res && !(res instanceof Error)){
+					console.log('hit');
+					loading.dismiss();
+					location.reload();
+				} else {
+					throw new Error(res.message);
+				}
+			} catch(err) {
+				loading.dismiss();
+				presentToast('error', '網絡出錯，請檢查資料來源url 和網絡');
 			}
-			loading.dismiss();
-			location.reload();
 		},
 		async downloadData(){
 			const loading = await loadingController.create({
@@ -168,10 +189,10 @@ export default {
 				text: '正體中文',
 				data: { action: 'zh' }
 			},
-			{
-				text: 'English',
-				data: { action: 'en' }
-			}];
+				{
+					text: 'English',
+					data: { action: 'en' }
+				}];
 			const langSheet = await actionSheetController.create({
 				header: '請選擇語言 / Select Language ',
 				buttons: langActions
@@ -209,7 +230,40 @@ export default {
 				await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
 				await presentToast('info', '請按管理資料 > 重新下載路線資料 以反映設定')
 			}
-		}
+		},
+		async presentThemeAction(){
+			const themeActions = [{
+				text: '系統預設',
+				data: { action: 'system' }
+			},
+				{
+					text: '亮色',
+					data: {action: 'light'}
+				},
+				{
+					text: '暗色',
+					data: {action: 'dark'}
+				}];
+			const themeSheet = await actionSheetController.create({
+				header: '請選擇資料來源',
+				buttons: themeActions
+			});
+			await themeSheet.present();
+			const res = await themeSheet.onDidDismiss();
+			if (res.data){
+				this.config.theme = res.data.action;
+				await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
+				if (res.data.action == 'dark'){
+					this.body.classList.toggle('dark', true);
+				} else if (res.data.action == 'light') {
+					this.body.classList.toggle('dark', false);
+				} else if (window.matchMedia("(prefers-color-scheme: dark)").matches){
+					this.body.classList.toggle('dark', true);
+				} else {
+					this.body.classList.toggle('dark', false);
+				}
+			}
+		},
 	},
 	watch:{
 		async apiBaseUrl(){
