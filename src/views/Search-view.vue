@@ -170,7 +170,7 @@ export default defineComponent({
 			await localforage.setItem('starred', starredClone);
 		},
 		async removeStar() {
-			const removeIndex = this.starred.findIndex(route => route.routeId != this.itemSelected.routeId && route.direction != this.itemSelected.direction)
+			const removeIndex = this.starred.findIndex(route => route.routeId === this.itemSelected.routeId && route.direction === this.itemSelected.direction)
 			this.starred.splice(removeIndex, 1);
 			const starredOriginal = await localforage.getItem('starred');
 			const starredClone = {

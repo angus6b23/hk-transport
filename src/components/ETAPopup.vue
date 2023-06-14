@@ -62,7 +62,7 @@
 				<!-- Show list view for stops and etas -->
 				<ion-list v-else>
 					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :noEta="noEta"
-				:class="{ nearest: nearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
+				:class="{ nearest: getNearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
 				</ion-list>
 			</section>
 			<!-- Route Info -->
@@ -71,7 +71,7 @@
 			</section>
 			<!-- Map View -->
 			<section v-if="popupView == 'map'" class="max-size">
-				<LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation" />
+				<LeafletMap :routeLocations="item.stops" />
 			</section>
 		</div>
 	</ion-content>
@@ -99,7 +99,7 @@ export default {
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
 		const popupLoading = ref(false);
-		const item = ref(props.item);
+		const item = ref({...props.item});
 		const popupView = ref('default');
 		const starred = ref(props.starred);
 		const altRoutes = ref(props.altRoutes);
@@ -130,32 +130,37 @@ export default {
 		}
 		// Fetch KMB ETAs
 		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
-			this.getKMB();
-			this.interval = setInterval(() => this.getKMB(), 10000);
+			await this.getKMB();
+			this.interval = setInterval(async () => await this.getKMB(), 10000);
 		}
 		// Fetch CTB and NWFB bus stop ids
 		else if (this.item.type === 'bus' && this.item.company.length == 1 &&(this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
 			await this.getStopID();
-			this.getCTB();
+			await this.getCTB();
+			this.interval = setInterval(async() => await this.getCTB(), 10000);
 		}
 		// Fetch Bus routes operated by multiple companies
 		else if (this.item.type === 'bus' && this.item.company.length >= 2){
-			this.getMultiple();
+			await this.getMultiple();
+			this.interval = setInterval(async() => await this.getMultiple(), 10000);
 		}
 		// Fetch MTR Buses ETAs
 		else if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
-			this.getMtrBus();
-			this.interval = setInterval(() => this.getMtrBus(), 10000);
+			await this.getMtrBus();
+			this.interval = setInterval(async () => await this.getMtrBus(), 10000);
 		}
 		// Fetch NLB Buses ETAs
 		else if (this.item.type === 'bus' && this.item.company.includes('NLB')){
-			this.getNLB();
+			await this.getNLB();
+			this.interval = setInterval(async () => await this.getNLB(), 10000);
 		}
 		else if (this.item.type === 'minibus'){
-			this.getMinibus();
+			await this.getMinibus();
+			this.interval = setInterval(async () => await this.getMinibus(), 10000);
 		}
 		else if (this.item.type === 'mtr'){
-			this.getMtr();
+			await this.getMtr();
+			this.interval = setInterval(async () => await this.getMtr(), 10000);
 		}
 		//		if (this.item.type === 'lightRail'){
 		//			this.getLightRail();
@@ -206,6 +211,7 @@ export default {
 					}
 				}
 			}
+			return false
 		}
 	},
 	methods: {
@@ -421,7 +427,7 @@ export default {
 			const {data: res} = await actionSheet.onDidDismiss();
 			this.$emit('swapDirection', res);
 		},
-		nearestStop(stopId) {
+		getNearestStop(stopId) {
 			if (this.nearestStop && this.nearestStop.id === stopId && this.nearestStop.distance <= 1000) {
 				return true
 			} else {
