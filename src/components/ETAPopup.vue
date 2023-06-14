@@ -62,7 +62,7 @@
 				<!-- Show list view for stops and etas -->
 				<ion-list v-else>
 					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :noEta="noEta"
-				:class="{ nearest: isNearestStop(stop.stopId) }"></StopItems>
+				:class="{ nearest: isNearestStop(stop.stopId) }" ref="stopItem"></StopItems>
 				</ion-list>
 			</section>
 			<!-- Route Info -->
@@ -189,10 +189,13 @@ export default {
 					return acc
 				}
 			});
+			// Auto scroll to nearest station ETA if the distance is less than 1000
 			if (this.nearestStop && this.nearestStop.distance < 1000){
 				let index = this.item.stops.findIndex(stop => stop.stopId == this.nearestStop.id);
 				if (index != -1){
-					this.$refs.content.$el.scrollToPoint(0, 78*index, 500);	
+					let height = this.$refs.stopItem.clientHeight;
+					console.log(`stopItem height: ${height}`);
+					this.$refs.content.$el.scrollToPoint(0, height*index, 500);	
 				}
 			}
 			//console.log(this.nearestStop);
