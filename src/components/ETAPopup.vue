@@ -37,7 +37,7 @@
 			</ion-buttons>
 		</ion-toolbar>
 	</ion-header>
-	<ion-content class="ion-padding-bottom">
+	<ion-content ref="content" class="ion-padding-bottom">
 		<!-- Segment select -->
 		<section slot="fixed" class="popup-segment">
 			<ion-segment v-model="popupView">
@@ -61,8 +61,8 @@
 				</ion-list>
 				<!-- Show list view for stops and etas -->
 				<ion-list v-else>
-					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :options="itemOptions" :noEta="noEta"
-				:class="{ nearest: getNearestStop(stop.stopId) }" @getETA="getCTBETA"></StopItems>
+					<StopItems v-for="stop in item.stops" :key="stop.id" :stop="stop" :noEta="noEta"
+				:class="{ nearest: isNearestStop(stop.stopId) }"></StopItems>
 				</ion-list>
 			</section>
 			<!-- Route Info -->
@@ -104,7 +104,6 @@ export default {
 		const starred = ref(props.starred);
 		const altRoutes = ref(props.altRoutes);
 		const noEta = ref(props.noEta);
-		const itemOptions = ref({ clickable: false });
 		const currentLocation = ref();
 		const nearestStop = ref();
 		return {
@@ -113,7 +112,6 @@ export default {
 			starred,
 			popupView,
 			altRoutes,
-			itemOptions,
 			currentLocation,
 			nearestStop,
 			noEta,
@@ -191,7 +189,13 @@ export default {
 					return acc
 				}
 			});
-			// console.log(this.nearestStop);
+			if (this.nearestStop && this.nearestStop.distance < 1000){
+				let index = this.item.stops.findIndex(stop => stop.stopId == this.nearestStop.id);
+				if (index != -1){
+					this.$refs.content.$el.scrollToPoint(0, 78*index, 500);	
+				}
+			}
+			//console.log(this.nearestStop);
 		} catch (err) {
 			console.error(err);
 		}
@@ -281,28 +285,13 @@ export default {
 					}
 					// Emits save data to save data to local forage
 					this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
+					presentToast('done', '已更新巴士路線資料');
 				}
 			}
-			presentToast('done', '按一下巴士站名稱以取得到站時間');
-			this.itemOptions.clickable = true;
 		},
 		async getKMB() { //Get KMB route etas from api
 			const etaData = await fetchKMBETA(this.item);
 			this.populateETABySeq(etaData);
-		},
-		async getCTBETA(seq) {
-			const clickedIndex = this.item.stops.findIndex(x => x.seq == seq);
-			this.item.stops[clickedIndex].etaMessage = 'loading';
-			const etaData = await fetchCTBETA(this.item, this.item.stops[clickedIndex].stopId);
-			if (etaData.status == 'success') {
-				if (etaData.data.length > 0) {
-					this.item.stops[clickedIndex].etas = [...etaData.data]
-					this.item.stops[clickedIndex].etaMessage = '';
-				} else {
-					this.item.stops[clickedIndex].etaMessage = 'N/A'
-				}
-			}
-			// console.log(this.item.stops[clickedIndex]);
 		},
 		async getCTB(){
 			const etaData = await fetchBulkCTBETA(this.item);
@@ -427,7 +416,7 @@ export default {
 			const {data: res} = await actionSheet.onDidDismiss();
 			this.$emit('swapDirection', res);
 		},
-		getNearestStop(stopId) {
+		isNearestStop(stopId) {
 			if (this.nearestStop && this.nearestStop.id === stopId && this.nearestStop.distance <= 1000) {
 				return true
 			} else {
