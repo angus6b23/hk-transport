@@ -1,5 +1,5 @@
 <template>
-    <ion-item :button="options.clickable" @click="getETA(stop.seq)">
+    <ion-item>
         <ion-grid>
             <ion-row class="ion-align-items-center">
                 <ion-col size-xs="2" size-md="2">
@@ -42,23 +42,14 @@ import { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText } from '@ionic/vu
 export default {
     name: "StopItems",
     components: { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText },
-    props: ['stop', 'options', 'noEta'],
+    props: ['stop', 'noEta'],
     emits: ['getETA'],
     setup(props){
         const stop = ref(props.stop);
-        const options = ref(props.options);
         const noEta = ref(props.noEta);
         return{
             stop,
-            options,
             noEta
-        }
-    },
-    methods: {
-        getETA(seq){
-            if (this.options.clickable){
-                this.$emit('getETA', seq);
-            }
         }
     }
 };
