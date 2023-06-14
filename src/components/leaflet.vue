@@ -1,20 +1,21 @@
 <template>
     <ion-select interface="action-sheet" placeholder="選擇放大的位置" v-model="zoomIndex">
-        <ion-select-option v-for="(stop, index) in routeLocations" :value="index">{{ index + 1}} {{ stop.nameTC }}</ion-select-option>
+        <ion-select-option v-for="(stop, index) in routeLocations" :value="index" :key="stop.stopId">{{ index + 1}} {{ stop.nameTC }}</ion-select-option>
         <ion-select-option value="gps">目前GPS 位置</ion-select-option>
     </ion-select>
     <div id="mapContainer"></div>
 </template>
 
 <script>
-import { ref, watch, toRaw } from 'vue';
+import { ref, toRaw } from 'vue';
+import { Geolocation } from '@capacitor/geolocation';
 import { IonSelect, IonSelectOption } from '@ionic/vue';
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 export default {
     name: "LeafletMap",
-    props: ['routeLocations', 'currentLocation'],
+    props: ['routeLocations'],
     components: { IonSelect, IonSelectOption },
     data() {
         return {
@@ -24,35 +25,44 @@ export default {
     methods:{
         setView(zoomIndex){
             if(zoomIndex == 'gps'){
-               toRaw(this.map).locate({setView: true});
-               this.map.on('locationfound', (e) => {
-                   let navIcon = L.icon({
-                       iconUrl: 'navigation.png',
-                       iconSize:     [32, 32],
-                       iconAnchor:   [16, 16],
-                       popupAnchor:  [0, -32]
-                   });
-                   var radius = e.accuracy;
-                   L.marker(e.latlng, {icon: navIcon}).addTo(toRaw(this.map));
-                   L.circle(e.latlng, radius).addTo(toRaw(this.map));
-               });
-           } else {
-               let lat = this.routeLocations[zoomIndex].coord[1];
-               let long = this.routeLocations[zoomIndex].coord[0]
-               toRaw(this.map).setView([lat, long], 18);
-           }
-        }
+                toRaw(this.map).locate({setView: true});
+                this.map.on('locationfound', (e) => {
+                    let navIcon = L.icon({
+                        iconUrl: 'navigation.png',
+                        iconSize:     [32, 32],
+                        iconAnchor:   [16, 16],
+                        popupAnchor:  [0, -32]
+                    });
+                    var radius = e.accuracy;
+                    L.marker(e.latlng, {icon: navIcon}).addTo(toRaw(this.map));
+                    L.circle(e.latlng, radius).addTo(toRaw(this.map));
+                });
+            } else {
+                let lat = this.routeLocations[zoomIndex].coord[1];
+                let long = this.routeLocations[zoomIndex].coord[0]
+                toRaw(this.map).setView([lat, long], 18);
+            }
+        },
+        async setLocation(location){
+            this.currentLocation = location; 
+        },
     },
     setup(props){
         const routeLocations = ref(props.routeLocations);
+        const currentLocation = ref({});
+        const watchLocation = "";
+        const locationFound = false;
         const zoomIndex = ref('gps');
-        let currentLocation = props.currentLocation;
         return {
             routeLocations,
+            watchLocation,
+            locationFound,
+            currentLocation,
             zoomIndex
         }
     },
-    mounted() {
+    async mounted() {
+        this.watchLocation = await Geolocation.watchPosition({ enableHighAccuracy: true}, (location) => this.setLocation(location));
         // Add leaflet marker group for showing locations of stops
         let markersGroup = L.featureGroup();
         // Define icons
@@ -105,9 +115,9 @@ export default {
             marker.addTo(markersGroup);
         }
         // Create array for stop geometries
-        let stop_geometries = this.routeLocations.map(x => new L.LatLng(x.coord[1], x.coord[0]));
-        // console.log(stop_geometries);
-        let polyline = new L.Polyline(stop_geometries, {
+        let stopGeometries = this.routeLocations.map(x => new L.LatLng(x.coord[1], x.coord[0]));
+        // console.log(stopGeometries);
+        let polyline = new L.Polyline(stopGeometries, {
             color: '#647fc0',
             weight: 3,
             opacity: 0.7
@@ -121,14 +131,14 @@ export default {
         toRaw(this.map).setMinZoom(10);
         // Try to get GPS location and set view
         // Use passed currentlocation first
-        if (this.currentLocation){
+        if (this.currentLocation.coords){
             // console.log(this.currentLocation);
             const radius = this.currentLocation.coords.accuracy;
             const latlng = {lat: this.currentLocation.coords.latitude, lng: this.currentLocation.coords.longitude}
             L.marker(latlng, {icon: navIcon}).addTo(self.map);
             L.circle(latlng, radius).addTo(self.map);
-            toRaw(this.map).setView(latlng, 18);
-        } else { // If prop not a/v, use leaflet location
+            //toRaw(this.map).setView(latlng, 18);
+        } /*else { // If prop not a/v, use leaflet location
             toRaw(this.map).locate({ setView: true });
             toRaw(this.map).on('locationfound', function(e){
                 console.log(e.latlng);
@@ -136,17 +146,42 @@ export default {
                 L.marker(e.latlng, {icon: navIcon}).addTo(self.map);
                 L.circle(e.latlng, radius).addTo(self.map);
             });
-        }
+        }*/
     },
     beforeUnmount() {
         if (this.map) {
             toRaw(this.map).remove();
         }
+        if (this.watchLocation){
+            this.watchLocation = Geolocation.clearWatch();
+        }
     },
     watch:{
         zoomIndex(newZoomIndex){
             this.setView(newZoomIndex);
-        }
+        },
+        currentLocation(){
+            let self = this;
+            if(!this.locationFound){
+                let navIcon = L.icon({
+                    iconUrl: 'navigation.png',
+                    iconSize:     [32, 32],
+                    iconAnchor:   [16, 16],
+                    popupAnchor:  [0, -32]
+                });
+                const radius = this.currentLocation.coords.accuracy;
+                const latlng = {lat: this.currentLocation.coords.latitude, lng: this.currentLocation.coords.longitude}
+                this.gpsMarker = L.marker(latlng, {icon: navIcon}).addTo(self.map);
+                this.gpsCircle = L.circle(latlng, radius).addTo(self.map);
+                this.locationFound = true
+            } else {
+                const radius = this.currentLocation.coords.accuracy;
+                const latlng = {lat: this.currentLocation.coords.latitude, lng: this.currentLocation.coords.longitude}
+                this.gpsMarker.setLatLng(latlng).update();
+                this.gpsCircle.remove();
+                this.gpsCircle = L.circle(latlng, radius).addTo(self.map);
+            }
+        },
     }
 };
 </script>
