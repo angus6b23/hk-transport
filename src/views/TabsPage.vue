@@ -143,6 +143,9 @@ export default defineComponent({
                     this.body.classList.toggle('dark', true);
                 }
             } else {
+                if (window.matchMedia("(prefers-color-scheme: dark)").matches){
+                    this.body.classList.toggle('dark', true);
+                }
                 this.settingFound = false
             }
         } catch (err) {
