@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.12a.hkTransport',
+  appId: 'app.hkTransport',
   appName: 'HK Transport',
   webDir: 'dist',
   bundledWebRuntime: false

@@ -71,7 +71,7 @@
 			</section>
 			<!-- Map View -->
 			<section v-if="popupView == 'map'" class="max-size">
-				<LeafletMap :routeLocations="item.stops" />
+				<LeafletMap :routeLocations="item.stops" :currentLocation="currentLocation" />
 			</section>
 		</div>
 	</ion-content>
