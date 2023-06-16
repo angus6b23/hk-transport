@@ -16,10 +16,6 @@
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
-			<ion-modal ref="modal" :is-open="optionIsOpen" @WillDismiss="closeOption">
-				<Option @closeOption="closeOption" />
-			</ion-modal>
-
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
@@ -74,10 +70,13 @@
 			</ion-list>
 		</ion-content>
 		<!-- Modal for displaying bus details -->
-		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
+		<ion-modal :is-open="modalIsOpen"  @WillDismiss="closeModal">
 			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes"
 	   @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData"
 	   @swapDirection="swapDirection" />
+		</ion-modal>
+		<ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
+			<Option @closeOption="closeOption" />
 		</ion-modal>
 	</ion-page>
 </template>

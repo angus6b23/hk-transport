@@ -141,7 +141,8 @@ export default defineComponent({
                 theme: 'system',
                 fetchMethod: this.radioSelect,
                 apiBaseUrl: (this.radioSelect == 'self') ? this.hostUrl : '',
-                dataFilled: false
+                dataFilled: false,
+                autoScroll: true
             }
             this.$emit('finishConfig', config)
         }
