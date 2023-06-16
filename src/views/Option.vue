@@ -9,7 +9,7 @@
 			</ion-buttons>
 		</ion-toolbar>
 	</ion-header>
-	<ion-content>
+	<ion-content class="ion-padding-bottom">
 		<ion-list-header>
 			<ion-label>基本</ion-label>
 		</ion-list-header>
@@ -44,11 +44,18 @@
 				<ion-label position="stacked">資料來源URL</ion-label>
 				<ion-input placeholder="https://your.api" v-model='apiBaseUrl'></ion-input>
 			</ion-item>
+			<ion-item>
+				<ion-icon :icon="returnDownForwardOutline" slot="start" />
+					<ion-label>
+						<h5>自動滾動至最近的車站</h5>
+					</ion-label>
+					<ion-checkbox slot="end" v-model="autoScroll"></ion-checkbox>
+			</ion-item>
 		</ion-list>
 		<ion-list-header>
 			<ion-label>管理資料</ion-label>
 		</ion-list-header>
-		<ion-list>
+		<ion-list class="ion-padding-bottom ion-margin-bottom">
 			<ion-item button @click="updateData">
 				<ion-icon :icon="cloudDownloadOutline" slot="start" />
 					<ion-label>
@@ -80,19 +87,20 @@
 <script>
 import { ref } from 'vue';
 import { Dialog } from '@capacitor/dialog'
-import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonToolbar, IonInput, actionSheetController, loadingController } from '@ionic/vue';
-import { chevronBack, languageOutline, serverOutline, cloudDownloadOutline, reloadOutline, starHalfOutline, trashOutline, colorPaletteOutline} from 'ionicons/icons'
+import { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem, IonIcon, IonButton, IonButtons, IonToolbar, IonInput, IonCheckbox, actionSheetController, loadingController } from '@ionic/vue';
+import { chevronBack, languageOutline, serverOutline, cloudDownloadOutline, reloadOutline, starHalfOutline, trashOutline, colorPaletteOutline, returnDownForwardOutline} from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js';
 import localforage from 'localforage';
 
 export default {
 	name: "Option-popup",
-	components: { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem,  IonIcon, IonButton, IonButtons, IonToolbar, IonInput },
+	components: { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem,  IonIcon, IonButton, IonButtons, IonToolbar, IonInput, IonCheckbox},
 	emits: ['closeOption', 'updateData', 'downloadData'],
 	setup() {
 		const config = ref({})
 		const apiBaseUrl = ref('');
+		const autoScroll = ref(false);
 		const body = document.body;
 		return {
 			chevronBack,
@@ -103,14 +111,17 @@ export default {
 			starHalfOutline,
 			trashOutline,
 			colorPaletteOutline,
+			returnDownForwardOutline,
 			config,
 			apiBaseUrl,
-			body
+			body,
+			autoScroll
 		}
 	},
 	async mounted() {
 		this.config = await localforage.getItem('config');
 		this.apiBaseUrl = this.config.apiBaseUrl;
+		this.autoScroll = this.config.autoScroll;
 	},
 	methods: {
 		closeOption() {
@@ -154,7 +165,6 @@ export default {
 					res = await fetchApiData();
 				}
 				if (res && !(res instanceof Error)){
-					console.log('hit');
 					loading.dismiss();
 					location.reload();
 				} else {
@@ -270,6 +280,13 @@ export default {
 			this.config = {
 				...this.config,
 				apiBaseUrl: this.apiBaseUrl
+			}
+			await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));	
+		},
+		async autoScroll(){
+			this.config = {
+				...this.config,
+				autoScroll: this.autoScroll
 			}
 			await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));	
 		}
