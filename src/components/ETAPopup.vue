@@ -106,6 +106,7 @@ export default {
 		const noEta = ref(props.noEta);
 		const currentLocation = ref();
 		const nearestStop = ref();
+		const stopItem = ref(null);
 		return {
 			popupLoading,
 			item,
@@ -115,6 +116,7 @@ export default {
 			currentLocation,
 			nearestStop,
 			noEta,
+			stopItem,
 			chevronBack,
 			starOutline,
 			star,
@@ -128,36 +130,36 @@ export default {
 		}
 		// Fetch KMB ETAs
 		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
-			await this.getKMB();
+			this.getKMB();
 			this.interval = setInterval(async () => await this.getKMB(), 10000);
 		}
 		// Fetch CTB and NWFB bus stop ids
 		else if (this.item.type === 'bus' && this.item.company.length == 1 &&(this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
 			await this.getStopID();
-			await this.getCTB();
+			this.getCTB();
 			this.interval = setInterval(async() => await this.getCTB(), 10000);
 		}
 		// Fetch Bus routes operated by multiple companies
 		else if (this.item.type === 'bus' && this.item.company.length >= 2){
-			await this.getMultiple();
+			this.getMultiple();
 			this.interval = setInterval(async() => await this.getMultiple(), 10000);
 		}
 		// Fetch MTR Buses ETAs
 		else if (this.item.type === 'bus' && this.item.company.includes('LRTFeeder')){
-			await this.getMtrBus();
+			this.getMtrBus();
 			this.interval = setInterval(async () => await this.getMtrBus(), 10000);
 		}
 		// Fetch NLB Buses ETAs
 		else if (this.item.type === 'bus' && this.item.company.includes('NLB')){
-			await this.getNLB();
+			this.getNLB();
 			this.interval = setInterval(async () => await this.getNLB(), 10000);
 		}
 		else if (this.item.type === 'minibus'){
-			await this.getMinibus();
+			this.getMinibus();
 			this.interval = setInterval(async () => await this.getMinibus(), 10000);
 		}
 		else if (this.item.type === 'mtr'){
-			await this.getMtr();
+			this.getMtr();
 			this.interval = setInterval(async () => await this.getMtr(), 10000);
 		}
 		//		if (this.item.type === 'lightRail'){
@@ -192,10 +194,9 @@ export default {
 			// Auto scroll to nearest station ETA if the distance is less than 1000
 			if (this.nearestStop && this.nearestStop.distance < 1000){
 				let index = this.item.stops.findIndex(stop => stop.stopId == this.nearestStop.id);
-				if (index != -1){
-					let height = this.$refs.stopItem.clientHeight;
-					console.log(`stopItem height: ${height}`);
-					this.$refs.content.$el.scrollToPoint(0, height*index, 500);	
+				if (index != -1 && this.$refs.stopItem){
+					let height = this.$refs.stopItem[0].$el.clientHeight;
+					this.$refs.content.$el.scrollToPoint(0, height*index - height/2, 500);	
 				}
 			}
 			//console.log(this.nearestStop);
