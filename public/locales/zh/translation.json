@@ -1,0 +1,20 @@
+{
+  "common":{
+    "back": "返回",
+    "finish": "完成",
+    "bus": "巴士",
+    "minibus": "專線小巴",
+    "underground": "地鐵",
+    "tram": "電車",
+    "lightRail": "輕鐵",
+    "ferry": "渡輪"
+  },
+  "landing":{
+    "selectSource": "請選擇資料來源",
+    "optionPrefetch": "預先整理好的資料（建議）",
+    "optionGovAPI": "直接從gov.hk API 下載",
+    "optionSelfHost": "使用自行搭建的後台",
+    "hostHint": "你可以在 12a.app github 找到自行搭建的方法",
+    "urlPlaceholder": "在此輸入網址 https://your.api/"
+  }
+}

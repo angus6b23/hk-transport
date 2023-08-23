@@ -12,32 +12,32 @@
                     <ion-tab-button tab="bus" href="/tabs/bus" class="scrollable-item">
                         <ion-icon v-if="currentTab == 'bus'" :icon="bus" />
                         <ion-icon v-else :icon="busOutline" />
-                        <ion-label>巴士</ion-label>
+                            <ion-label>{{ $t('common.bus') }}</ion-label>
                     </ion-tab-button>
                     <ion-tab-button tab="mtr" href="/tabs/mtr" class="scrollable-item">
                         <BIconTrainFrontFill v-if="currentTab == 'mtr'" class="bi-icons" />
                         <BIconTrainFront v-else class="bi-icons" />
-                        <ion-label>地鐵</ion-label>
+                        <ion-label>{{ $t('common.underground') }}</ion-label>
                     </ion-tab-button>
                     <ion-tab-button tab="minibus" href="/tabs/minibus" class="scrollable-item">
                         <BIconTruckFrontFill v-if="currentTab == 'minibus'" class="bi-icons" />
                         <BIconTruckFront v-else class="bi-icons" />
-                        <ion-label>專線小巴</ion-label>
+                        <ion-label>{{ $t('common.minibus') }}</ion-label>
                     </ion-tab-button>
                     <ion-tab-button tab="tram" href="/tabs/tram" class="scrollable-item">
                         <ion-icon v-if="currentTab == 'tram'" :icon="train" />
                         <ion-icon v-else :icon="trainOutline" />
-                        <ion-label>電車</ion-label>
+                            <ion-label>{{ $t('common.tram') }}</ion-label>
                     </ion-tab-button>
                     <ion-tab-button tab="lightRail" href="/tabs/light-rail" class="scrollable-item">
                         <BIconTrainLightrailFrontFill v-if="currentTab == 'lightRail'" class="bi-icons" />
                         <BIconTrainLightrailFront v-else class="bi-icons" />
-                        <ion-label>輕鐵</ion-label>
+                        <ion-label>{{ $t('common.lightRail') }}</ion-label>
                     </ion-tab-button>
                     <ion-tab-button tab="ferry" href="/tabs/ferry" class="scrollable-item">
                         <ion-icon v-if="currentTab == 'ferry'" :icon="boat" />
                         <ion-icon v-else :icon="boatOutline" />
-                        <ion-label>渡輪</ion-label>
+                        <ion-label>{{ $t('common.ferry') }}</ion-label>
                     </ion-tab-button>
                     <!-- <ion-tab-button tab="tab3" href="/tabs/tab3">
                         <ion-icon :icon="square" />
@@ -135,6 +135,7 @@ export default defineComponent({
             if (config && config.dataFilled) {
                 this.config = config
                 this.settingFound = true
+                this.$i18next.changeLanguage(this.config.lang);
                 if (config.theme && config.theme == 'dark'){
                     this.body.classList.toggle('dark', true);
                 } else if (config.theme && config.theme == 'light'){

@@ -212,6 +212,7 @@ export default {
 			if (res.data){
 				if (this.config.lang != res.data.action){
 					this.config.lang = res.data.action
+					this.$i18next.changeLanguage(this.config.lang);
 					await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
 				}
 			}
