@@ -3,7 +3,11 @@
 		<ion-header>
 			<ion-toolbar>
 				<ion-title>
-					{{ typeTC }}路線
+					<i18next :translation="$t('searchView.title')">
+					<template #transportType>
+						<span>{{ $t(`common.${type}`) }}</span>
+					</template>
+					</i18next>
 				</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="openOption">
@@ -12,18 +16,30 @@
 				</ion-buttons>
 			</ion-toolbar>
 			<ion-toolbar>
-				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線號碼或目的地"></ion-searchbar>
+				<ion-searchbar autocorrect="off" v-model="query" :placeholder="$t('searchView.searchPlaceHolder')"></ion-searchbar>
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
-					<ion-label>搜尋{{ typeTC }}: {{ query }}</ion-label>
-					<ion-button fill="clear" @click="clearQuery">清除搜尋</ion-button>
+					<ion-label>
+						<i18next :translation="$t('searchView.searchPrompt', {query: query})">
+						<template #transportType>
+							<span>{{ $t(`common.${type}`) }}</span>
+						</template>
+						</i18next>
+					</ion-label>
+					<ion-button fill="clear" @click="clearQuery">{{ $t('searchView.clearSearch') }}</ion-button>
 				</ion-list-header>
 				<ion-list-header v-else>
-					<ion-label v-if="starred.length > 0">已標記的{{ typeTC }}</ion-label>
+					<ion-label v-if="starred.length > 0">
+						<i18next :translation="$t('searchView.starredPrompt')">
+							<template #transportType>
+								<span>{{ $t(`common.${type}`) }}</span>
+							</template>
+						</i18next>
+					</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
@@ -38,20 +54,22 @@
 									</ion-col>
 									<ion-col size-xs="9" size-md="11">
 										<Badges :route="route" />
-										<h3 class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
+										<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start">{{ route.destTC }}</h5>
+										<h5 v-else class="ion-no-margin ion-margin-start">{{ route.destEN }}</h5>
 									</ion-col>
 								</ion-row>
 								<!-- Rows for Ferry -->
 								<ion-row v-else class="open-modal" expand="block" @click="openModal(index)">
 									<ion-col size-xs="8" size-md="10">
 										<Badges :route="route" />
-										<h3 class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h3>
+										<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h5>
+										<h5 v-else class="ion-no-margin ion-margin-start">{{ route.routeNameEN }}</h5>
 									</ion-col>
 									<ion-col size-xs="2" size-md="1" class="d-flex">
-										<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">順行</ion-button>
+										<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">{{ $t('searchView.inbound') }}</ion-button>
 									</ion-col>
 									<ion-col size-xs="2" size-md="1" class="d-flex">
-										<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">逆行</ion-button>
+										<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">{{ $t('searchView.outbound') }}</ion-button>
 									</ion-col>
 								</ion-row>
 							</ion-grid>
@@ -60,12 +78,12 @@
 				</div>
 				<div v-else class="no-content">
 					<ion-text color="medium">
-						<p>尚未有顯示的項目</p>
-					</ion-text>
+						<p>{{ $t('searchView.noItem') }}</p>
+				</ion-text>
 					<ion-text color="medium">
-						<p>可於搜尋後標記星號以方便使用</p>
+						<p>{{ $t('searchView.noItemHint') }}</p>
 					</ion-text>
-					<ion-button v-if="type == 'ferry'" fill="clear" @click="listAll">顯示所有渡輪</ion-button>
+					<ion-button v-if="type == 'ferry'" fill="clear" @click="listAll">{{ $t('searchView.showFerry') }}</ion-button>
 				</div>
 			</ion-list>
 		</ion-content>
@@ -76,7 +94,7 @@
 	   @swapDirection="swapDirection" />
 		</ion-modal>
 		<ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
-			<Option @closeOption="closeOption" />
+			<Option @closeOption="closeOption" @changeLanguage="changeLanguage" />
 		</ion-modal>
 	</ion-page>
 </template>
@@ -103,12 +121,12 @@ export default defineComponent({
 		const displayArray = ref([]);// Reference for displaying search results
 		const itemSelected = ref({}); // Reference for selected bus on query
 		const altRoutes = ref([]);
+		const config = ref({});
 		const modalIsOpen = ref(false);
 		const optionIsOpen = ref(false);
 		const data = ref([]); // For storage of bus routes and stops
 		const starred = ref([]);
 		const type = ref(props.dataType);
-		const typeTC = ref('');
 		const dataReady = ref(false)
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
@@ -120,12 +138,12 @@ export default defineComponent({
 			displayArray,
 			itemSelected,
 			altRoutes,
+			config,
 			modalIsOpen,
 			optionIsOpen,
 			starred,
 			type,
 			dataReady,
-			typeTC,
 			cog,
 			chevronBack
 		}
@@ -158,6 +176,9 @@ export default defineComponent({
 		},
 		closeOption() {
 			this.optionIsOpen = false;
+		},
+		async changeLanguage(){
+			this.config = await localforage.getItem('config');
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
@@ -217,18 +238,6 @@ export default defineComponent({
 				}
 			}
 		},
-		getTypeTranslate(type) {
-			switch (type) {
-				case 'bus':
-					return '巴士'
-				case 'minibus':
-					return '專線小巴'
-				case 'ferry':
-					return '渡輪'
-				default:
-					return '未知'
-			}
-		},
 		listAll() {
 			this.query = ' '
 		},
@@ -264,7 +273,7 @@ export default defineComponent({
 	},
 	async mounted() {
 		this.data = await loadChunk(this.type)
-		this.typeTC = this.getTypeTranslate(this.type);
+		this.config = await localforage.getItem('config');
 		let starStorage = await localforage.getItem('starred');
 		if (!starStorage || !starStorage[this.type]) {
 			this.starred = []

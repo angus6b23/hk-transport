@@ -4,7 +4,7 @@
     "finish": "Finish",
     "bus": "Bus",
     "minibus": "Minibus",
-    "underground": "Underground",
+    "underground": "Metro",
     "tram": "Tram",
     "lightRail": "Light Rail",
     "ferry": "Ferry"
@@ -16,5 +16,17 @@
     "optionSelfHost": "Use your own API",
     "hostHint": "You can find how to host your api on 12a.app github",
     "urlPlaceholder": "Enter your url here: https://your.api/"
+  },
+  "searchView":{
+    "title": "{transportType} Routes",
+    "searchPlaceHolder": "Please enter route No. or destination",
+    "searchPrompt": "Searching {transportType}: {{query}}",
+    "clearSearch": "Clear",
+    "starredPrompt": "Starred {transportType}",
+    "inbound": "In",
+    "outbound": "Out",
+    "noItem": "No item to display",
+    "noItemHint": "Starred items will be displayed here when no searching",
+    "showFerry": "Display all ferries"
   }
 }

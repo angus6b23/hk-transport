@@ -16,5 +16,17 @@
     "optionSelfHost": "使用自行搭建的後台",
     "hostHint": "你可以在 12a.app github 找到自行搭建的方法",
     "urlPlaceholder": "在此輸入網址 https://your.api/"
+  },
+  "searchView":{
+    "title": "{transportType}路線",
+    "searchPlaceHolder": "請輪入路線號碼或終點站",
+    "searchPrompt": "搜尋{transportType}: {{query}}",
+    "clearSearch": "清除搜尋",
+    "starredPrompt": "已標記的{transportType}",
+    "inbound": "順行",
+    "outbound": "逆行",
+    "noItem": "尚未有顯示項目",
+    "noItemHint": "可於搜尋後標記星號以方便使用",
+    "showFerry": "顯示所有渡輪"
   }
 }

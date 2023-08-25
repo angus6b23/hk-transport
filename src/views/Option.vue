@@ -96,7 +96,7 @@ import localforage from 'localforage';
 export default {
 	name: "Option-popup",
 	components: { IonHeader, IonTitle, IonContent, IonList, IonListHeader, IonLabel, IonItem,  IonIcon, IonButton, IonButtons, IonToolbar, IonInput, IonCheckbox},
-	emits: ['closeOption', 'updateData', 'downloadData'],
+	emits: ['closeOption', 'updateData', 'downloadData', 'changeLanguage'],
 	setup() {
 		const config = ref({})
 		const apiBaseUrl = ref('');
