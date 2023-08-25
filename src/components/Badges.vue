@@ -1,48 +1,29 @@
 <template>
 	<!-- Badges for bus -->
 	<div v-if="route.type === 'bus'">
-		<ion-badge v-if="route.company.includes('KMB')"
-			class="kmb-badge ion-margin-start">九巴</ion-badge>
-		<ion-badge v-if="route.company.includes('CTB')"
-			class="ctb-badge ion-margin-start">城巴</ion-badge>
-		<ion-badge v-if="route.company.includes('LWB')"
-			class="lwb-badge ion-margin-start">龍運</ion-badge>
-		<ion-badge v-if="route.company.includes('NWFB')"
-			class="nwfb-badge ion-margin-start">新巴</ion-badge>
-		<ion-badge v-if="route.company.includes('DB')"
-			class="db-badge ion-margin-start">愉景</ion-badge>
-		<ion-badge v-if="route.company.includes('NLB')"
-			class="nlb-badge ion-margin-start">大嶼</ion-badge>
-		<ion-badge v-if="route.company.includes('PI')"
-			class="pi-badge ion-margin-start">馬灣</ion-badge>
-		<ion-badge v-if="route.company.includes('XB')"
-			class="xb-badge ion-margin-start">過境</ion-badge>
-		<ion-badge v-if="route.company.includes('LRTFeeder')"
-			class="ltr-badge ion-margin-start">港鐵</ion-badge>
-		<ion-badge v-if="route.serviceMode.includes('N')"
-			class="night-badge ion-margin-start">晚間</ion-badge>
-		<ion-badge v-if="route.serviceMode == 'T'"
-			class="special-badge ion-margin-start">特別</ion-badge>
+		<ion-badge v-if="route.company.includes('KMB')" class="kmb-badge ion-margin-start">{{ $t('badges.kmb') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('CTB')" class="ctb-badge ion-margin-start">{{ $t('badges.ctb') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('LWB')" class="lwb-badge ion-margin-start">{{ $t('badges.lwb') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('NWFB')" class="nwfb-badge ion-margin-start">{{ $t('badges.nwfb') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('DB')" class="db-badge ion-margin-start">{{ $t('badges.db') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('NLB')" class="nlb-badge ion-margin-start">{{ $t('badges.nlb') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('PI')" class="pi-badge ion-margin-start">{{ $t('badges.pi') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('XB')" class="xb-badge ion-margin-start">{{ $t('badges.xb') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('LRTFeeder')" class="ltr-badge ion-margin-start">{{ $t('badges.ltr') }}</ion-badge>
+		<ion-badge v-if="route.serviceMode.includes('N')" class="night-badge ion-margin-start">{{ $t('badges.night') }}</ion-badge>
+		<ion-badge v-if="route.serviceMode == 'T'" class="special-badge ion-margin-start">{{ $t('badges.special') }}</ion-badge>
 	</div>
 	<div v-if="route.type === 'minibus'">
-		<ion-badge v-if="route.district.includes('HKI')"
-			class="hki-badge ion-margin-start">港島</ion-badge>
-		<ion-badge v-if="route.district.includes('KLN')"
-			class="kln-badge ion-margin-start">九龍</ion-badge>
-		<ion-badge v-if="route.district.includes('NT')"
-			class="nt-badge ion-margin-start">新界</ion-badge>
-		<ion-badge v-if="route.serviceMode.includes('N')"
-			class="night-badge ion-margin-start">晚間</ion-badge>
-		<ion-badge v-if="route.serviceMode == 'T'"
-			class="special-badge ion-margin-start">特別</ion-badge>
+		<ion-badge v-if="route.district.includes('HKI')" class="hki-badge ion-margin-start">{{ $t('badges.hki') }}</ion-badge>
+		<ion-badge v-if="route.district.includes('KLN')" class="kln-badge ion-margin-start">{{ $t('badges.kln') }}</ion-badge>
+		<ion-badge v-if="route.district.includes('NT')" class="nt-badge ion-margin-start">{{ $t('badges.nt') }}</ion-badge>
+		<ion-badge v-if="route.serviceMode.includes('N')" class="night-badge ion-margin-start">{{ $t('badges.night') }}</ion-badge>
+		<ion-badge v-if="route.serviceMode == 'T'" class="special-badge ion-margin-start">{{ $t('badges.special') }}</ion-badge>
 	</div>
 	<div v-if="route.type === 'ferry'">
-		<ion-badge v-if="route.district == 'KAITO'"
-			class="hki-badge ion-margin-start">街渡</ion-badge>
-		<ion-badge v-if="route.district == 'OUTLYING'"
-			class="kln-badge ion-margin-start">離島</ion-badge>
-		<ion-badge v-if="route.district == 'INNER'"
-			class="nt-badge ion-margin-start">內陸</ion-badge>
+		<ion-badge v-if="route.district == 'KAITO'" class="hki-badge ion-margin-start">{{ $t('badges.kaito') }}</ion-badge>
+		<ion-badge v-if="route.district == 'OUTLYING'" class="kln-badge ion-margin-start">{{ $t('badges.outlying') }}</ion-badge>
+		<ion-badge v-if="route.district == 'INNER'" class="nt-badge ion-margin-start">{{ $t('badges.inner') }}</ion-badge>
 	</div>
 </template>
 
@@ -50,7 +31,7 @@
 import { defineComponent, ref } from 'vue';
 import { IonBadge } from '@ionic/vue';
 export default defineComponent({
-	name: 'Badges',
+	name: 'Badges-component',
 	props: ['route'],
 	components: { IonBadge },
 	mount(props){
