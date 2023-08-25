@@ -26,7 +26,26 @@
     "inbound": "In",
     "outbound": "Out",
     "noItem": "No item to display",
-    "noItemHint": "Starred items will be displayed here when no searching",
+    "noItemHint": "Starred items will be displayed here",
     "showFerry": "Display all ferries"
+  },
+  "badges":{
+    "kmb": "KMB",
+    "ctb": "CTB",
+    "lwb": "LWB",
+    "nwfb": "NWFB",
+    "db": "Discovery Bay",
+    "nlb": "Lantau",
+    "pi": "Ma Wan",
+    "xb": "Boundary",
+    "lrt": "MTR",
+    "night": "Night",
+    "special": "Special",
+    "hki": "Hong Kong Island",
+    "kln": "Kowloon",
+    "nt": "New Territories",
+    "kaito": "Kai-to",
+    "outlying": "Outlying Islands",
+    "inner": "Inner Routes"
   }
 }
