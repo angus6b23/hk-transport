@@ -7,7 +7,8 @@
     "underground": "Metro",
     "tram": "Tram",
     "lightRail": "Light Rail",
-    "ferry": "Ferry"
+    "ferry": "Ferry",
+    "minute": "min"
   },
   "landing":{
     "selectSource": "Please select data source",
@@ -47,5 +48,20 @@
     "kaito": "Kai-to",
     "outlying": "Outlying Islands",
     "inner": "Inner Routes"
+  },
+  "etaPopup":{
+    "info":{
+      "journeyTime": "Journey Time",
+      "fullFare": "Full Fare",
+      "details": "Route Details",
+      "MF": "Monday to Friday",
+      "S": "Saturday",
+      "H": "Sunday and Public Holidays",
+      "D": "Daily"
+    },
+    "map":{
+      "selectStation": "Please select station",
+      "currentLocation": "Current GPS Location"
+    }
   }
 }
