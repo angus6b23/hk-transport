@@ -7,7 +7,8 @@
     "underground": "地鐵",
     "tram": "電車",
     "lightRail": "輕鐵",
-    "ferry": "渡輪"
+    "ferry": "渡輪",
+    "minute": "分鐘"
   },
   "landing":{
     "selectSource": "請選擇資料來源",
@@ -47,5 +48,20 @@
     "kaito": "街渡",
     "outlying": "離島",
     "inner": "內陸"
+  },
+  "etaPopup":{
+    "info":{
+      "journeyTime": "總車程",
+      "fullFare": "全程收費",
+      "details": "路線資料",
+      "MF": "星期一至五",
+      "S": "星期六",
+      "H": "星期日及公眾假期",
+      "D": "每日"
+    },
+    "map":{
+      "selectStation": "請選擇車站",
+      "currentLocation": "目前GPS位置"
+    }
   }
 }
