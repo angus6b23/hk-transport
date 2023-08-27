@@ -4,14 +4,23 @@
 		<!-- Toolbar -->
 		<ion-toolbar>
 			<ion-title v-if="item.type == 'bus' || item.type == 'minibus'">
-				{{ item.routeNo }}
-				<span class="ion-margin-start">{{ item.destTC }}</span>
+				<span>{{ item.routeNo }}</span>
+				<Vue3Marquee>
+				<span v-if="$i18next.language === 'zh'" class="ion-margin-start">{{ item.destTC }}</span>
+				<span v-else class="ion-margin-start">{{ item.destEN }}</span>
+				</Vue3Marquee>
 			</ion-title>
 			<ion-title v-else-if="item.type == 'lightRail'">
 				{{ item.routeNameEN }}
-				<span class="ion-margin-start">{{ item.originTC }} - {{ item.destTC }}</span>
+				<Vue3Marquee>
+				<span v-if="$i18next.language === 'zh'" class="ion-margin-start">{{ item.originTC }} - {{ item.destTC }}</span>
+				<span v-else class="ion-margin-start">{{ item.originEN }} - {{ item.destEN }}</span>
+				</Vue3Marquee>
 			</ion-title>
-			<ion-title v-else>{{ item.routeNameTC }}</ion-title>
+			<ion-title class="marquee" v-else>
+				<span v-if="$i18next.language === 'zh'">{{ item.routeNameTC }}</span>
+				<span v-else>{{ item.routeNameEN }}</span>
+			</ion-title>
 			<ion-buttons slot="start" class="top-buttons">
 				<ion-button @click="closeModal"><ion-icon :icon="chevronBack"></ion-icon></ion-button>
 			</ion-buttons>
@@ -42,13 +51,13 @@
 		<section slot="fixed" class="popup-segment">
 			<ion-segment v-model="popupView">
 				<ion-segment-button value="default">
-					<ion-label>預報</ion-label>
+					<ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
 				</ion-segment-button>
 				<ion-segment-button value="info">
-					<ion-label>資訊</ion-label>
+					<ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
 				</ion-segment-button>
 				<ion-segment-button value="map">
-					<ion-label>地圖</ion-label>
+					<ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
 				</ion-segment-button>
 			</ion-segment>
 		</section>
@@ -78,13 +87,14 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { VueElement, ref } from 'vue';
 import { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController } from '@ionic/vue';
 import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
+import { Vue3Marquee } from 'vue3-marquee';
 
-import { fetchKMBETA, fetchCTBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta, fetchMtrEta, fetchLightRailEta, fetchBulkCTBETA } from '@/fetch/fetchETA.js';
+import { fetchKMBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta, fetchMtrEta, fetchLightRailEta, fetchBulkCTBETA } from '@/fetch/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
@@ -94,7 +104,7 @@ import presentToast from '@/components/presentToast.js';
 
 export default {
 	name: "ETAPopup",
-	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
+	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo, Vue3Marquee, VueElement },
 	props: ['item', 'starred', 'noEta', 'altRoutes'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
@@ -126,7 +136,7 @@ export default {
 	async mounted() {
 		// Show Toast if no eta is avaliable
 		if (this.noEta) {
-			presentToast('info', '此路線未提供到站報時服務')
+			presentToast('info', this.$t('toast.noEta'))
 		}
 		// Fetch KMB ETAs
 		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
@@ -301,72 +311,72 @@ export default {
 			const etaData = await fetchBulkCTBETA(this.item);
 			this.populateETAById(etaData);
 		},
-		async getMultiple(){
-			const kmbReq = fetchKMBETA(this.item);
-			const ctbReq = fetchBulkCTBETA(this.item);
-			let data = await Promise.all([kmbReq, ctbReq]);
-			let [kmbData, ctbData] = data;
-			let combinedList = [];
-			//combined item = { seq: number, data:[{tag: string, eta: number, note}]};
-			if (kmbData.status === 'success'){
-				for (let kmb of kmbData.data){
-					let etaArray = kmb.etas.map(item => {
-						return {
-							tag: 'KMB',
-							eta: item,
-							note: kmb.note
-						}
-					});
-					combinedList.push({
-						seq: kmb.seq,
-						data: etaArray
-					})
-				}
-			}
-			if (ctbData.status === 'success'){
-				const companyCode = this.item.company.includes('CTB') ? 'CTB' : 'NWFB';
-				for (let ctb of ctbData.data){
-					let index = this.item.stops.findIndex(stop => stop.altId == ctb.stopId);
-					if (index != -1){
-						let seq = this.item.stops[index].seq;
-						let combinedListIndex = combinedList.findIndex( item => item.seq == seq);
-						let etaArray = ctb.etas.map(item => {
+			async getMultiple(){
+				const kmbReq = fetchKMBETA(this.item);
+				const ctbReq = fetchBulkCTBETA(this.item);
+				let data = await Promise.all([kmbReq, ctbReq]);
+				let [kmbData, ctbData] = data;
+				let combinedList = [];
+				//combined item = { seq: number, data:[{tag: string, eta: number, note}]};
+				if (kmbData.status === 'success'){
+					for (let kmb of kmbData.data){
+						let etaArray = kmb.etas.map(item => {
 							return {
-								tag: companyCode,
+								tag: 'KMB',
 								eta: item,
-								note: ctb.note
+								note: kmb.note
 							}
 						});
-						if (combinedListIndex != -1) {
-							combinedList[combinedListIndex].data = [...combinedList[combinedListIndex].data, ...etaArray]
-						} else {
-							combinedList.push({
-								seq: seq,
-								data: etaArray
+						combinedList.push({
+							seq: kmb.seq,
+							data: etaArray
+						})
+					}
+				}
+				if (ctbData.status === 'success'){
+					const companyCode = this.item.company.includes('CTB') ? 'CTB' : 'NWFB';
+					for (let ctb of ctbData.data){
+						let index = this.item.stops.findIndex(stop => stop.altId == ctb.stopId);
+						if (index != -1){
+							let seq = this.item.stops[index].seq;
+							let combinedListIndex = combinedList.findIndex( item => item.seq == seq);
+							let etaArray = ctb.etas.map(item => {
+								return {
+									tag: companyCode,
+									eta: item,
+									note: ctb.note
+								}
 							});
+							if (combinedListIndex != -1) {
+								combinedList[combinedListIndex].data = [...combinedList[combinedListIndex].data, ...etaArray]
+							} else {
+								combinedList.push({
+									seq: seq,
+									data: etaArray
+								});
+							}
 						}
 					}
 				}
-			}
-			// Sort the etas inside every stop in combined list
-			for (let stop of combinedList){
-				stop.data.sort((a,b) => a.eta - b.eta);
-			}
-			// Populate the combined List
-			console.log(combinedList)
-			for (let i = 0; i < combinedList.length; i++){
-				let targetItem = combinedList[i];
-				let targetStopIndex = this.item.stops.findIndex(stop => stop.seq == targetItem.seq);
-				if (targetStopIndex != -1){
-					let etaArray = targetItem.data.map(item => item.eta);
-					if (etaArray.length > 0){
-						this.item.stops[targetStopIndex].etas = etaArray.slice(0, 3);
-					} else {
-						this.item.stops[targetStopIndex].etaMessage = 'N/A';
+				// Sort the etas inside every stop in combined list
+				for (let stop of combinedList){
+					stop.data.sort((a,b) => a.eta - b.eta);
+				}
+				// Populate the combined List
+				console.log(combinedList)
+				for (let i = 0; i < combinedList.length; i++){
+					let targetItem = combinedList[i];
+					let targetStopIndex = this.item.stops.findIndex(stop => stop.seq == targetItem.seq);
+					if (targetStopIndex != -1){
+						let etaArray = targetItem.data.map(item => item.eta);
+						if (etaArray.length > 0){
+							this.item.stops[targetStopIndex].etas = etaArray.slice(0, 3);
+						} else {
+							this.item.stops[targetStopIndex].etaMessage = 'N/A';
+						}
 					}
 				}
-			}
-		},
+			},
 		async getMtrBus() {
 			const etaData = await fetchMtrBusEta(this.item);
 			this.populateETAById(etaData);
@@ -450,5 +460,9 @@ export default {
 .segment-content {
 	margin-top: 50px;
 	margin-bottom: 50px;
+}
+.marquee {
+	-webkit-marquee: auto medium infinite scroll normal;
+	overflow-x: -webkit-marquee;
 }
 </style>

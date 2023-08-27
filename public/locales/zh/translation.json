@@ -50,6 +50,14 @@
     "inner": "內陸"
   },
   "etaPopup":{
+    "frame": {
+      "upcoming": "預報",
+      "info": "資訊",
+      "map": "地圖"
+    },
+    "upcoming":{
+      "noService": "暫無班次"
+    },
     "info":{
       "journeyTime": "總車程",
       "fullFare": "全程收費",
@@ -63,5 +71,8 @@
       "selectStation": "請選擇車站",
       "currentLocation": "目前GPS位置"
     }
+  },
+  "toast":{
+    "noEta": "此路線未有提供到站報時服務"
   }
 }

@@ -50,6 +50,14 @@
     "inner": "Inner Routes"
   },
   "etaPopup":{
+    "frame": {
+      "upcoming": "Upcoming",
+      "info": "Info",
+      "map": "Map"
+    },
+    "upcoming":{
+      "noService": "No Service"
+    },
     "info":{
       "journeyTime": "Journey Time",
       "fullFare": "Full Fare",
@@ -63,5 +71,8 @@
       "selectStation": "Please select station",
       "currentLocation": "Current GPS Location"
     }
+  },
+  "toast":{
+    "noEta": "This route does not provide ETA service"
   }
 }

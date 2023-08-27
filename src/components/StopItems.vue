@@ -6,29 +6,29 @@
                     <h5 class="ion-margin-start highlight">{{ stop.seq }}</h5>
                 </ion-col>
                 <ion-col size-xs="10" size-md="10" v-if="noEta">
-                    <h5 class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
+                    <h5 v-if="$i18next.language === 'zh'" class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
+                    <h5 v-else class="ion-margin-start highlight">{{ stop.nameEN }}</h5>
                 </ion-col>
                 <ion-col size-xs="7" size-md="7" v-else>
-                    <h5 class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
+                    <h5 v-if="$i18next.language === 'zh'" class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
+                    <h5 v-else class="ion-margin-start highlight">{{ stop.nameEN }}</h5>
                 </ion-col>
-                <ion-col size-xs="3" size-md="3" v-if="!noEta">
-                    <p class="ion-no-margin ion-text-right">
-                        <div v-if="stop.etaMessage == 'N/A'">
-                            <ion-text color="medium">
-                                <span>暫無班次</span>
-                            </ion-text>
-                        </div>
-                        <div v-else-if="stop.etaMessage == 'loading'">
-                            <ion-spinner color="primary"></ion-spinner>
-                        </div>
-                        <div v-else-if="stop.etas.length > 0">
-                            <ion-text>
-                                <span>{{ stop.etas.join(', ') }}</span>
-                                <br />
-                                <span>分鐘</span>
-                            </ion-text>
-                        </div>
-                    </p>
+                <ion-col size-xs="3" size-md="3" class="ion-no-margin ion-text-right" v-if="!noEta">
+                    <div v-if="stop.etaMessage == 'N/A'">
+                        <ion-text color="medium">
+                            <span>{{ $t('etaPopup.upcoming.noService') }}</span>
+                        </ion-text>
+                    </div>
+                    <div v-else-if="stop.etaMessage == 'loading'">
+                        <ion-spinner color="primary"></ion-spinner>
+                    </div>
+                    <div v-else-if="stop.etas.length > 0">
+                        <ion-text>
+                            <span>{{ stop.etas.join(', ') }}</span>
+                            <br />
+                            <span>{{ $t('common.minute') }}</span>
+                        </ion-text>
+                    </div>
                 </ion-col>
             </ion-row>
         </ion-grid>
