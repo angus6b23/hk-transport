@@ -111,7 +111,11 @@ export default {
             } else {
                 marker = L.marker([this.routeLocations[index].coord[1], this.routeLocations[index].coord[0]], {icon: this.nodeIcon});
             }
-            marker.bindPopup(`${this.routeLocations[index].seq} ${this.routeLocations[index].nameTC}`);
+            if (this.$i18next.language === 'zh'){
+                marker.bindPopup(`${this.routeLocations[index].seq} ${this.routeLocations[index].nameTC}`);
+            } else {
+                marker.bindPopup(`${this.routeLocations[index].seq}. ${this.routeLocations[index].nameEN}`);
+            }
             marker.addTo(this.markersGroup);
         }
         // Create array for stop geometries
