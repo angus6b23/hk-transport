@@ -4,7 +4,8 @@
     "finish": "Finish",
     "bus": "Bus",
     "minibus": "Minibus",
-    "underground": "Metro",
+    "mtr": "MTR",
+    "underground": "MTR",
     "tram": "Tram",
     "lightRail": "Light Rail",
     "ferry": "Ferry",
@@ -30,6 +31,12 @@
     "noItemHint": "Starred items will be displayed here",
     "showFerry": "Display all ferries"
   },
+  "listView":{
+    "title": "All {transportType} Routes",
+    "hint": "Please select route",
+    "eastbound": "East",
+    "westbound": "West"
+  },
   "badges":{
     "kmb": "KMB",
     "ctb": "CTB",
@@ -49,11 +56,35 @@
     "outlying": "Outlying Islands",
     "inner": "Inner Routes"
   },
+  "option":{
+    "title": "Options",
+    "basic": "Basic",
+    "theme": "Theme",
+    "selectTheme": "Please select theme",
+    "light": "Light",
+    "dark": "Dark",
+    "systemTheme": "Follow System",
+    "dataSource": "Data source",
+    "selectSource": "Please select data source",
+    "defaultSource": "Prefetched data from API (Recommended)",
+    "govApi": "Download from gov.hk API directly",
+    "selfHost": "Use your own API",
+    "selfHostUrl": "Self Host Instance URL",
+    "autoScroll": "Auto Scroll to nearest station",
+    "manageData": "Manage Data",
+    "updateRoute": "Update routes data",
+    "reloadRoute": "Reload all routes data",
+    "removeAllStar": "Clear all stars from route",
+    "removeAllStarPrompt": "This will clear all stars from route.\n Do you want to proceed?",
+    "resetAll": "Reset all settings",
+    "resetAllPrompt": "All route data will be reloaded and all stars will be cleared.\n Do you want to proceed?"
+  },
   "etaPopup":{
     "frame": {
       "upcoming": "Upcoming",
       "info": "Info",
-      "map": "Map"
+      "map": "Map",
+      "otherDirection": "Other directions"
     },
     "upcoming":{
       "noService": "No Service"
@@ -73,6 +104,7 @@
     }
   },
   "toast":{
-    "noEta": "This route does not provide ETA service"
+    "noEta": "This route does not provide ETA service",
+    "removedStar": "All stars were cleared"
   }
 }

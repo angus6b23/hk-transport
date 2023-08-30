@@ -5,6 +5,7 @@
     "bus": "巴士",
     "minibus": "專線小巴",
     "underground": "地鐵",
+    "mtr": "地鐵",
     "tram": "電車",
     "lightRail": "輕鐵",
     "ferry": "渡輪",
@@ -30,6 +31,12 @@
     "noItemHint": "可於搜尋後標記星號以方便使用",
     "showFerry": "顯示所有渡輪"
   },
+  "listView":{
+    "title": "所有{transportType}路線",
+    "hint": "請選擇路線",
+    "eastbound": "東行",
+    "westbound": "西行"
+  },
   "badges":{
     "kmb": "九巴",
     "ctb": "城巴",
@@ -49,11 +56,35 @@
     "outlying": "離島",
     "inner": "內陸"
   },
+  "option":{
+    "title": "設定",
+    "basic": "基本",
+    "theme": "主題",
+    "selectTheme": "請選擇主題",
+    "light": "亮色",
+    "dark": "暗色",
+    "systemTheme": "跟隨系統",
+    "dataSource": "資料來源",
+    "selectSource": "請選擇資料來源",
+    "defaultSource": "預設來源",
+    "govApi": "使用來自gov.hk 的api",
+    "selfHost": "自行建設的站台",
+    "selfHostUrl": "站台網址",
+    "autoScroll": "自動滾動到最接近的車站",
+    "manageData": "管理資料",
+    "updateRoute": "更新路線資料",
+    "reloadRoute": "重新下載路線資料",
+    "removeAllStar": "清除所有已標記的路線",
+    "removeAllStarPrompt": "你確定要清除所有已標記的路線嗎？",
+    "resetAll": "重設所有設定",
+    "resetAllPrompt": "所有路線資料需再次下載，已標記的路線亦會被清除。\n你確定要重設所有資料嗎？"
+  },
   "etaPopup":{
     "frame": {
       "upcoming": "預報",
       "info": "資訊",
-      "map": "地圖"
+      "map": "地圖",
+      "otherDirection": "其他方向"
     },
     "upcoming":{
       "noService": "暫無班次"
@@ -73,6 +104,7 @@
     }
   },
   "toast":{
-    "noEta": "此路線未有提供到站報時服務"
+    "noEta": "此路線未有提供到站報時服務",
+    "removedStar": "已清除所有已標記的路線"
   }
 }
