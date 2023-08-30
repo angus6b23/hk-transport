@@ -1,7 +1,7 @@
 <template>
 	<ion-header>
 		<ion-toolbar>
-			<ion-title>設定</ion-title>
+			<ion-title>{{ $t('option.title') }}</ion-title>
 			<ion-buttons slot="start">
 				<ion-button @click="closeOption">
 					<ion-icon :icon="chevronBack" />
@@ -11,7 +11,7 @@
 	</ion-header>
 	<ion-content class="ion-padding-bottom">
 		<ion-list-header>
-			<ion-label>基本</ion-label>
+			<ion-label>{{ $t('option.basic') }}</ion-label>
 		</ion-list-header>
 		<ion-list>
 			<ion-item button @click='presentLangAction'>
@@ -25,59 +25,59 @@
 			<ion-item button @click='presentThemeAction'>
 				<ion-icon :icon="colorPaletteOutline" slot="start" />
 					<ion-label>
-						<h5>主題</h5>
-						<p v-if="config.theme == 'light'">亮色</p>
-						<p v-else-if="config.theme == 'dark'">暗色</p>
-						<p v-else-if="config.theme == 'system'">系統預設</p>
+						<h5>{{ $t('option.theme') }}</h5>
+						<p v-if="config.theme == 'light'">{{ $t('option.light') }}</p>
+						<p v-else-if="config.theme == 'dark'">{{ $t('option.dark') }}</p>
+						<p v-else-if="config.theme == 'system'">{{ $t('option.systemTheme') }}</p>
 					</ion-label>
 			</ion-item>
 			<ion-item button @click='presentSourceAction'>
 				<ion-icon :icon="serverOutline" slot="start" />
 					<ion-label>
-						<h5>資料來源</h5>
-						<p v-if="config.fetchMethod == 'default'">預設</p>
-						<p v-else-if="config.fetchMethod == 'hkgov'">來自 gov.hk</p>
-						<p v-else-if="config.fetchMethod == 'self'">自行搭建來源</p>
+						<h5>{{ $t('option.dataSource') }}</h5>
+						<p v-if="config.fetchMethod == 'default'">{{ $t('option.defaultSource') }}</p>
+						<p v-else-if="config.fetchMethod == 'hkgov'">{{ $t('option.govApi') }}</p>
+						<p v-else-if="config.fetchMethod == 'self'">{{ $t('option.selfHost') }}</p>
 					</ion-label>
 			</ion-item>
 			<ion-item v-if="config.fetchMethod == 'self'">
-				<ion-label position="stacked">資料來源URL</ion-label>
+				<ion-label position="stacked">{{ $t('option.selfHostUrl') }}</ion-label>
 				<ion-input placeholder="https://your.api" v-model='apiBaseUrl'></ion-input>
 			</ion-item>
 			<ion-item>
 				<ion-icon :icon="returnDownForwardOutline" slot="start" />
 					<ion-label>
-						<h5>自動滾動至最近的車站</h5>
+						<h5>{{ $t('option.autoScroll') }}</h5>
 					</ion-label>
 					<ion-checkbox slot="end" v-model="autoScroll"></ion-checkbox>
 			</ion-item>
 		</ion-list>
 		<ion-list-header>
-			<ion-label>管理資料</ion-label>
+			<ion-label>{{ $t('option.manageData') }}</ion-label>
 		</ion-list-header>
 		<ion-list class="ion-padding-bottom ion-margin-bottom">
 			<ion-item button @click="updateData">
 				<ion-icon :icon="cloudDownloadOutline" slot="start" />
 					<ion-label>
-						<h5>更新路線資料</h5>
+						<h5>{{ $t('option.updateRoute') }}</h5>
 					</ion-label>
 			</ion-item>
 			<ion-item button @click="downloadData">
 				<ion-icon :icon="reloadOutline" slot="start" />
 					<ion-label>
-						<h5>重新下載路線資料</h5>
+						<h5>{{ $t('option.reloadRoute') }}</h5>
 					</ion-label>
 			</ion-item>
 			<ion-item button @click="clearStarred">
 				<ion-icon :icon="starHalfOutline" slot="start" />
 					<ion-label>
-						<h5>清除所有已標記的路線</h5>
+						<h5>{{ $t('option.removeAllStar') }}</h5>
 					</ion-label>
 			</ion-item>
 			<ion-item button @click="confirmClearData">
 				<ion-icon :icon="trashOutline" slot="start" />
 					<ion-label>
-						<h5>重設所有設定</h5>
+						<h5>{{ $t('option.resetAll') }}</h5>
 					</ion-label>
 			</ion-item>
 		</ion-list>
@@ -132,18 +132,18 @@ export default {
 		},
 		async clearStarred() {
 			const {value} = await Dialog.confirm({
-				title: '清除所有已標記的路線',
-				message: '你確定要清除所有已標記的路線嗎？'
+				title: this.$t("option.removeAllStar"),
+				message: this.$t("option.removeAllStarPrompt")
 			});
 			if (value){
 				await localforage.setItem('starred', []);
-				presentToast('info', '已清除所有已標記的路線')
+				presentToast('info', this.$t('toast.removedStar'))
 			}
 		},
 		async confirmClearData() {
 			const { value } = await Dialog.confirm({
-				title: '重設所有資料',
-				message: '所有路線資料需再次下載，已標記的路線亦會被清除。\n你確定要重設所有資料嗎？'
+				title: this.$t('option.resetAll'),
+				message: this.$t('option.resetAllPrompt')
 			});
 			if (value){
 				let keys = await localforage.keys();
@@ -219,19 +219,19 @@ export default {
 		},
 		async presentSourceAction(){
 			const sourceActions = [{
-				text: '預設',
+				text: this.$t('option.defaultSource'),
 				data: { action: 'default' }
-			},
+				},
 				{
-					text: '來自gov.hk',
+					text: this.$t('option.govApi'),
 					data: {action: 'hkgov'}
 				},
 				{
-					text: '自行搭建來源',
+					text: this.$t('option.selfHost'),
 					data: {action: 'self'}
 				}];
 			const sourceSheet = await actionSheetController.create({
-				header: '請選擇資料來源',
+				header: this.$t('option.selectSource'),
 				buttons: sourceActions
 			});
 			await sourceSheet.present();
@@ -244,19 +244,19 @@ export default {
 		},
 		async presentThemeAction(){
 			const themeActions = [{
-				text: '系統預設',
+				text: this.$t('option.systemTheme'),
 				data: { action: 'system' }
 			},
 				{
-					text: '亮色',
+					text: this.$t('option.light'),
 					data: {action: 'light'}
 				},
 				{
-					text: '暗色',
+					text: this.$t('option.dark'),
 					data: {action: 'dark'}
 				}];
 			const themeSheet = await actionSheetController.create({
-				header: '請選擇資料來源',
+				header: this.$t('option.selectTheme'),
 				buttons: themeActions
 			});
 			await themeSheet.present();

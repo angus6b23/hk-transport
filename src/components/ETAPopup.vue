@@ -104,7 +104,7 @@ import presentToast from '@/components/presentToast.js';
 
 export default {
 	name: "ETAPopup",
-	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo, Vue3Marquee, VueElement },
+	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo, Vue3Marquee },
 	props: ['item', 'starred', 'noEta', 'altRoutes'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {
@@ -417,13 +417,20 @@ export default {
 		},
 		async presentActionSheet(){
 			const actionButtons = this.altRoutes.map(route => {
-				return {
-					text: `${route.originTC} →  ${route.destTC}`,
-					data: route
+				if (this.$i18next.language === 'zh'){
+					return {
+						text: `${route.originTC} →  ${route.destTC}`,
+						data: route
+					}
+				} else {
+					return {
+						text: `${route.originEN} →  ${route.destEN}`,
+						data: route
+					}
 				}
 			});
 			const actionSheet = await actionSheetController.create({
-				header: '其他方向',
+				header: this.$t('etaPopup.frame.otherDirection'),
 				buttons: actionButtons
 			})
 			await actionSheet.present();
@@ -460,9 +467,5 @@ export default {
 .segment-content {
 	margin-top: 50px;
 	margin-bottom: 50px;
-}
-.marquee {
-	-webkit-marquee: auto medium infinite scroll normal;
-	overflow-x: -webkit-marquee;
 }
 </style>
