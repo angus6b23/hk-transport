@@ -89,9 +89,7 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen"  @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes"
-	   @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData"
-	   @swapDirection="swapDirection" />
+			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData" @swapDirection="swapDirection" />
 		</ion-modal>
 		<ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
 			<Option @closeOption="closeOption" @changeLanguage="changeLanguage" />
@@ -224,11 +222,16 @@ export default defineComponent({
 				this.displayArray = this.starred; //Show starred bus if query is empty
 			} else {
 				if (this.type == 'ferry') {
-					this.displayArray = this.data.filter(x => x.direction == 1 && (x.routeNameTC.includes(newQuery) || x.routeNameEN.includes(newQuery)));
+					this.displayArray = this.data.filter(x => x.direction == 1 && (x.routeNameTC.includes(newQuery) || x.routeNameEN.toLowerCase().includes(newQuery.toLowerCase())));
 				} else {
-					// Limit small number query
-					this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
+					if (this.$i18next.language === 'zh'){
+						this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
 						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)); // Filter by route numbers and destinations.
+					} else {
+						this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())) :
+						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())); // Filter by route numbers and destinations.
+					}
+					// Limit small number query
 					this.displayArray.sort(function (a, b) {
 						a = Number(a.routeNo.replace(/[A-Z]/g, 0));
 						b = Number(b.routeNo.replace(/[A-Z]/g, 0));

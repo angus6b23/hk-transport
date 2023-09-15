@@ -5,10 +5,8 @@
 		<ion-toolbar>
 			<ion-title v-if="item.type == 'bus' || item.type == 'minibus'">
 				<span>{{ item.routeNo }}</span>
-				<Vue3Marquee>
 				<span v-if="$i18next.language === 'zh'" class="ion-margin-start">{{ item.destTC }}</span>
 				<span v-else class="ion-margin-start">{{ item.destEN }}</span>
-				</Vue3Marquee>
 			</ion-title>
 			<ion-title v-else-if="item.type == 'lightRail'">
 				{{ item.routeNameEN }}
@@ -53,10 +51,10 @@
 				<ion-segment-button value="default">
 					<ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
 				</ion-segment-button>
-				<ion-segment-button value="info">
+				<ion-segment-button v-if="item.type != 'mtr'" value="info">
 					<ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
 				</ion-segment-button>
-				<ion-segment-button value="map">
+				<ion-segment-button v-if="item.type != 'mtr'" value="map">
 					<ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
 				</ion-segment-button>
 			</ion-segment>
@@ -139,7 +137,7 @@ export default {
 			presentToast('info', this.$t('toast.noEta'))
 		}
 		// Fetch KMB ETAs
-		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LMB'))) {
+		if (this.item.type === 'bus' && this.item.company.length == 1 && (this.item.company.includes('KMB') || this.item.company.includes('LWB'))) {
 			this.getKMB();
 			this.interval = setInterval(async () => await this.getKMB(), 10000);
 		}
