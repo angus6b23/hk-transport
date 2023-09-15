@@ -77,7 +77,9 @@
     "removeAllStar": "Clear all stars from route",
     "removeAllStarPrompt": "This will clear all stars from route.\n Do you want to proceed?",
     "resetAll": "Reset all settings",
-    "resetAllPrompt": "All route data will be reloaded and all stars will be cleared.\n Do you want to proceed?"
+    "resetAllPrompt": "All route data will be reloaded and all stars will be cleared.\n Do you want to proceed?",
+    "updatingData": "Updating data",
+    "redownloadData": "Redownloading all route data"
   },
   "etaPopup":{
     "frame": {
@@ -105,6 +107,9 @@
   },
   "toast":{
     "noEta": "This route does not provide ETA service",
-    "removedStar": "All stars were cleared"
+    "removedStar": "All stars were cleared",
+    "resetAll": "All settins are reseted, the page will reload in 3 seconds",
+    "networkError": "Network error. Please check the source api and your network",
+    "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs"
   }
 }

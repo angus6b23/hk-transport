@@ -150,12 +150,12 @@ export default {
 				for (let key of keys){
 					await localforage.removeItem(key)
 				}
-				presentToast('info', '已重設所有設定，將會在3秒後重新載入');
+				presentToast('info', this.$t('toast.resetAll'));
 				setTimeout(()=>{ location.reload() }, 3000)
 			}
 		},
 		async updateData(){
-			const loading = await loadingController.create({ message: '正在更新資料<br><span id="loading-progress"><span>'});
+			const loading = await loadingController.create({ message: this.$t('option.updatingData') + '<br><span id="loading-progress"><span>'});
 			try{
 				let res;
 				loading.present();
@@ -172,12 +172,12 @@ export default {
 				}
 			} catch(err) {
 				loading.dismiss();
-				presentToast('error', '網絡出錯，請檢查資料來源url 和網絡');
+				presentToast('error', this.$t('toast.networkError'));
 			}
 		},
 		async downloadData(){
 			const loading = await loadingController.create({
-				message: '正在重新下載資料<br><span id="loading-progress"><span>',
+				message: this.$t('option.redownloadData') + '<br><span id="loading-progress"><span>',
 			});
 			loading.present();
 			let keys = await localforage.keys();
@@ -239,7 +239,7 @@ export default {
 			if (res.data && this.config.fetchMethod != res.data.action){
 				this.config.fetchMethod = res.data.action;
 				await localforage.setItem('config', JSON.parse(JSON.stringify(this.config)));
-				await presentToast('info', '請按管理資料 > 重新下載路線資料 以反映設定')
+				await presentToast('info', this.$t('toast.changeSourceHint'));
 			}
 		},
 		async presentThemeAction(){
