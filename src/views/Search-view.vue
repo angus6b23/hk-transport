@@ -17,6 +17,7 @@
 			</ion-toolbar>
 			<ion-toolbar>
 				<ion-searchbar autocorrect="off" v-model="query" :placeholder="$t('searchView.searchPlaceHolder')"></ion-searchbar>
+				<Keypad :query="query" :data="data" @padClick="padUpdateQuery" />
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
@@ -108,10 +109,11 @@ import Badges from '@/components/Badges';
 import sleep from '@/components/sleep.js'
 import localforage from 'localforage';
 import presentToast from '@/components/presentToast.js'
+import Keypad from '@/components/Keypad'
 
 export default defineComponent({
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option, Keypad },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -129,7 +131,8 @@ export default defineComponent({
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
 			modalIsOpen.value = false;
-		})
+		});
+
 		return {
 			data,
 			query,
@@ -239,6 +242,15 @@ export default defineComponent({
 					});
 					this.displayArray.splice(50);// Only show first 50 results
 				}
+			}
+		},
+		padUpdateQuery(value){
+			if (value === 'clear'){
+				this.clearQuery()
+			} else if (value === 'back'){
+				this.query = this.query.substring(0, this.query.length - 1);
+			} else {
+				this.query = `${this.query}${value}`
 			}
 		},
 		listAll() {
