@@ -10,10 +10,8 @@
 			</ion-title>
 			<ion-title v-else-if="item.type == 'lightRail'">
 				{{ item.routeNameEN }}
-				<Vue3Marquee>
 				<span v-if="$i18next.language === 'zh'" class="ion-margin-start">{{ item.originTC }} - {{ item.destTC }}</span>
 				<span v-else class="ion-margin-start">{{ item.originEN }} - {{ item.destEN }}</span>
-				</Vue3Marquee>
 			</ion-title>
 			<ion-title class="marquee" v-else>
 				<span v-if="$i18next.language === 'zh'">{{ item.routeNameTC }}</span>
@@ -72,9 +70,9 @@
 				:class="{ nearest: isNearestStop(stop.stopId) }" ref="stopItem"></StopItems>
 				</ion-list>
 			</section>
-			<!-- Route Info -->
 			<section v-if="popupView == 'info'">
 				<RouteInfo :item="item"></RouteInfo>
+			<!-- Route Info -->
 			</section>
 			<!-- Map View -->
 			<section v-if="popupView == 'map'" class="max-size">
@@ -85,12 +83,11 @@
 </template>
 
 <script>
-import { VueElement, ref } from 'vue';
+import { ref } from 'vue';
 import { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, actionSheetController } from '@ionic/vue';
 import { star, starOutline, chevronBack, swapHorizontalOutline } from 'ionicons/icons'
 import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
-import { Vue3Marquee } from 'vue3-marquee';
 
 import { fetchKMBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta, fetchMtrEta, fetchLightRailEta, fetchBulkCTBETA } from '@/fetch/fetchETA.js';
 import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
@@ -102,7 +99,7 @@ import presentToast from '@/components/presentToast.js';
 
 export default {
 	name: "ETAPopup",
-	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo, Vue3Marquee },
+	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
 	props: ['item', 'starred', 'noEta', 'altRoutes'],
 	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
 	setup(props) {

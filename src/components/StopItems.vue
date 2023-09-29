@@ -3,7 +3,7 @@
         <ion-grid>
             <ion-row class="ion-align-items-center">
                 <ion-col size-xs="2" size-md="2">
-                    <h5 class="ion-margin-start highlight">{{ stop.seq }}</h5>
+                    <h5 class="ion-margin-start highlight">{{ parseInt(stop.seq) }}</h5>
                 </ion-col>
                 <ion-col size-xs="10" size-md="10" v-if="noEta">
                     <h5 v-if="$i18next.language === 'zh'" class="ion-margin-start highlight">{{ stop.nameTC }}</h5>
