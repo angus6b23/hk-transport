@@ -1,8 +1,11 @@
 <template>
     <ion-select interface="action-sheet" placeholder="選擇放大的位置" v-model="zoomIndex">
-        <ion-select-option value="null">請選擇巴士站</ion-select-option>
-        <ion-select-option v-for="(stop, index) in routeLocations" :value="index" :key="stop.stopId">{{ index + 1}} {{ stop.nameTC }}</ion-select-option>
-        <ion-select-option value="gps">目前GPS 位置</ion-select-option>
+        <ion-select-option value="null">{{ $t('etaPopup.map.selectStation') }}</ion-select-option>
+        <ion-select-option v-for="(stop, index) in routeLocations" :value="index" :key="stop.stopId">
+            <span v-if="$i18next.language === 'zh'">{{ index + 1}} {{ stop.nameTC }}</span>
+            <span v-else class="ion-text-captitalize">{{ index +1 }}. {{ stop.nameEN }}</span>
+        </ion-select-option>
+        <ion-select-option value="gps">{{ $t('etaPopup.map.currentLocation') }}</ion-select-option>
     </ion-select>
     <div id="mapContainer"></div>
 </template>
@@ -108,7 +111,11 @@ export default {
             } else {
                 marker = L.marker([this.routeLocations[index].coord[1], this.routeLocations[index].coord[0]], {icon: this.nodeIcon});
             }
-            marker.bindPopup(`${this.routeLocations[index].seq} ${this.routeLocations[index].nameTC}`);
+            if (this.$i18next.language === 'zh'){
+                marker.bindPopup(`${this.routeLocations[index].seq} ${this.routeLocations[index].nameTC}`);
+            } else {
+                marker.bindPopup(`${this.routeLocations[index].seq}. ${this.routeLocations[index].nameEN}`);
+            }
             marker.addTo(this.markersGroup);
         }
         // Create array for stop geometries

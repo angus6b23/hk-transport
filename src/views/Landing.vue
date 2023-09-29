@@ -12,84 +12,47 @@
                             <ion-card-subtitle>Please select language</ion-card-subtitle>
                         </ion-card-header>
                         <ion-card-content>
-                            <ion-button expand="block" class="ion-margin-top" @click="setLang('zh')">正體中文</ion-button>
+                            <ion-button expand="block" class="ion-margin-top" @click="$i18next.changeLanguage('zh'); setLang('zh')">正體中文</ion-button>
                             <ion-button expand="block" class="ion-margin-top"
-                                @click="setLang('en')">English</ion-button>
+                                @click="$i18next.changeLanguage('en'); setLang('en')">English</ion-button>
                         </ion-card-content>
                     </div>
                 </ion-card>
             </div>
             <div v-if="step == 2" class="ion-margin-start ion-margin-end ion-margin-top">
-                <div v-if="lang == 'zh'">
-                    <ion-title>請選擇資料來源</ion-title>
+                <div>
+                    <ion-title>{{ $t('landing.selectSource') }}</ion-title>
                     <form @submit.prevent="finishConfig()">
                         <ion-list class="ion-margin-top">
                             <ion-radio-group v-model="radioSelect">
                                 <ion-item>
-                                    <ion-label class="ion-text-wrap">預先整理好的資料(建議)</ion-label>
+                                    <ion-label class="ion-text-wrap">{{ $t('landing.optionPrefetch') }}</ion-label>
                                     <ion-radio slot="end" value="default" checked></ion-radio>
                                 </ion-item>
         
                                 <ion-item>
-                                    <ion-label class="ion-text-wrap">直接從gov.hk API 獲取</ion-label>
+                                    <ion-label class="ion-text-wrap">{{ $t('landing.optionGovAPI') }}</ion-label>
                                     <ion-radio slot="end" value="hkgov"></ion-radio>
                                 </ion-item>
         
                                 <ion-item>
-                                    <ion-label class="ion-text-wrap">使用自後搭建的後台</ion-label>
+                                    <ion-label class="ion-text-wrap">{{ $t('landing.optionSelfHost') }}</ion-label>
                                     <ion-radio slot="end" value="self"></ion-radio>
                                 </ion-item>
                             </ion-radio-group>
                             <ion-item v-if="radioSelect == 'self'">
-                                <ion-label position="stacked">你可以在 12a.app github 找到自行搭建的方法</ion-label>
-                                <ion-input v-model="hostUrl" placeholder="在此輸入網址: https://your.api/" required></ion-input>
+                                <ion-label position="stacked">{{ $t('landing.hostHint') }}</ion-label>
+                                <ion-input v-model="hostUrl" :placeholder="$t('landing.urlPlaceholder')" required></ion-input>
                             </ion-item>
                         </ion-list>
                         <div class="button-container">
                             <ion-button fill="clear" type="button" @click="back()">
                                 <ion-icon :icon="chevronBackOutline" slot="start"></ion-icon>
-                                上一步
+                                {{ $t('common.back') }}
                             </ion-button>
                             <ion-button fill="solid" type="submit">
                                 <ion-icon :icon="checkmarkOutline" ></ion-icon>
-                                完成
-                            </ion-button>
-                        </div>
-                    </form>
-                </div>
-                <div v-else>
-                    <ion-title>Please select data source</ion-title>
-                    <form @submit.prevent="finishConfig()">
-                        <ion-list class="ion-margin-top">
-                            <ion-radio-group v-model="radioSelect">
-                                <ion-item>
-                                    <ion-label class="ion-text-wrap">Pre-fetched data from backend (Recommended)</ion-label>
-                                    <ion-radio slot="end" value="default" checked></ion-radio>
-                                </ion-item>
-        
-                                <ion-item>
-                                    <ion-label class="ion-text-wrap">Direct from api.gov.hk</ion-label>
-                                    <ion-radio slot="end" value="hkgov"></ion-radio>
-                                </ion-item>
-        
-                                <ion-item>
-                                    <ion-label class="ion-text-wrap">Use self-hosted backend</ion-label>
-                                    <ion-radio slot="end" value="self"></ion-radio>
-                                </ion-item>
-                            </ion-radio-group>
-                            <ion-item v-if="radioSelect == 'self'">
-                                <ion-label position="stacked">You can find ways to self-host from 12a.app github</ion-label>
-                                <ion-input v-model="hostUrl" placeholder="Enter the url: https://your.api/" required></ion-input>
-                            </ion-item>
-                        </ion-list>
-                        <div class="button-container">
-                            <ion-button fill="clear" type="button" @click="back()">
-                                <ion-icon :icon="chevronBackOutline" slot="start"></ion-icon>
-                                Back
-                            </ion-button>
-                            <ion-button fill="solid" type="submit">
-                                <ion-icon :icon="checkmarkOutline" ></ion-icon>
-                                Finish
+                                {{ $t('common.finish') }}
                             </ion-button>
                         </div>
                     </form>
@@ -101,13 +64,12 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonList, IonRadio, IonTitle, IonItem, IonContent, IonLabel, IonInput, IonRadioGroup, IonIcon } from '@ionic/vue';
+import { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonList, IonRadio, IonTitle, IonItem, IonContent, IonLabel, IonInput, IonRadioGroup, IonIcon } from '@ionic/vue';
 import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons';
-import presentToast from '@/components/presentToast'
 
 export default defineComponent({
     name: 'Landing',
-    components: { IonPage, IonText, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonList, IonRadio, IonTitle, IonItem, IonContent, IonLabel, IonInput, IonRadioGroup, IonIcon, presentToast },
+    components: { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonList, IonRadio, IonTitle, IonItem, IonContent, IonLabel, IonInput, IonRadioGroup, IonIcon},
     emits: ['finishConfig'],
     setup() {
         const loading = ref(false);
@@ -141,7 +103,8 @@ export default defineComponent({
                 theme: 'system',
                 fetchMethod: this.radioSelect,
                 apiBaseUrl: (this.radioSelect == 'self') ? this.hostUrl : '',
-                dataFilled: false
+                dataFilled: false,
+                autoScroll: true
             }
             this.$emit('finishConfig', config)
         }

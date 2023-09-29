@@ -3,7 +3,11 @@
 		<ion-header>
 			<ion-toolbar>
 				<ion-title>
-					{{ typeTC }}路線
+					<i18next :translation="$t('searchView.title')">
+					<template #transportType>
+						<span>{{ $t(`common.${type}`) }}</span>
+					</template>
+					</i18next>
 				</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="openOption">
@@ -12,22 +16,31 @@
 				</ion-buttons>
 			</ion-toolbar>
 			<ion-toolbar>
-				<ion-searchbar autocorrect="off" v-model="query" placeholder="請輸入路線號碼或目的地"></ion-searchbar>
+				<ion-searchbar autocorrect="off" v-model="query" :placeholder="$t('searchView.searchPlaceHolder')"></ion-searchbar>
+				<Keypad :query="query" :data="data" @padClick="padUpdateQuery" />
 			</ion-toolbar>
 		</ion-header>
 		<ion-content :fullscreen="true">
-			<ion-modal ref="modal" :is-open="optionIsOpen" @WillDismiss="closeOption">
-				<Option @closeOption="closeOption" />
-			</ion-modal>
-
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header v-if="query.length > 0">
-					<ion-label>搜尋{{ typeTC }}: {{ query }}</ion-label>
-					<ion-button fill="clear" @click="clearQuery">清除搜尋</ion-button>
+					<ion-label>
+						<i18next :translation="$t('searchView.searchPrompt', {query: query})">
+						<template #transportType>
+							<span>{{ $t(`common.${type}`) }}</span>
+						</template>
+						</i18next>
+					</ion-label>
+					<ion-button fill="clear" @click="clearQuery">{{ $t('searchView.clearSearch') }}</ion-button>
 				</ion-list-header>
 				<ion-list-header v-else>
-					<ion-label v-if="starred.length > 0">已標記的{{ typeTC }}</ion-label>
+					<ion-label v-if="starred.length > 0">
+						<i18next :translation="$t('searchView.starredPrompt')">
+							<template #transportType>
+								<span>{{ $t(`common.${type}`) }}</span>
+							</template>
+						</i18next>
+					</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
@@ -42,20 +55,22 @@
 									</ion-col>
 									<ion-col size-xs="9" size-md="11">
 										<Badges :route="route" />
-										<h3 class="ion-no-margin ion-margin-start">{{ route.destTC }}</h3>
+										<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start">{{ route.destTC }}</h5>
+										<h5 v-else class="ion-no-margin ion-margin-start">{{ route.destEN }}</h5>
 									</ion-col>
 								</ion-row>
 								<!-- Rows for Ferry -->
 								<ion-row v-else class="open-modal" expand="block" @click="openModal(index)">
 									<ion-col size-xs="8" size-md="10">
 										<Badges :route="route" />
-										<h3 class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h3>
+										<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start">{{ route.routeNameTC }}</h5>
+										<h5 v-else class="ion-no-margin ion-margin-start">{{ route.routeNameEN }}</h5>
 									</ion-col>
 									<ion-col size-xs="2" size-md="1" class="d-flex">
-										<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">順行</ion-button>
+										<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">{{ $t('searchView.inbound') }}</ion-button>
 									</ion-col>
 									<ion-col size-xs="2" size-md="1" class="d-flex">
-										<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">逆行</ion-button>
+										<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">{{ $t('searchView.outbound') }}</ion-button>
 									</ion-col>
 								</ion-row>
 							</ion-grid>
@@ -64,20 +79,21 @@
 				</div>
 				<div v-else class="no-content">
 					<ion-text color="medium">
-						<p>尚未有顯示的項目</p>
-					</ion-text>
+						<p>{{ $t('searchView.noItem') }}</p>
+				</ion-text>
 					<ion-text color="medium">
-						<p>可於搜尋後標記星號以方便使用</p>
+						<p>{{ $t('searchView.noItemHint') }}</p>
 					</ion-text>
-					<ion-button v-if="type == 'ferry'" fill="clear" @click="listAll">顯示所有渡輪</ion-button>
+					<ion-button v-if="type == 'ferry'" fill="clear" @click="listAll">{{ $t('searchView.showFerry') }}</ion-button>
 				</div>
 			</ion-list>
 		</ion-content>
 		<!-- Modal for displaying bus details -->
-		<ion-modal :is-open="modalIsOpen" ref="modal" @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes"
-	   @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData"
-	   @swapDirection="swapDirection" />
+		<ion-modal :is-open="modalIsOpen"  @WillDismiss="closeModal">
+			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData" @swapDirection="swapDirection" />
+		</ion-modal>
+		<ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
+			<Option @closeOption="closeOption" @changeLanguage="changeLanguage" />
 		</ion-modal>
 	</ion-page>
 </template>
@@ -93,10 +109,11 @@ import Badges from '@/components/Badges';
 import sleep from '@/components/sleep.js'
 import localforage from 'localforage';
 import presentToast from '@/components/presentToast.js'
+import Keypad from '@/components/Keypad'
 
 export default defineComponent({
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option },
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option, Keypad },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -104,29 +121,30 @@ export default defineComponent({
 		const displayArray = ref([]);// Reference for displaying search results
 		const itemSelected = ref({}); // Reference for selected bus on query
 		const altRoutes = ref([]);
+		const config = ref({});
 		const modalIsOpen = ref(false);
 		const optionIsOpen = ref(false);
 		const data = ref([]); // For storage of bus routes and stops
 		const starred = ref([]);
 		const type = ref(props.dataType);
-		const typeTC = ref('');
 		const dataReady = ref(false)
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
 			modalIsOpen.value = false;
-		})
+		});
+
 		return {
 			data,
 			query,
 			displayArray,
 			itemSelected,
 			altRoutes,
+			config,
 			modalIsOpen,
 			optionIsOpen,
 			starred,
 			type,
 			dataReady,
-			typeTC,
 			cog,
 			chevronBack
 		}
@@ -159,6 +177,9 @@ export default defineComponent({
 		},
 		closeOption() {
 			this.optionIsOpen = false;
+		},
+		async changeLanguage(){
+			this.config = await localforage.getItem('config');
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
@@ -204,11 +225,16 @@ export default defineComponent({
 				this.displayArray = this.starred; //Show starred bus if query is empty
 			} else {
 				if (this.type == 'ferry') {
-					this.displayArray = this.data.filter(x => x.direction == 1 && (x.routeNameTC.includes(newQuery) || x.routeNameEN.includes(newQuery)));
+					this.displayArray = this.data.filter(x => x.direction == 1 && (x.routeNameTC.includes(newQuery) || x.routeNameEN.toLowerCase().includes(newQuery.toLowerCase())));
 				} else {
-					// Limit small number query
-					this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
+					if (this.$i18next.language === 'zh'){
+						this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
 						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)); // Filter by route numbers and destinations.
+					} else {
+						this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())) :
+						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())); // Filter by route numbers and destinations.
+					}
+					// Limit small number query
 					this.displayArray.sort(function (a, b) {
 						a = Number(a.routeNo.replace(/[A-Z]/g, 0));
 						b = Number(b.routeNo.replace(/[A-Z]/g, 0));
@@ -218,16 +244,13 @@ export default defineComponent({
 				}
 			}
 		},
-		getTypeTranslate(type) {
-			switch (type) {
-				case 'bus':
-					return '巴士'
-				case 'minibus':
-					return '專線小巴'
-				case 'ferry':
-					return '渡輪'
-				default:
-					return '未知'
+		padUpdateQuery(value){
+			if (value === 'clear'){
+				this.clearQuery()
+			} else if (value === 'back'){
+				this.query = this.query.substring(0, this.query.length - 1);
+			} else {
+				this.query = `${this.query}${value}`
 			}
 		},
 		listAll() {
@@ -265,7 +288,7 @@ export default defineComponent({
 	},
 	async mounted() {
 		this.data = await loadChunk(this.type)
-		this.typeTC = this.getTypeTranslate(this.type);
+		this.config = await localforage.getItem('config');
 		let starStorage = await localforage.getItem('starred');
 		if (!starStorage || !starStorage[this.type]) {
 			this.starred = []

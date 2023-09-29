@@ -2,7 +2,13 @@
 	<ion-page>
 		<ion-header>
 			<ion-toolbar>
-				<ion-title>所有{{ typeTC }}路線</ion-title>
+				<ion-title>
+					<i18next :translation="$t('listView.title')">
+					<template #transportType>
+						<span>{{ $t(`common.${type}`) }}</span>
+					</template>
+					</i18next>
+				</ion-title>
 				<ion-buttons slot="end">
 					<ion-button @click="openOption">
 						<ion-icon :icon="cog"></ion-icon>
@@ -17,35 +23,44 @@
 			<ion-list v-if="dataReady">
 				<!-- Change List Header according to bus search -->
 				<ion-list-header>
-					<ion-label>請選擇路線</ion-label>
+					<ion-label>{{ $t('listView.hint') }}</ion-label>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-for="(route, index) in data" :key="route.id">
 					<ion-item v-if="route.direction == 1" button>
 						<ion-grid>
-							<!-- Row Button for MTR and lightRail -->
-							<ion-row v-if="route.type == 'mtr' || route.type == 'lightRail'" class="open-modal" expand="block" @click="openModal(index)">
+							<!-- Row Button for MTR -->
+							<ion-row v-if="route.type == 'mtr'" class="open-modal" expand="block" @click="openModal(index)">
 								<ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
-									<div v-if="route.type == 'mtr'" class="line-color-indicator"
+									<div class="line-color-indicator"
 										:style="{ 'background-color': '#' + route.color }"></div>
-									<h3 v-else>{{ route.routeId }}</h3>
 								</ion-col>
 								<ion-col size-xs="9" size-md="11">
-									<h3 v-if="route.type == 'lightRail'" class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.originTC }} - {{ route.destTC }}</h3>
-									<h3 v-else class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC
-									}}</h3>
+									<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC }}</h5>
+									<h5 v-else class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameEN }}</h5>
+								</ion-col>
+							</ion-row>
+							<!-- Row Button for lightRail -->
+							<ion-row v-if="route.type == 'lightRail'" class="open-modal" expand="block" @click="openModal(index)">
+								<ion-col size-xs="3" size-md="1" class="route-no ion-align-items-center">
+									<h5>{{ route.routeId }}</h5>
+								</ion-col>
+								<ion-col size-xs="9" size-md="11">
+									<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.originTC }} - {{ route.destTC }}</h5>
+									<h5 v-else class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.originEN }} - {{ route.destEN }}</h5>
 								</ion-col>
 							</ion-row>
 							<!-- Row Button for Tram -->
 							<ion-row v-if="route.type == 'tram'" class="open-modal" expand="block" @click="openModal(index)">
 								<ion-col size-xs="8" size-md="10">
-									<h5 class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC }}</h5>
+									<h5 v-if="$i18next.language === 'zh'" class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameTC }}</h5>
+									<h5 v-else class="ion-no-margin ion-margin-start ion-padding-vertical">{{ route.routeNameEN }}</h5>
 								</ion-col>
 								<ion-col size-xs="2" size-md="1" class="d-flex">
-									<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">西行</ion-button>
+									<ion-button @click.stop="openModal(index)" class="direction1-button direction-button">{{ $t('listView.westbound') }}</ion-button>
 								</ion-col>
 								<ion-col size-xs="2" size-md="1" class="d-flex">
-									<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">東行</ion-button>
+									<ion-button @click.stop="openAltModal(index)" class="direction2-button direction-button">{{ $t('listView.eastbound') }}</ion-button>
 								</ion-col>
 							</ion-row>
 						</ion-grid>
@@ -62,7 +77,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonContent, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonTitle, IonIcon, IonButtons, IonButton } from '@ionic/vue';
 import { cog } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import presentToast from '@/components/presentToast'
@@ -72,7 +87,7 @@ import sleep from '@/components/sleep.js'
 
 export default defineComponent({
 	name: 'ListView',
-	components: { IonHeader, IonToolbar, IonContent, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonBadge, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup, Option },
+	components: { IonHeader, IonToolbar, IonContent, IonPage, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonTitle, IonIcon, IonButtons, IonButton, ETAPopup, Option },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -82,7 +97,6 @@ export default defineComponent({
 		const data = ref([]); // For storage of routes and stops
 		const type = ref(props.dataType);
 		const dataReady = ref(false)
-		const typeTC = ref(''); //For saving TC translation for type of transport
 		const altRoutes = ref([]); // For saving directions with same routeNo, which will be passed to etaPopup
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
@@ -96,7 +110,6 @@ export default defineComponent({
 			optionIsOpen,
 			type,
 			dataReady,
-			typeTC,
 			cog,
 		}
 	},
@@ -129,18 +142,6 @@ export default defineComponent({
 		currentSelectedItem(x) { // For finding index of currently selected bus
 			return x.routeId == this.itemSelected.routeId && x.routeDirection == this.itemSelected.routeDirection
 		},
-		getTypeTranslate(type) {
-			switch (type) {
-				case 'tram':
-					return '電車'
-				case 'lightRail':
-					return '輕鐵'
-				case 'mtr':
-					return '港鐵'
-				default:
-					return '未知'
-			}
-		},
 		getAltRoutes(){
 			if(this.type == 'tram'){
 				this.altRoutes = JSON.parse(JSON.stringify(this.data.filter(item => item.routeNo == this.itemSelected.routeNo && item.direction != this.itemSelected.direction)));
@@ -163,7 +164,6 @@ export default defineComponent({
 	},
 	async mounted() {
 		this.data = await loadChunk(this.type)
-		this.typeTC = this.getTypeTranslate(this.type);
 		this.dataReady = true;
 	},
 	computed: {
