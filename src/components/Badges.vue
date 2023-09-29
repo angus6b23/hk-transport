@@ -9,7 +9,7 @@
 		<ion-badge v-if="route.company.includes('NLB')" class="nlb-badge ion-margin-start">{{ $t('badges.nlb') }}</ion-badge>
 		<ion-badge v-if="route.company.includes('PI')" class="pi-badge ion-margin-start">{{ $t('badges.pi') }}</ion-badge>
 		<ion-badge v-if="route.company.includes('XB')" class="xb-badge ion-margin-start">{{ $t('badges.xb') }}</ion-badge>
-		<ion-badge v-if="route.company.includes('LRTFeeder')" class="ltr-badge ion-margin-start">{{ $t('badges.ltr') }}</ion-badge>
+		<ion-badge v-if="route.company.includes('LRTFeeder')" class="ltr-badge ion-margin-start">{{ $t('badges.lrt') }}</ion-badge>
 		<ion-badge v-if="route.serviceMode.includes('N')" class="night-badge ion-margin-start">{{ $t('badges.night') }}</ion-badge>
 		<ion-badge v-if="route.serviceMode == 'T'" class="special-badge ion-margin-start">{{ $t('badges.special') }}</ion-badge>
 	</div>
