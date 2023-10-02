@@ -96,36 +96,8 @@ export default defineComponent({
             this.currentTab = e.tab
         },
         async finishConfig(config) { //Save config and fetch data after initial setup
-            try {
-                this.loading = true;
-                this.loadingMessage = '正在獲取交通資訊...<br>Fetching Transport data...<br><span id="loading-progress"><span>';
-                let isSuccess = false
-                switch (config.fetchMethod) {
-                    case 'default':
-                        isSuccess = await fetchAPIData();
-                        break;
-                    case 'self':
-                        isSuccess = await fetchAPIData(config.apiBaseUrl);
-                        break;
-                    case 'hkgov':
-                        console.log('hkgov')
-                        break;
-                }
-                if (isSuccess) {
-                    this.loading = false;
-                    await localforage.setItem('config', {...config, dataFilled: true});
-                    this.settingFound = true;
-                } else {
-                    this.loading = false;
-                    if (config.lang == 'zh') {
-                        presentToast('error', '未能取得路線資料，請檢查網路設定')
-                    } else {
-                        presentToast('error', 'Unable to fetch route data, please check your internet connection')
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-            }
+            await localforage.setItem('config', {...config, dataFilled: true});
+            this.settingFound = true
         },
     },
     async mounted() {

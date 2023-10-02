@@ -222,10 +222,10 @@ export default {
 				text: this.$t('option.defaultSource'),
 				data: { action: 'default' }
 				},
-				{
-					text: this.$t('option.govApi'),
-					data: {action: 'hkgov'}
-				},
+//				{
+//					text: this.$t('option.govApi'),
+//					data: {action: 'hkgov'}
+//				},
 				{
 					text: this.$t('option.selfHost'),
 					data: {action: 'self'}

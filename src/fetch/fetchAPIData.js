@@ -5,7 +5,7 @@ import sha256 from 'sha256'
 
 axiosRetry(axios, { retry: 3 });
 
-const fetchAPIData = async (baseURL = 'https://api.12a.app/hk-transport') => {
+const fetchAPIData = async (baseURL = 'https://api.12a.app/hk-transport', el) => {
 	try{
 		// Generate hashes from localForage
 		let localHashes = {}
@@ -20,7 +20,14 @@ const fetchAPIData = async (baseURL = 'https://api.12a.app/hk-transport') => {
 		// Compare Hashes and generate
 		for (let keyName in remoteHashes){
 			const progress = document.querySelector('#loading-progress')
-			progress.textContent = `${current}/${objSize}`
+			if (progress){
+				progress.textContent = `${current}/${objSize}`
+			}
+			if (el){
+				const data = { current: current, objSize: objSize}
+				const event = new CustomEvent('downloadProgress', { 'detail': data });
+				el.dispatchEvent(event);
+			}
 			if (!localHashes[keyName] || localHashes[keyName] !== remoteHashes[keyName]){
 				const { data: remoteData } = await axios(`${baseURL}/chunked/${keyName}.json`)
 

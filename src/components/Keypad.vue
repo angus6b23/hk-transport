@@ -1,12 +1,17 @@
 <template>
     <div>
         <details>
-            <summary id="summary-tag">Use Custom Keyboard</summary>
+            <summary id="summary-tag">
+                <ion-text color="primary">
+                <ion-icon :icon="keypadOutline" class="ion-margin-end keypad-icon"></ion-icon>
+                {{ $t('searchView.toggleRouteKeypad') }}
+                </ion-text>
+            </summary>
             <div class="wrapper">
                 <div class="center">
                     <ion-grid class="keypad">
                         <ion-row>
-                            <ion-col size="9" size-md="6">
+                            <ion-col size="9" size-md="6" class="numbers">
                                 <ion-row class="ion-justify-content-around">
                                     <ion-button fill="clear" size="4" :disabled="!numpad[1]" @click="emitClick(1)">1</ion-button>
                                     <ion-button fill="clear" size="4" :disabled="!numpad[2]" @click="emitClick(2)">2</ion-button>
@@ -45,12 +50,12 @@
 
 <script>
 import { ref } from 'vue';
-import { IonGrid, IonRow, IonCol, IonButton, IonIcon } from '@ionic/vue';
-import { backspaceOutline, trashBinOutline } from 'ionicons/icons';
+import { IonGrid, IonRow, IonCol, IonButton, IonIcon, IonText } from '@ionic/vue';
+import { backspaceOutline, trashBinOutline, keypadOutline } from 'ionicons/icons';
 
 export default {
     name: "ComponentName",
-    components: { IonGrid, IonRow, IonCol, IonButton, IonIcon },
+    components: { IonGrid, IonRow, IonCol, IonButton, IonIcon, IonText },
     props: ['data', 'query'],
     emits: ['padClick'],
     setup(){
@@ -63,7 +68,8 @@ export default {
             letterRow,
             routeNoList,
             backspaceOutline,
-            trashBinOutline
+            trashBinOutline,
+            keypadOutline
         }
     },
     mounted(){
@@ -87,7 +93,7 @@ export default {
         updateButtonStates: function(query){
             let updated = this.routeNoList.filter(route => route.indexOf(query) === 0 && route.length > query.length);
             let numberState = { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false, 9: false };
-            let letterState = this.letterRow.map(item => { return { ...item ,enable: false}});
+            let letterState = this.letterRow.map(item => { return { ...item ,enable: false}}).sort((a,b) => a.letter.localeCompare(b.letter));
             for (let route of updated){
                 if (route[query.length].match(/\d/)){
                     numberState[route[query.length]] = true
@@ -101,7 +107,7 @@ export default {
                     });
                 }
             }
-            this.letterRow = letterState
+            this.letterRow = [...letterState.filter(item=>item.enable), ...letterState.filter(item=>!item.enable)];
             this.numpad = numberState
             //            console.log(letterState);
             //            console.log(numberState);
@@ -133,6 +139,15 @@ export default {
 }
 #summary-tag{
     margin-left: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer
+}
+summary::marker{
+    display: none;
+}
+summary {
+    list-style-type: none;
 }
 ion-button {
     font-size: 1.5rem;
@@ -144,6 +159,12 @@ ion-button > ion-icon{
 .letter-column{
     max-height: 25vh;
     overflow-y: scroll
+}
+.numbers{
+    min-width: 300px;
+}
+.keypad-icon{
+    transform: translateY(0.2rem);
 }
 @media screen and (min-width: 800px){
     .center{
