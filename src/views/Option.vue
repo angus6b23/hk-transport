@@ -151,7 +151,7 @@ export default {
 					await localforage.removeItem(key)
 				}
 				presentToast('info', this.$t('toast.resetAll'));
-				setTimeout(()=>{ location.reload() }, 3000)
+				setTimeout(()=>{ location.replace(location.origin) }, 3000)
 			}
 		},
 		async updateData(){
@@ -166,7 +166,7 @@ export default {
 				}
 				if (res && !(res instanceof Error)){
 					loading.dismiss();
-					location.reload();
+					location.replace(location.origin);
 				} else {
 					throw new Error(res.message);
 				}
@@ -192,7 +192,7 @@ export default {
 				await fetchApiData();
 			}
 			loading.dismiss();
-			location.reload();
+			location.replace(location.origin);
 		},
 		async presentLangAction(){
 			const langActions = [{
