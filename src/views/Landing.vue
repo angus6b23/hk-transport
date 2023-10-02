@@ -1,7 +1,5 @@
 <template>
     <ion-page>
-        <ion-loading :is-open="loading" :message="loadingMessage" :translucent="true">
-        </ion-loading>
         <ion-content class="ion-margin-top ion-margin-start ion-margin-end">
             <div v-if="step == 1" id="init">
                 <ion-card id="welcome_card">
@@ -13,50 +11,75 @@
                         </ion-card-header>
                         <ion-card-content>
                             <ion-button expand="block" class="ion-margin-top" @click="$i18next.changeLanguage('zh'); setLang('zh')">正體中文</ion-button>
-                            <ion-button expand="block" class="ion-margin-top"
-                                @click="$i18next.changeLanguage('en'); setLang('en')">English</ion-button>
+                            <ion-button expand="block" class="ion-margin-top" @click="$i18next.changeLanguage('en'); setLang('en')">English</ion-button>
+                            <div class="ion-margin-top customApiDiag">
+                                <ion-checkbox slot="start" v-model="useOwnAPI"></ion-checkbox>
+                                <ion-label>使用自訂的站台 / Use your own endpoint</ion-label>
+                                <div :class="{'hidden':!useOwnAPI, 'ion-margin-top': true}">
+                                    <ion-input v-model="hostUrl" :placeholder="$t('landing.urlPlaceholder')" required></ion-input>
+                                </div>
+                            </div>
                         </ion-card-content>
                     </div>
                 </ion-card>
             </div>
-            <div v-if="step == 2" class="ion-margin-start ion-margin-end ion-margin-top">
-                <div>
-                    <ion-title>{{ $t('landing.selectSource') }}</ion-title>
-                    <form @submit.prevent="finishConfig()">
-                        <ion-list class="ion-margin-top">
-                            <ion-radio-group v-model="radioSelect">
-                                <ion-item>
-                                    <ion-label class="ion-text-wrap">{{ $t('landing.optionPrefetch') }}</ion-label>
-                                    <ion-radio slot="end" value="default" checked></ion-radio>
-                                </ion-item>
-        
-                                <ion-item>
-                                    <ion-label class="ion-text-wrap">{{ $t('landing.optionGovAPI') }}</ion-label>
-                                    <ion-radio slot="end" value="hkgov"></ion-radio>
-                                </ion-item>
-        
-                                <ion-item>
-                                    <ion-label class="ion-text-wrap">{{ $t('landing.optionSelfHost') }}</ion-label>
-                                    <ion-radio slot="end" value="self"></ion-radio>
-                                </ion-item>
-                            </ion-radio-group>
-                            <ion-item v-if="radioSelect == 'self'">
-                                <ion-label position="stacked">{{ $t('landing.hostHint') }}</ion-label>
-                                <ion-input v-model="hostUrl" :placeholder="$t('landing.urlPlaceholder')" required></ion-input>
-                            </ion-item>
-                        </ion-list>
-                        <div class="button-container">
-                            <ion-button fill="clear" type="button" @click="back()">
-                                <ion-icon :icon="chevronBackOutline" slot="start"></ion-icon>
-                                {{ $t('common.back') }}
-                            </ion-button>
-                            <ion-button fill="solid" type="submit">
-                                <ion-icon :icon="checkmarkOutline" ></ion-icon>
-                                {{ $t('common.finish') }}
-                            </ion-button>
+            <div v-if="step == 2" class="swipe-wrapper ion-margin-start ion-margin-end ion-margin-top swipe-wrapper">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-card-title>
+                            {{ $t('landing.quicktour') }}
+                        </ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <swiper class="ion-margin-top ion-margin-bottom" :modules="modules" :slides-per-view="1" :space-between="50" pagination>
+                        <swiper-slide>
+                            <div class="swipe-slide">
+                                <div class="video-wrapper">
+                                    <video autoplay muted loop>
+                                        <source src="assets/videos/hint1.webm" />
+                                    </video>
+                                </div>
+                                <p>{{ $t('landing.hint1') }}</p>
+                            </div>
+                        </swiper-slide>
+                        <swiper-slide>
+                            <div class="swipe-slide">
+                                <div class="video-wrapper">
+                                    <video autoplay muted loop preload="none">
+                                        <source src="assets/videos/hint2.webm" />
+                                    </video>
+                                </div>
+                                <p>{{ $t('landing.hint2') }}</p>
+                            </div>
+                        </swiper-slide>
+                        <swiper-slide>
+                            <div class="swipe-slide">
+                                <div class="video-wrapper">
+                                    <video autoplay muted loop preload="none">
+                                        <source src="assets/videos/hint3.webm" />
+                                    </video>
+                                </div>
+                                <p>{{ $t('landing.hint3') }}</p>
+                            </div>
+                        </swiper-slide>
+                        <swiper-slide>
+                            <div class="swipe-slide">
+                                <div class="video-wrapper">
+                                    <video autoplay muted loop preload="none">
+                                        <source src="assets/videos/hint4.webm" />
+                                    </video>
+                                </div>
+                                <p>{{ $t('landing.hint4') }}</p>
+                            </div>
+                        </swiper-slide>
+                        </swiper>
+                        <div class="button-wrapper">
+                            <ion-button fill="clear">{{ $t('common.skip') }}</ion-button>
+                            <ion-button @click="finishConfig()">{{ $t('common.next') }}</ion-button>
                         </div>
-                    </form>
-                </div>
+                        <ion-progress-bar :value="downloadProgress" class="ion-margin-top" />
+                    </ion-card-content>
+                </ion-card>
             </div>
         </ion-content>
     </ion-page>
@@ -64,35 +87,45 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonList, IonRadio, IonTitle, IonItem, IonContent, IonLabel, IonInput, IonRadioGroup, IonIcon } from '@ionic/vue';
+import { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, IonProgressBar } from '@ionic/vue';
 import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons';
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Pagination } from 'swiper/modules'
+import fetchAPIData from '@/fetch/fetchAPIData'
+import presentToast from '@/components/presentToast';
+import 'swiper/css'
+import 'swiper/css/pagination';
+
 
 export default defineComponent({
     name: 'Landing',
-    components: { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonLoading, IonList, IonRadio, IonTitle, IonItem, IonContent, IonLabel, IonInput, IonRadioGroup, IonIcon},
+    components: { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, Swiper, SwiperSlide, IonProgressBar },
     emits: ['finishConfig'],
     setup() {
-        const loading = ref(false);
         const lang = ref('');
-        const loadingMessage = ref('');
-        const radioSelect = ref('default');
+        const useOwnAPI = ref(false);
         const hostUrl = ref('');
         const step = ref(1);
+        const downloadProgress = ref(0);
         return {
-            radioSelect,
             hostUrl,
             step,
-            loading,
-            loadingMessage,
             chevronBackOutline,
             checkmarkOutline,
-            lang
+            lang,
+            useOwnAPI,
+            downloadProgress,
+            modules: [Pagination]
         }
     },
+    mounted(){
+        this.$el.addEventListener('downloadProgress', this.handleDownloadProgress);
+    },
     methods: {
-        setLang(lang) {
+        async setLang(lang) {
             this.lang = lang
             this.step = 2
+            await this.initiateDownload();
         },
         back(){
             this.step = 1;
@@ -101,12 +134,50 @@ export default defineComponent({
             let config = {
                 lang: this.lang,
                 theme: 'system',
-                fetchMethod: this.radioSelect,
-                apiBaseUrl: (this.radioSelect == 'self') ? this.hostUrl : '',
+                fetchMethod: this.useOwnAPI ? 'self' : 'default',
+                apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                 dataFilled: false,
                 autoScroll: true
             }
             this.$emit('finishConfig', config)
+        },
+        handleDownloadProgress(progress){
+            this.downloadProgress = progress.detail.current / progress.detail.objSize;
+        },
+        async initiateDownload(){
+            try{
+                let isSuccess = false;
+                let config = {
+                    lang: this.lang,
+                    theme: 'system',
+                    fetchMethod: this.useOwnAPI ? 'self' : 'default',
+                    apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
+                    dataFilled: false,
+                    autoScroll: true
+                }
+                switch (config.fetchMethod) {
+                    case 'default':
+                        isSuccess = await fetchAPIData(undefined, this.$el);
+                        break;
+                    case 'self':
+                        isSuccess = await fetchAPIData(config.apiBaseUrl. this.$el);
+                        break;
+                    case 'hkgov':
+                        console.log('hkgov')
+                        break;
+                }
+                if (isSuccess) {
+                    this.$emit('finishConfig', config);
+                } else {
+                    if (config.lang == 'zh') {
+                        presentToast('error', '未能取得路線資料，請檢查網路設定')
+                    } else {
+                        presentToast('error', 'Unable to fetch route data, please check your internet connection')
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
         }
     }
 });
@@ -127,7 +198,7 @@ export default defineComponent({
     justify-content: space-around;
     align-items: center;
     width: 30vw;
-    height: 45vh;
+    height: 50vh;
     min-width: 300px;
     min-height: 300px;
 }
@@ -135,5 +206,35 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+.hidden {
+    visibility: hidden;
+}
+.swipe-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%
+}
+.button-wrapper{
+    display: flex;
+    justify-content: space-between
+}
+.swipe-slide {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.video-wrapper{
+    width:100%;
+    display: flex;
+    justify-content: center;
+}
+.video-wrapper > video{
+    max-height: 60vh;
+    object-fit: contain;
+}
+.swipe-slide > p{
+    margin-bottom: 30px;
 }
 </style>
