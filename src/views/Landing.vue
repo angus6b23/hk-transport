@@ -23,15 +23,15 @@
                     </div>
                 </ion-card>
             </div>
-            <div v-if="step == 2" class="swipe-wrapper ion-margin-start ion-margin-end ion-margin-top swipe-wrapper">
-                <ion-card>
+            <div v-if="step == 2" class="card-wrapper">
+                <ion-card style="max-height: 75vh">
                     <ion-card-header>
                         <ion-card-title>
                             {{ $t('landing.quicktour') }}
                         </ion-card-title>
                     </ion-card-header>
-                    <ion-card-content>
-                        <swiper class="ion-margin-top ion-margin-bottom" :modules="modules" :slides-per-view="1" :space-between="50" pagination>
+                    <ion-card-content style="height: 70vh">
+                        <swiper style="max-height: 60vh" :modules="modules" :slides-per-view="1" :space-between="50" pagination>
                         <swiper-slide>
                             <div class="swipe-slide">
                                 <div class="video-wrapper">
@@ -74,7 +74,7 @@
                         </swiper-slide>
                         <swiper-slide>
                             <div class="swipe-slide">
-                                <img src="assets/hk-transport-animated.svg">
+                                <img style="object-fit:contain; height: 100%; width: 100%; max-height:50vh" src="assets/hk-transport-animated.svg">
                                 <p>{{ $t('landing.hint5') }}</p>
                             </div>
                         </swiper-slide>
@@ -143,9 +143,6 @@ export default defineComponent({
                 presentToast('info', this.$t('landing.nullUrl'))
             }
             await this.initiateDownload();
-        },
-        back(){
-            this.step = 1;
         },
         finishConfig(){
             let config = {
@@ -230,7 +227,7 @@ export default defineComponent({
 .hidden {
     visibility: hidden;
 }
-.swipe-wrapper{
+.card-wrapper{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -241,20 +238,23 @@ export default defineComponent({
     justify-content: space-between
 }
 .swipe-slide {
+    height: 100%;
     display: flex !important;
     flex-wrap: wrap;
     justify-content: center;
 }
 .video-wrapper{
-    width:100%;
+    width: 100%;
+    height: 80%;
     display: flex;
     justify-content: center;
 }
 .video-wrapper > video{
-    max-height: 60vh;
+    max-height: 50vh;
     object-fit: contain;
 }
 .swipe-slide > p{
-    margin-bottom: 30px;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
 }
 </style>
