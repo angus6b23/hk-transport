@@ -149,6 +149,18 @@ export default {
     max-height: 25vh;
     overflow-y: auto;
 }
+
+details summary::-webkit-details-marker {
+    display:none;
+}
+details > summary {
+    list-style: none;
+}
+
+details > summary {
+    margin-top: 0.5rem;
+    margin-left: 1rem;
+}
 @media screen and (min-width: 800px){
     .grid{
         margin-left: auto;
