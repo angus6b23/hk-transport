@@ -34,18 +34,26 @@
 					<ion-button fill="clear" @click="clearQuery">{{ $t('searchView.clearSearch') }}</ion-button>
 				</ion-list-header>
 				<ion-list-header v-else>
-					<ion-label v-if="starred.length > 0">
-						<i18next :translation="$t('searchView.starredPrompt')">
+					<div class='star-wrapper' v-if="starred.length > 0">
+						<ion-label>
+							<i18next :translation="$t('searchView.starredPrompt')">
 							<template #transportType>
 								<span>{{ $t(`common.${type}`) }}</span>
 							</template>
-						</i18next>
-					</ion-label>
+							</i18next>
+						</ion-label>
+						<ion-button v-if="disableReorder" fill="clear" @click="toggleReorder()" class="swap-icon">
+							<ion-icon slot="icon-only" :icon="swapVerticalOutline" />
+						</ion-button>
+						<ion-button v-else fill="solid" @click="toggleReorder()" class="swap-icon">
+							<ion-icon slot="icon-only" :icon="swapVerticalOutline" />
+						</ion-button>
+					</div>
 				</ion-list-header>
 				<!-- Bus route display list here -->
 				<div v-if="displayArray.length > 0">
-					<div v-for="(route, index) in displayArray" :key="route.id">
-						<ion-item button>
+					<ion-reorder-group :disabled="disableReorder" @ionItemReorder="reorder($event)">
+						<ion-item v-for="(route, index) in displayArray" :key="route.id" button>
 							<ion-grid>
 								<!-- Rows for Bus and minibus -->
 								<ion-row v-if="type == 'bus' || type == 'minibus'" class="open-modal" expand="block" @click="openModal(index)">
@@ -74,13 +82,14 @@
 									</ion-col>
 								</ion-row>
 							</ion-grid>
+							<ion-reorder slot="end" />
 						</ion-item>
-					</div>
+					</ion-reorder-group>
 				</div>
 				<div v-else class="no-content">
 					<ion-text color="medium">
 						<p>{{ $t('searchView.noItem') }}</p>
-				</ion-text>
+					</ion-text>
 					<ion-text color="medium">
 						<p>{{ $t('searchView.noItemHint') }}</p>
 					</ion-text>
@@ -90,7 +99,7 @@
 		</ion-content>
 		<!-- Modal for displaying bus details -->
 		<ion-modal :is-open="modalIsOpen"  @WillDismiss="closeModal">
-			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @saveData="saveData" @swapDirection="swapDirection" />
+			<ETAPopup :item="itemSelected" :starred="starred" :noEta="checkNoEta" :altRoutes="altRoutes" @closeModal="closeModal" @addStar="addStar" @removeStar="removeStar" @swapDirection="swapDirection" />
 		</ion-modal>
 		<ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
 			<Option @closeOption="closeOption" @changeLanguage="changeLanguage" />
@@ -100,8 +109,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonTitle, IonButtons } from '@ionic/vue';
-import { cog, chevronBack } from 'ionicons/icons'
+import { IonPage, IonHeader, IonToolbar, IonContent, IonText, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonTitle, IonButtons, IonReorder, IonReorderGroup } from '@ionic/vue';
+import { cog, chevronBack, swapVerticalOutline } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js';
 import ETAPopup from '@/components/ETAPopup.vue';
 import Option from '@/views/Option.vue';
@@ -112,8 +121,8 @@ import presentToast from '@/components/presentToast.js'
 import Keypad from '@/components/Keypad'
 
 export default defineComponent({
+	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option, Keypad, IonReorder, IonReorderGroup },
 	name: 'SearchView',
-	components: { IonHeader, IonToolbar, IonContent, IonText, IonPage, IonSearchbar, IonItem, IonLabel, IonList, IonListHeader, IonModal, IonGrid, IonRow, IonCol, Badges, IonButton, IonIcon, IonTitle, IonButtons, ETAPopup, Option, Keypad },
 	props: ['dataType'],
 	setup(props) {
 		// Create ref for loading and show map for ui control
@@ -128,6 +137,7 @@ export default defineComponent({
 		const starred = ref([]);
 		const type = ref(props.dataType);
 		const dataReady = ref(false)
+		const disableReorder = ref(true);
 		// Event listeners
 		addEventListener('ionModalDidDismiss', function () {
 			modalIsOpen.value = false;
@@ -142,11 +152,13 @@ export default defineComponent({
 			config,
 			modalIsOpen,
 			optionIsOpen,
+			disableReorder,
 			starred,
 			type,
 			dataReady,
 			cog,
-			chevronBack
+			chevronBack,
+			swapVerticalOutline,
 		}
 	},
 	methods: {
@@ -183,16 +195,14 @@ export default defineComponent({
 		},
 		async addStar() {
 			this.starred.push(this.itemSelected);
-			const starredOriginal = await localforage.getItem('starred');
-			const starredClone = {
-				...starredOriginal,
-				[this.type]: JSON.parse(JSON.stringify(this.starred))
-			};
-			await localforage.setItem('starred', starredClone);
+			await this.saveStar()
 		},
 		async removeStar() {
 			const removeIndex = this.starred.findIndex(route => route.routeId === this.itemSelected.routeId && route.direction === this.itemSelected.direction)
 			this.starred.splice(removeIndex, 1);
+			await this.saveStar();
+		},
+		async saveStar(){
 			const starredOriginal = await localforage.getItem('starred');
 			const starredClone = {
 				...starredOriginal,
@@ -200,23 +210,26 @@ export default defineComponent({
 			};
 			await localforage.setItem('starred', starredClone);
 		},
+		/*
+		Old Code, saveData currently not used
 		async saveData(data) {
 			if (this.type == 'bus') {
-				// Link to currently displayed bus
+	// Link to currently displayed bus
 				const displayIndex = this.displayArray.findIndex(this.currentSelectedItem)
 				this.displayArray[displayIndex] = data;
-				// Link to global bus array
+	// Link to global bus array
 				const index = this.data.findIndex(this.currentSelectedItem);
 				this.data[index] = JSON.parse(JSON.stringify(data));
-				// console.log(index);
-				// Save to localforage
+	// console.log(index);
+	// Save to localforage
 				const key = 'busData-chunk' + Math.floor(index / 100);
 				const chunkIndex = index % 100;
 				let chunk = await loadData(key, false, false);
 				chunk[chunkIndex] = JSON.parse(JSON.stringify(data));
 				await setData(key, chunk);
 			}
-		},
+
+		}, */
 		currentSelectedItem(x) { // For finding index of currently selected bus
 			return x.routeId == this.itemSelected.routeId && x.routeDirection == this.itemSelected.routeDirection
 		},
@@ -229,10 +242,10 @@ export default defineComponent({
 				} else {
 					if (this.$i18next.language === 'zh'){
 						this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)) :
-						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)); // Filter by route numbers and destinations.
+							this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destTC.includes(newQuery)); // Filter by route numbers and destinations.
 					} else {
 						this.displayArray = (newQuery) < 10 ? this.data.filter(x => x.routeNo.length <= 2 && x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())) :
-						this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())); // Filter by route numbers and destinations.
+							this.data.filter(x => x.routeNo.indexOf(newQuery.toUpperCase()) == 0 || x.destEN.toLowerCase().includes(newQuery.toLowerCase())); // Filter by route numbers and destinations.
 					}
 					// Limit small number query
 					this.displayArray.sort(function (a, b) {
@@ -284,7 +297,14 @@ export default defineComponent({
 			} else {
 				this.altRoutes = this.data.filter(altRoute => altRoute.routeId == this.itemSelected.routeId && altRoute.direction != this.itemSelected.direction);
 			}
-		}
+		},
+		toggleReorder(){
+			this.disableReorder = !this.disableReorder
+		},
+		async reorder(event){
+			event.detail.complete(this.starred)
+			await this.saveStar();
+		},
 	},
 	async mounted() {
 		this.data = await loadChunk(this.type)
@@ -302,6 +322,7 @@ export default defineComponent({
 	watch: {
 		query(newQuery) { //Update bus array upon change of bus query
 			this.updateQuery(newQuery);
+			this.disableReorder = true;
 		}
 	},
 	computed: {
@@ -346,5 +367,15 @@ export default defineComponent({
 }
 .direction2-button{
 	--background: #A1905E;
+}
+.star-wrapper{
+	font-size: 1.2rem;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.swap-icon{
+	margin-right: 1rem;
 }
 </style>

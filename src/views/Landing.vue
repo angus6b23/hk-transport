@@ -15,9 +15,9 @@
                             <div class="ion-margin-top customApiDiag">
                                 <ion-checkbox slot="start" v-model="useOwnAPI"></ion-checkbox>
                                 <ion-label>使用自訂的站台 / Use your own endpoint</ion-label>
-                                <div :class="{'hidden':!useOwnAPI, 'ion-margin-top': true}">
-                                    <ion-input v-model="hostUrl" :placeholder="$t('landing.urlPlaceholder')" required></ion-input>
-                                </div>
+                                <ion-item :class="{'hidden':!useOwnAPI, 'ion-margin-top': true}">
+                                    <ion-input v-model="hostUrl" placeholder="https://your.endpoint.api/" required></ion-input>
+                                </ion-item>
                             </div>
                         </ion-card-content>
                     </div>
@@ -72,10 +72,19 @@
                                 <p>{{ $t('landing.hint4') }}</p>
                             </div>
                         </swiper-slide>
+                        <swiper-slide>
+                            <div class="swipe-slide">
+                                <img src="assets/hk-transport-animated.svg">
+                                <p>{{ $t('landing.hint5') }}</p>
+                            </div>
+                        </swiper-slide>
                         </swiper>
-                        <div class="button-wrapper">
-                            <ion-button fill="clear">{{ $t('common.skip') }}</ion-button>
-                            <ion-button @click="finishConfig()">{{ $t('common.next') }}</ion-button>
+                        <div class="optionWrapper">
+                            <div>
+                                <ion-checkbox slot="start" v-model="autoStart" />
+                                    <ion-label class="ion-margin-start">{{ $t('landing.autoStart') }}</ion-label>
+                            </div>
+                            <ion-button @click="finishConfig()" :disabled="!downloadFinish">{{ $t('common.finish') }}</ion-button>
                         </div>
                         <ion-progress-bar :value="downloadProgress" class="ion-margin-top" />
                     </ion-card-content>
@@ -87,7 +96,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, IonProgressBar } from '@ionic/vue';
+import { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, IonProgressBar, IonItem } from '@ionic/vue';
 import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons';
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination } from 'swiper/modules'
@@ -99,7 +108,7 @@ import 'swiper/css/pagination';
 
 export default defineComponent({
     name: 'Landing',
-    components: { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, Swiper, SwiperSlide, IonProgressBar },
+    components: { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, Swiper, SwiperSlide, IonProgressBar, IonItem },
     emits: ['finishConfig'],
     setup() {
         const lang = ref('');
@@ -107,6 +116,8 @@ export default defineComponent({
         const hostUrl = ref('');
         const step = ref(1);
         const downloadProgress = ref(0);
+        const downloadFinish = ref(false);
+        const autoStart = ref(true)
         return {
             hostUrl,
             step,
@@ -115,6 +126,8 @@ export default defineComponent({
             lang,
             useOwnAPI,
             downloadProgress,
+            downloadFinish,
+            autoStart,
             modules: [Pagination]
         }
     },
@@ -125,6 +138,10 @@ export default defineComponent({
         async setLang(lang) {
             this.lang = lang
             this.step = 2
+            if (this.useOwnAPI && this.hostUrl === ''){
+                this.useOwnAPI = false;
+                presentToast('info', this.$t('landing.nullUrl'))
+            }
             await this.initiateDownload();
         },
         back(){
@@ -167,7 +184,10 @@ export default defineComponent({
                         break;
                 }
                 if (isSuccess) {
-                    this.$emit('finishConfig', config);
+                    this.downloadFinish = true;
+                    if(this.autoStart){
+                        this.$emit('finishConfig', config);
+                    }
                 } else {
                     if (config.lang == 'zh') {
                         presentToast('error', '未能取得路線資料，請檢查網路設定')
@@ -202,7 +222,7 @@ export default defineComponent({
     min-width: 300px;
     min-height: 300px;
 }
-.button-container{
+.optionWrapper{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
