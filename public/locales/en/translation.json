@@ -1,6 +1,8 @@
 {
   "common":{
     "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
     "finish": "Finish",
     "bus": "Bus",
     "minibus": "Minibus",
@@ -12,12 +14,14 @@
     "minute": "min"
   },
   "landing":{
-    "selectSource": "Please select data source",
-    "optionPrefetch": "Prefetched data from API (Recommended)",
-    "optionGovAPI": "Download from gov.hk API directly",
-    "optionSelfHost": "Use your own API",
-    "hostHint": "You can find how to host your api on 12a.app github",
-    "urlPlaceholder": "Enter your url here: https://your.api/"
+    "quicktour": "Quick Tour",
+    "hint1": "You can choose from most of the transport type in Hong Kong. Enter the route number or destination name to search your route.",
+    "hint2": "Quick access to route keyboard is also avaliable.",
+    "hint3": "Information including the route timetable, arrival time and map is avaliable",
+    "hint4": "Mark your route with star and the route will be stored and viewed.",
+    "hint5": "Everything will be avaliable after the app finish downloading",
+    "autoStart": "Automatically start app after finish downloading",
+    "nullUrl": "The URL is empty, default api endpoint will be used."
   },
   "searchView":{
     "title": "{transportType} Routes",
@@ -29,7 +33,8 @@
     "outbound": "Out",
     "noItem": "No item to display",
     "noItemHint": "Starred items will be displayed here",
-    "showFerry": "Display all ferries"
+    "showFerry": "Display all ferries",
+    "toggleRouteKeypad": "Toogle Route Keypad"
   },
   "listView":{
     "title": "All {transportType} Routes",

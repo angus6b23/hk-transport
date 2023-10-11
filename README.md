@@ -7,9 +7,11 @@
 # Installation
 
 1.  Clone the git repository
+
     `git clone https://github.com/angus6b23/hk-transport`
     
 2.  Run yarn / npm
+
     Using yarn
     
     `yarn && yarn run build`

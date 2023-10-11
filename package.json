@@ -34,6 +34,7 @@
     "leaflet": "^1.9.2",
     "localforage": "^1.10.0",
     "sha256": "^0.2.0",
+    "swiper": "^10.3.1",
     "vue": "^3.3.4",
     "vue-router": "^4.2.1",
     "vue3-marquee": "^4.0.0"
@@ -53,6 +54,7 @@
     "cypress": "^8.7.0",
     "eslint": "^8.41.0",
     "eslint-plugin-vue": "^9.14.1",
+    "http-server": "^14.1.1",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7"
   },
