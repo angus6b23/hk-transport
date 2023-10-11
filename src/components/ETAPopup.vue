@@ -90,7 +90,7 @@ import { Geolocation } from '@capacitor/geolocation';
 import { getDistance } from 'geolib';
 
 import { fetchKMBETA, fetchMtrBusEta, fetchNLBEta, fetchMinibusEta, fetchMtrEta, fetchLightRailEta, fetchBulkCTBETA } from '@/fetch/fetchETA.js';
-import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
+// import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
 import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue';
 import RouteInfo from '@/components/RouteInfo.vue';
@@ -101,7 +101,7 @@ export default {
 	name: "ETAPopup",
 	components: { IonHeader, IonTitle, IonContent, IonList, IonLabel, IonIcon, IonButton, IonButtons, IonSegment, IonSegmentButton, IonToolbar, LeafletMap, SkeletonItems, StopItems, RouteInfo },
 	props: ['item', 'starred', 'noEta', 'altRoutes'],
-	emits: ['closeModal', 'addStar', 'removeStar', 'saveData', 'swapDirection'],
+	emits: ['closeModal', 'addStar', 'removeStar', 'swapDirection'],
 	setup(props) {
 		const popupLoading = ref(false);
 		const item = ref({...props.item});
@@ -140,7 +140,8 @@ export default {
 		}
 		// Fetch CTB and NWFB bus stop ids
 		else if (this.item.type === 'bus' && this.item.company.length == 1 &&(this.item.company.includes('CTB') || this.item.company.includes('NWFB'))) {
-			await this.getStopID();
+			// Fetching stop id will not required now when using api
+			// await this.getStopID();
 			this.getCTB();
 			this.interval = setInterval(async() => await this.getCTB(), 10000);
 		}
@@ -267,6 +268,8 @@ export default {
 				})
 			}
 		},
+		/*
+		Old code, currently do not require feching data from CTB and NWFB
 		async getStopID() { //Fetch Stop ids of CTB and NWFB bus from api
 			if (this.item.stops.length > 0 && !('stopId' in this.item.stops[0])) {
 				const stopData = await fetchBusStopID(this.item);
@@ -297,7 +300,7 @@ export default {
 					presentToast('done', '已更新巴士路線資料');
 				}
 			}
-		},
+		}, */
 		async getKMB() { //Get KMB route etas from api
 			const etaData = await fetchKMBETA(this.item);
 			this.populateETABySeq(etaData);
