@@ -49,9 +49,11 @@ The app makes use of api provided by HK government to provide estimated time of 
     For ionic cli, please see https://ionicframework.com/docs/cli
 
 2. Clone the git repository
+
     `git clone https://github.com/angus6b23/hk-transport`
  
 3. Build the image using ionic/cli
+
     `ionic capacitor build android`
 
 4. Continue with android studio
