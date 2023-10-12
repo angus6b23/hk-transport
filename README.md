@@ -13,7 +13,7 @@ The app makes use of api provided by HK government to provide estimated time of 
 
 
 ## Features
-- [Live site](https:hk-transport.12a.app)
+- [Live site](https://hk-transport.12a.app)
 - Transport modes include bus, mtr, minibus, tram, light rail, ferry
 - No annoying ads
 - Modern interface
