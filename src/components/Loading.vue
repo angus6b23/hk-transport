@@ -6,24 +6,17 @@
 </template>
 
 <script>
-import { IonText } from '@ionic/vue';
+import { IonText } from '@ionic/vue'
 
 export default {
-    name: "ComponentName",
+    name: 'ComponentName',
     components: { IonText },
     props: [''],
     emits: [''],
-    setup(){
-    },
-    mounted(){
-
-    },
-    methods:{
-
-    },
-    beforeUnmount(){
-    }
-};
+    setup() {},
+    mounted() {},
+    methods: {},
+    beforeUnmount() {},
+}
 </script>
-<style scoped>
-</style>
+<style scoped></style>

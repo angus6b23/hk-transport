@@ -1,7 +1,7 @@
 {
-  "name": "HK Transport",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "vue"
+    "name": "HK Transport",
+    "integrations": {
+        "capacitor": {}
+    },
+    "type": "vue"
 }
