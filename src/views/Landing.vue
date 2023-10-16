@@ -5,18 +5,49 @@
                 <ion-card id="welcome_card">
                     <div>
                         <ion-card-header>
-                            <ion-card-title class="ion-text-center">歡迎 Welcome</ion-card-title>
-                            <ion-card-subtitle class="ion-margin-top">請選擇語言</ion-card-subtitle>
-                            <ion-card-subtitle>Please select language</ion-card-subtitle>
+                            <ion-card-title class="ion-text-center"
+                                >歡迎 Welcome</ion-card-title
+                            >
+                            <ion-card-subtitle class="ion-margin-top"
+                                >請選擇語言</ion-card-subtitle
+                            >
+                            <ion-card-subtitle
+                                >Please select language</ion-card-subtitle
+                            >
                         </ion-card-header>
                         <ion-card-content>
-                            <ion-button expand="block" class="ion-margin-top" @click="$i18next.changeLanguage('zh'); setLang('zh')">正體中文</ion-button>
-                            <ion-button expand="block" class="ion-margin-top" @click="$i18next.changeLanguage('en'); setLang('en')">English</ion-button>
+                            <ion-button
+                                expand="block"
+                                class="ion-margin-top"
+                                @click="setLang('zh')"
+                                >正體中文</ion-button
+                            >
+                            <ion-button
+                                expand="block"
+                                class="ion-margin-top"
+                                @click="setLang('en')"
+                                >English</ion-button
+                            >
                             <div class="ion-margin-top customApiDiag">
-                                <ion-checkbox slot="start" v-model="useOwnAPI"></ion-checkbox>
-                                <ion-label>使用自訂的站台 / Use your own endpoint</ion-label>
-                                <ion-item :class="{'hidden':!useOwnAPI, 'ion-margin-top': true}">
-                                    <ion-input v-model="hostUrl" placeholder="https://your.endpoint.api/" required></ion-input>
+                                <ion-checkbox
+                                    slot="start"
+                                    v-model="useOwnAPI"
+                                ></ion-checkbox>
+                                <ion-label
+                                    >使用自訂的站台 / Use your own
+                                    endpoint</ion-label
+                                >
+                                <ion-item
+                                    :class="{
+                                        hidden: !useOwnAPI,
+                                        'ion-margin-top': true,
+                                    }"
+                                >
+                                    <ion-input
+                                        v-model="hostUrl"
+                                        placeholder="https://your.endpoint.api/"
+                                        required
+                                    ></ion-input>
                                 </ion-item>
                             </div>
                         </ion-card-content>
@@ -31,62 +62,111 @@
                         </ion-card-title>
                     </ion-card-header>
                     <ion-card-content style="height: 70vh">
-                        <swiper style="max-height: 60vh" :modules="modules" :slides-per-view="1" :space-between="50" pagination>
-                        <swiper-slide>
-                            <div class="swipe-slide">
-                                <div class="video-wrapper">
-                                    <video autoplay muted loop>
-                                        <source src="assets/videos/hint1.webm" />
-                                    </video>
+                        <swiper
+                            style="max-height: 60vh"
+                            :modules="modules"
+                            :slides-per-view="1"
+                            :space-between="50"
+                            pagination
+                        >
+                            <swiper-slide>
+                                <div class="swipe-slide">
+                                    <div class="video-wrapper">
+                                        <video autoplay muted loop>
+                                            <source
+                                                src="assets/videos/hint1.webm"
+                                            />
+                                        </video>
+                                    </div>
+                                    <p>{{ $t('landing.hint1') }}</p>
                                 </div>
-                                <p>{{ $t('landing.hint1') }}</p>
-                            </div>
-                        </swiper-slide>
-                        <swiper-slide>
-                            <div class="swipe-slide">
-                                <div class="video-wrapper">
-                                    <video autoplay muted loop preload="none">
-                                        <source src="assets/videos/hint2.webm" />
-                                    </video>
+                            </swiper-slide>
+                            <swiper-slide>
+                                <div class="swipe-slide">
+                                    <div class="video-wrapper">
+                                        <video
+                                            autoplay
+                                            muted
+                                            loop
+                                            preload="none"
+                                        >
+                                            <source
+                                                src="assets/videos/hint2.webm"
+                                            />
+                                        </video>
+                                    </div>
+                                    <p>{{ $t('landing.hint2') }}</p>
                                 </div>
-                                <p>{{ $t('landing.hint2') }}</p>
-                            </div>
-                        </swiper-slide>
-                        <swiper-slide>
-                            <div class="swipe-slide">
-                                <div class="video-wrapper">
-                                    <video autoplay muted loop preload="none">
-                                        <source src="assets/videos/hint3.webm" />
-                                    </video>
+                            </swiper-slide>
+                            <swiper-slide>
+                                <div class="swipe-slide">
+                                    <div class="video-wrapper">
+                                        <video
+                                            autoplay
+                                            muted
+                                            loop
+                                            preload="none"
+                                        >
+                                            <source
+                                                src="assets/videos/hint3.webm"
+                                            />
+                                        </video>
+                                    </div>
+                                    <p>{{ $t('landing.hint3') }}</p>
                                 </div>
-                                <p>{{ $t('landing.hint3') }}</p>
-                            </div>
-                        </swiper-slide>
-                        <swiper-slide>
-                            <div class="swipe-slide">
-                                <div class="video-wrapper">
-                                    <video autoplay muted loop preload="none">
-                                        <source src="assets/videos/hint4.webm" />
-                                    </video>
+                            </swiper-slide>
+                            <swiper-slide>
+                                <div class="swipe-slide">
+                                    <div class="video-wrapper">
+                                        <video
+                                            autoplay
+                                            muted
+                                            loop
+                                            preload="none"
+                                        >
+                                            <source
+                                                src="assets/videos/hint4.webm"
+                                            />
+                                        </video>
+                                    </div>
+                                    <p>{{ $t('landing.hint4') }}</p>
                                 </div>
-                                <p>{{ $t('landing.hint4') }}</p>
-                            </div>
-                        </swiper-slide>
-                        <swiper-slide>
-                            <div class="swipe-slide">
-                                <img style="object-fit:contain; height: 100%; width: 100%; max-height:50vh" src="assets/hk-transport-animated.svg">
-                                <p>{{ $t('landing.hint5') }}</p>
-                            </div>
-                        </swiper-slide>
+                            </swiper-slide>
+                            <swiper-slide>
+                                <div class="swipe-slide">
+                                    <img
+                                        style="
+                                            object-fit: contain;
+                                            height: 100%;
+                                            width: 100%;
+                                            max-height: 50vh;
+                                        "
+                                        src="assets/hk-transport-animated.svg"
+                                    />
+                                    <p>{{ $t('landing.hint5') }}</p>
+                                </div>
+                            </swiper-slide>
                         </swiper>
                         <div class="optionWrapper">
                             <div>
-                                <ion-checkbox slot="start" v-model="autoStart" />
-                                    <ion-label class="ion-margin-start">{{ $t('landing.autoStart') }}</ion-label>
+                                <ion-checkbox
+                                    slot="start"
+                                    v-model="autoStart"
+                                />
+                                <ion-label class="ion-margin-start">{{
+                                    $t('landing.autoStart')
+                                }}</ion-label>
                             </div>
-                            <ion-button @click="finishConfig()" :disabled="!downloadFinish">{{ $t('common.finish') }}</ion-button>
+                            <ion-button
+                                @click="finishConfig()"
+                                :disabled="!downloadFinish"
+                                >{{ $t('common.finish') }}</ion-button
+                            >
                         </div>
-                        <ion-progress-bar :value="downloadProgress" class="ion-margin-top" />
+                        <ion-progress-bar
+                            :value="downloadProgress"
+                            class="ion-margin-top"
+                        />
                     </ion-card-content>
                 </ion-card>
             </div>
@@ -95,28 +175,57 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, IonProgressBar, IonItem } from '@ionic/vue';
-import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons';
+import { defineComponent, ref } from 'vue'
+import {
+    IonPage,
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardSubtitle,
+    IonCardTitle,
+    IonCardHeader,
+    IonContent,
+    IonLabel,
+    IonInput,
+    IonCheckbox,
+    IonProgressBar,
+    IonItem,
+} from '@ionic/vue'
+import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination } from 'swiper/modules'
 import fetchAPIData from '@/fetch/fetchAPIData'
-import presentToast from '@/components/presentToast';
+import presentToast from '@/components/presentToast'
 import 'swiper/css'
-import 'swiper/css/pagination';
-
+import 'swiper/css/pagination'
 
 export default defineComponent({
     name: 'Landing',
-    components: { IonPage, IonButton, IonCard, IonCardContent, IonCardSubtitle, IonCardTitle, IonCardHeader, IonContent, IonLabel, IonInput, IonCheckbox, Swiper, SwiperSlide, IonProgressBar, IonItem },
+    components: {
+        IonPage,
+        IonButton,
+        IonCard,
+        IonCardContent,
+        IonCardSubtitle,
+        IonCardTitle,
+        IonCardHeader,
+        IonContent,
+        IonLabel,
+        IonInput,
+        IonCheckbox,
+        Swiper,
+        SwiperSlide,
+        IonProgressBar,
+        IonItem,
+    },
     emits: ['finishConfig'],
     setup() {
-        const lang = ref('');
-        const useOwnAPI = ref(false);
-        const hostUrl = ref('');
-        const step = ref(1);
-        const downloadProgress = ref(0);
-        const downloadFinish = ref(false);
+        const lang = ref('')
+        const useOwnAPI = ref(false)
+        const hostUrl = ref('')
+        const step = ref(1)
+        const downloadProgress = ref(0)
+        const downloadFinish = ref(false)
         const autoStart = ref(true)
         return {
             hostUrl,
@@ -128,76 +237,89 @@ export default defineComponent({
             downloadProgress,
             downloadFinish,
             autoStart,
-            modules: [Pagination]
+            modules: [Pagination],
         }
     },
-    mounted(){
-        this.$el.addEventListener('downloadProgress', this.handleDownloadProgress);
+    mounted() {
+        this.$el.addEventListener(
+            'downloadProgress',
+            this.handleDownloadProgress
+        )
     },
     methods: {
         async setLang(lang) {
+            this.$i18next.changeLanguage(lang)
             this.lang = lang
             this.step = 2
-            if (this.useOwnAPI && this.hostUrl === ''){
-                this.useOwnAPI = false;
+            if (this.useOwnAPI && this.hostUrl === '') {
+                this.useOwnAPI = false
                 presentToast('info', this.$t('landing.nullUrl'))
             }
-            await this.initiateDownload();
+            await this.initiateDownload()
         },
-        finishConfig(){
+        finishConfig() {
             let config = {
                 lang: this.lang,
                 theme: 'system',
                 fetchMethod: this.useOwnAPI ? 'self' : 'default',
                 apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                 dataFilled: false,
-                autoScroll: true
+                autoScroll: true,
             }
             this.$emit('finishConfig', config)
         },
-        handleDownloadProgress(progress){
-            this.downloadProgress = progress.detail.current / progress.detail.objSize;
+        handleDownloadProgress(progress) {
+            this.downloadProgress =
+                progress.detail.current / progress.detail.objSize
         },
-        async initiateDownload(){
-            try{
-                let isSuccess = false;
+        async initiateDownload() {
+            try {
+                let isSuccess = false
                 let config = {
                     lang: this.lang,
                     theme: 'system',
                     fetchMethod: this.useOwnAPI ? 'self' : 'default',
                     apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                     dataFilled: false,
-                    autoScroll: true
+                    autoScroll: true,
                 }
                 switch (config.fetchMethod) {
                     case 'default':
-                        isSuccess = await fetchAPIData(undefined, this.$el);
-                        break;
+                        isSuccess = await fetchAPIData(undefined, this.$el)
+                        break
                     case 'self':
-                        isSuccess = await fetchAPIData(config.apiBaseUrl. this.$el);
-                        break;
+                        isSuccess = await fetchAPIData(
+                            config.apiBaseUrl.this.$el
+                        )
+                        break
                     case 'hkgov':
                         console.log('hkgov')
-                        break;
+                        break
                 }
                 if (isSuccess) {
-                    this.downloadFinish = true;
-                    if(this.autoStart){
-                        this.$emit('finishConfig', config);
+                    this.downloadFinish = true
+                    if (this.autoStart) {
+                        this.$emit('finishConfig', config)
                     }
                 } else {
                     if (config.lang == 'zh') {
-                        presentToast('error', '未能取得路線資料，請檢查網路設定')
+                        presentToast(
+                            'error',
+                            '未能取得路線資料，請檢查網路設定'
+                        )
                     } else {
-                        presentToast('error', 'Unable to fetch route data, please check your internet connection')
+                        presentToast(
+                            'error',
+                            'Unable to fetch route data, please check your internet connection'
+                        )
                     }
                 }
             } catch (err) {
-                console.error(err);
+                console.error(err)
             }
-        }
-    }
-});
+        },
+    },
+})
 </script>
 <style scoped>
 #init {
@@ -219,7 +341,7 @@ export default defineComponent({
     min-width: 300px;
     min-height: 300px;
 }
-.optionWrapper{
+.optionWrapper {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -227,15 +349,15 @@ export default defineComponent({
 .hidden {
     visibility: hidden;
 }
-.card-wrapper{
+.card-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%
+    height: 100%;
 }
-.button-wrapper{
+.button-wrapper {
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
 }
 .swipe-slide {
     height: 100%;
@@ -243,17 +365,17 @@ export default defineComponent({
     flex-wrap: wrap;
     justify-content: center;
 }
-.video-wrapper{
+.video-wrapper {
     width: 100%;
     height: 80%;
     display: flex;
     justify-content: center;
 }
-.video-wrapper > video{
+.video-wrapper > video {
     max-height: 50vh;
     object-fit: contain;
 }
-.swipe-slide > p{
+.swipe-slide > p {
     margin-top: 0.5rem;
     margin-bottom: 2rem;
 }
