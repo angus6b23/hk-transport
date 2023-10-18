@@ -312,8 +312,7 @@ export default defineComponent({
         checkNoEta() {
             if (
                 this.type == 'ferry' ||
-                this.type == 'tram' ||
-                this.type == 'lightRail'
+                this.type == 'tram'
             ) {
                 return true
             } else {

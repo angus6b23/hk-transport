@@ -342,46 +342,21 @@ export async function fetchMtrEta(route) {
         return etaData
     }
 }
-export async function fetchLightRailEta(route) {
+export async function fetchLightRailEta(route, baseUrl = "https://api.12a.app/hk-transport/"){
     let etaData = {
         status: '',
-        data: [],
+        data: []
     }
-    try {
-        const routeNo = route.routeNo
-        const destEN = route.destEN
-        let lrResponse = route.stops.map((stop) =>
-            axios(
-                `https://rt.data.gov.hk/v1/transport/mtr/lrt/getSchedule?station_id=${stop.stopId}`
-            )
-        )
-        lrResponse = await axios.all(lrResponse)
-        for (let response of lrResponse) {
-            let routeLists = []
-            let arrivalTimes = []
-            let stopId = response.config.url
-                .match(/station\_id\=.*$/)[0]
-                .replace('station_id=', '')
-            routeLists = response.data.platform_list.forEach((platform) => {
-                for (let item of platform.route_list) {
-                    routeLists = [...routeLists, ...item]
-                }
-            })
-            routeLists = routeLists.filter(
-                (item) => item.route_no == routeNo && item.dest_en == destEN
-            )
-            for (let item of routeLists) {
-                arrivalTimes.push(item.time_en.replace(' min', ''))
-            }
-            etaData.data.push({
-                stopId: stopId,
-                etas: arrivalTimes,
-                note: arrivalTimes.length == 0 ? 'N/A' : '',
-            })
-        }
-        etaData.status = 'success'
+    const { routeId, direction } = route;
+    try{
+        let res = await axios(`lightRailEta?routeNo=${routeId}&direction=${direction}`, {
+            baseURL: baseUrl
+        })
+        etaData.status = 'success';
+        etaData.data = res.data
+        console.log(etaData);
         return etaData
-    } catch (err) {
+    } catch (err){
         console.error(err)
         etaData.status = 'failed'
         etaData.data = err
