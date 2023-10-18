@@ -15,22 +15,22 @@
             <ion-title v-else-if="item.type == 'lightRail'">
                 {{ item.routeNameEN }}
                 <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
-                    >{{ item.originTC }} - {{ item.destTC }}</span
-                >
-                <span v-else class="ion-margin-start"
-                    >{{ item.originEN }} - {{ item.destEN }}</span
-                >
+                                                        >{{ item.originTC }} - {{ item.destTC }}</span
+                                                    >
+                                                    <span v-else class="ion-margin-start"
+                                                                 >{{ item.originEN }} - {{ item.destEN }}</span
+                                                             >
             </ion-title>
             <ion-title class="marquee" v-else>
                 <span v-if="$i18next.language === 'zh'">{{
                     item.routeNameTC
-                }}</span>
+                    }}</span>
                 <span v-else>{{ item.routeNameEN }}</span>
             </ion-title>
             <ion-buttons slot="start" class="top-buttons">
                 <ion-button @click="closeModal"
                     ><ion-icon :icon="chevronBack"></ion-icon
-                ></ion-button>
+                    ></ion-button>
             </ion-buttons>
             <ion-buttons slot="end" class="top-buttons">
                 <span v-if="altRoutes && altRoutes.length == 1">
@@ -85,7 +85,7 @@
                         :noEta="noEta"
                         :class="{ nearest: isNearestStop(stop.stopId) }"
                         ref="stopItem"
-                    ></StopItems>
+                        ></StopItems>
                 </ion-list>
             </section>
             <section v-if="popupView == 'info'">
@@ -97,14 +97,14 @@
                 <LeafletMap
                     :routeLocations="item.stops"
                     :currentLocation="currentLocation"
-                />
+                    />
             </section>
         </div>
     </ion-content>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import {
     IonHeader,
     IonTitle,
@@ -175,6 +175,7 @@ export default {
         const currentLocation = ref()
         const nearestStop = ref()
         const stopItem = ref(null)
+        const injectConfig = inject('globalConfig')
         return {
             popupLoading,
             item,
@@ -189,6 +190,7 @@ export default {
             starOutline,
             star,
             swapHorizontalOutline,
+            injectConfig
         }
     },
     async mounted() {
@@ -254,9 +256,9 @@ export default {
             this.getMtr()
             this.interval = setInterval(async () => await this.getMtr(), 10000)
         }
-        //		if (this.item.type === 'lightRail'){
-        //			this.getLightRail();
-        //		}
+        if (this.item.type === 'lightRail'){
+            this.getLightRail();
+        }
         // Get Coordinates
         try {
             this.currentLocation = await Geolocation.getCurrentPosition()
@@ -317,8 +319,8 @@ export default {
                 } else {
                     let indexResult = starredClone.findIndex(
                         (x) =>
-                            x.routeId == this.item.routeId &&
-                            x.direction == this.item.direction
+                        x.routeId == this.item.routeId &&
+                        x.direction == this.item.direction
                     )
                     if (indexResult == -1) {
                         return false
@@ -367,8 +369,8 @@ export default {
                     } else {
                         index = this.item.stops.findIndex(
                             (x) =>
-                                x.stopId == etaItem.stopId ||
-                                x.stopId == etaItem.stationId
+                            x.stopId == etaItem.stopId ||
+                            x.stopId == etaItem.stationId
                         )
                     }
                     if (index != -1) {
@@ -379,45 +381,50 @@ export default {
             }
         },
         /*
-		Old code, currently do not require feching data from CTB and NWFB
-		async getStopID() { //Fetch Stop ids of CTB and NWFB bus from api
-			if (this.item.stops.length > 0 && !('stopId' in this.item.stops[0])) {
-				const stopData = await fetchBusStopID(this.item);
-				// console.log(stopData);
-				if (stopData.status == 'success') {
-					// Populate stop ids into current route
-					if (stopData.data.length == this.item.stops.length) {
-						stopData.data.forEach(element => {
-							const index = this.item.stops.findIndex(x => x.seq == element.seq);
-							if (index != -1) {
-								this.item.stops[index].stopId = element.stop;
-							}
-						});
-					} else {
-						// Reconstruct CTB bus stop array
-						presentToast('info', '正在更新路線資料')
-						const reconBusData = await reconstructBusStops(stopData);
-						// console.log(reconBusData);
-						if (reconBusData.status == 'success' && reconBusData.data.length > 0) {
-							this.item.stops = JSON.parse(JSON.stringify(reconBusData.data));
-						} else {
-							presentToast('error', '重新建立路線失敗')
-							return
-						}
-					}
-					// Emits save data to save data to local forage
-					this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
-					presentToast('done', '已更新巴士路線資料');
-				}
-			}
-		}, */
-        async getKMB() {
-            //Get KMB route etas from api
-            const etaData = await fetchKMBETA(this.item)
-            this.populateETABySeq(etaData)
-        },
+        Old code, currently do not require feching data from CTB and NWFB
+        async getStopID() { //Fetch Stop ids of CTB and NWFB bus from api
+            if (this.item.stops.length > 0 && !('stopId' in this.item.stops[0])) {
+                const stopData = await fetchBusStopID(this.item);
+                // console.log(stopData);
+                if (stopData.status == 'success') {
+                    // Populate stop ids into current route
+                    if (stopData.data.length == this.item.stops.length) {
+                        stopData.data.forEach(element => {
+                            const index = this.item.stops.findIndex(x => x.seq == element.seq);
+                            if (index != -1) {
+                                this.item.stops[index].stopId = element.stop;
+                            }
+                        });
+                    } else {
+                        // Reconstruct CTB bus stop array
+                        presentToast('info', '正在更新路線資料')
+                        const reconBusData = await reconstructBusStops(stopData);
+// console.log(reconBusData);
+                        if (reconBusData.status == 'success' && reconBusData.data.length > 0) {
+                            this.item.stops = JSON.parse(JSON.stringify(reconBusData.data));
+                        } else {
+                            presentToast('error', '重新建立路線失敗')
+                            return
+                        }
+                    }
+                    // Emits save data to save data to local forage
+                    this.$emit('saveData', JSON.parse(JSON.stringify(this.item)));
+                    presentToast('done', '已更新巴士路線資料');
+                }
+            }
+        }, */
+                        async getKMB() {
+                            //Get KMB route etas from api
+                            const etaData = await fetchKMBETA(this.item)
+                            this.populateETABySeq(etaData)
+                        },
         async getCTB() {
             const etaData = await fetchBulkCTBETA(this.item)
+            this.populateETAById(etaData)
+        },
+        async getLightRail(){
+            const url = this.injectConfig.apiBaseUrl === '' ? undefined : this.injectConfig.apiBaseUrl
+            const etaData = await fetchLightRailEta(this.item, url);
             this.populateETAById(etaData)
         },
         async getMultiple() {
@@ -526,20 +533,6 @@ export default {
                 })
             } else if (etaData.status == 'api-error') {
                 presentToast('error', etaData.memo)
-            }
-        },
-        async getLightRail() {
-            const etaData = await fetchLightRailEta(this.item)
-            if (etaData.status == 'success' && etaData.data.length > 0) {
-                etaData.data.forEach((etaItem) => {
-                    const index = this.item.stops.findIndex(
-                        (x) => x.stopId == etaItem.stopId
-                    )
-                    if (index != -1) {
-                        this.item.stops[index].etaMessage = etaItem.note
-                        this.item.stops[index].etas = [...etaItem.etas]
-                    }
-                })
             }
         },
         async presentActionSheet() {

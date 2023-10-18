@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, provide } from 'vue'
 import {
     IonTabBar,
     IonTabButton,
@@ -133,8 +133,6 @@ import {
     BIconTrainLightrailFrontFill,
 } from 'bootstrap-icons-vue'
 import localforage from 'localforage'
-import presentToast from '@/components/presentToast'
-import fetchAPIData from '@/fetch/fetchAPIData'
 import Landing from '@/views/Landing.vue'
 
 export default defineComponent({
@@ -163,6 +161,7 @@ export default defineComponent({
         const loadingMessage = ref('請稍侯...<br>Please Wait...')
         const currentTab = ref('')
         const body = document.body
+        provide('globalConfig', config)
         // const afterTabChange = (e) => {
         //     // do something after tab change
         //     currentTab.value = e.tab;
