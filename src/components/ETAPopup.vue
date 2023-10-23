@@ -15,22 +15,22 @@
             <ion-title v-else-if="item.type == 'lightRail'">
                 {{ item.routeNameEN }}
                 <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
-                                                        >{{ item.originTC }} - {{ item.destTC }}</span
-                                                    >
-                                                    <span v-else class="ion-margin-start"
-                                                                 >{{ item.originEN }} - {{ item.destEN }}</span
-                                                             >
+                    >{{ item.originTC }} - {{ item.destTC }}</span
+                >
+                <span v-else class="ion-margin-start"
+                    >{{ item.originEN }} - {{ item.destEN }}</span
+                >
             </ion-title>
             <ion-title class="marquee" v-else>
                 <span v-if="$i18next.language === 'zh'">{{
                     item.routeNameTC
-                    }}</span>
+                }}</span>
                 <span v-else>{{ item.routeNameEN }}</span>
             </ion-title>
             <ion-buttons slot="start" class="top-buttons">
                 <ion-button @click="closeModal"
                     ><ion-icon :icon="chevronBack"></ion-icon
-                    ></ion-button>
+                ></ion-button>
             </ion-buttons>
             <ion-buttons slot="end" class="top-buttons">
                 <span v-if="altRoutes && altRoutes.length == 1">
@@ -61,10 +61,16 @@
                 <ion-segment-button value="default">
                     <ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
                 </ion-segment-button>
-                <ion-segment-button v-if="item.type != 'mtr' && item.type != 'lightRail'" value="info">
+                <ion-segment-button
+                    v-if="item.type != 'mtr' && item.type != 'lightRail'"
+                    value="info"
+                >
                     <ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
                 </ion-segment-button>
-                <ion-segment-button v-if="item.type != 'mtr' && item.type != 'lightRail'" value="map">
+                <ion-segment-button
+                    v-if="item.type != 'mtr' && item.type != 'lightRail'"
+                    value="map"
+                >
                     <ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
                 </ion-segment-button>
             </ion-segment>
@@ -85,7 +91,7 @@
                         :noEta="noEta"
                         :class="{ nearest: isNearestStop(stop.stopId) }"
                         ref="stopItem"
-                        ></StopItems>
+                    ></StopItems>
                 </ion-list>
             </section>
             <section v-if="popupView == 'info'">
@@ -97,7 +103,7 @@
                 <LeafletMap
                     :routeLocations="item.stops"
                     :currentLocation="currentLocation"
-                    />
+                />
             </section>
         </div>
     </ion-content>
@@ -190,7 +196,7 @@ export default {
             starOutline,
             star,
             swapHorizontalOutline,
-            injectConfig
+            injectConfig,
         }
     },
     async mounted() {
@@ -256,8 +262,8 @@ export default {
             this.getMtr()
             this.interval = setInterval(async () => await this.getMtr(), 10000)
         }
-        if (this.item.type === 'lightRail'){
-            this.getLightRail();
+        if (this.item.type === 'lightRail') {
+            this.getLightRail()
         }
         // Get Coordinates
         try {
@@ -319,8 +325,8 @@ export default {
                 } else {
                     let indexResult = starredClone.findIndex(
                         (x) =>
-                        x.routeId == this.item.routeId &&
-                        x.direction == this.item.direction
+                            x.routeId == this.item.routeId &&
+                            x.direction == this.item.direction
                     )
                     if (indexResult == -1) {
                         return false
@@ -369,8 +375,8 @@ export default {
                     } else {
                         index = this.item.stops.findIndex(
                             (x) =>
-                            x.stopId == etaItem.stopId ||
-                            x.stopId == etaItem.stationId
+                                x.stopId == etaItem.stopId ||
+                                x.stopId == etaItem.stationId
                         )
                     }
                     if (index != -1) {
@@ -413,18 +419,21 @@ export default {
                 }
             }
         }, */
-                        async getKMB() {
-                            //Get KMB route etas from api
-                            const etaData = await fetchKMBETA(this.item)
-                            this.populateETABySeq(etaData)
-                        },
+        async getKMB() {
+            //Get KMB route etas from api
+            const etaData = await fetchKMBETA(this.item)
+            this.populateETABySeq(etaData)
+        },
         async getCTB() {
             const etaData = await fetchBulkCTBETA(this.item)
             this.populateETAById(etaData)
         },
-        async getLightRail(){
-            const url = this.injectConfig.apiBaseUrl === '' ? undefined : this.injectConfig.apiBaseUrl
-            const etaData = await fetchLightRailEta(this.item, url);
+        async getLightRail() {
+            const url =
+                this.injectConfig.apiBaseUrl === ''
+                    ? undefined
+                    : this.injectConfig.apiBaseUrl
+            const etaData = await fetchLightRailEta(this.item, url)
             this.populateETAById(etaData)
         },
         async getMultiple() {

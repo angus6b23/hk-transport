@@ -27,7 +27,9 @@
             <ion-list v-if="dataReady">
                 <!-- Change List Header according to bus search -->
                 <ion-list-header>
-                    <ion-label class="hint">{{ $t('listView.hint') }}</ion-label>
+                    <ion-label class="hint">{{
+                        $t('listView.hint')
+                    }}</ion-label>
                 </ion-list-header>
                 <!-- Bus route display list here -->
                 <div v-for="(route, index) in data" :key="route.id">
@@ -310,10 +312,7 @@ export default defineComponent({
     },
     computed: {
         checkNoEta() {
-            if (
-                this.type == 'ferry' ||
-                this.type == 'tram'
-            ) {
+            if (this.type == 'ferry' || this.type == 'tram') {
                 return true
             } else {
                 return false
@@ -353,7 +352,7 @@ export default defineComponent({
 .route-no {
     display: flex;
 }
-.hint{
-    font-size: 1.2rem
+.hint {
+    font-size: 1.2rem;
 }
 </style>
