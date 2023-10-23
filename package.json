@@ -1,6 +1,6 @@
 {
     "name": "hk-bus",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "private": true,
     "scripts": {
         "dev": "vue-cli-service serve",
@@ -60,5 +60,5 @@
         "prettier": "^3.0.3",
         "ts-jest": "^27.0.7"
     },
-    "description": "An Ionic project"
+    "description": "An app viewing all major modes of transport in Hong Kong. "
 }
