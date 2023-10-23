@@ -1,120 +1,128 @@
 {
-  "common":{
-    "back": "Back",
-    "next": "Next",
-    "skip": "Skip",
-    "finish": "Finish",
-    "bus": "Bus",
-    "minibus": "Minibus",
-    "mtr": "MTR",
-    "underground": "MTR",
-    "tram": "Tram",
-    "lightRail": "Light Rail",
-    "ferry": "Ferry",
-    "minute": "min"
-  },
-  "landing":{
-    "quicktour": "Quick Tour",
-    "hint1": "You can choose from most of the transport type in Hong Kong. Enter the route number or destination name to search your route.",
-    "hint2": "Quick access to route keyboard is also avaliable.",
-    "hint3": "Information including the route timetable, arrival time and map is avaliable",
-    "hint4": "Mark your route with star and the route will be stored and viewed.",
-    "hint5": "Everything will be avaliable after the app finish downloading",
-    "autoStart": "Automatically start app after finish downloading",
-    "nullUrl": "The URL is empty, default api endpoint will be used."
-  },
-  "searchView":{
-    "title": "{transportType} Routes",
-    "searchPlaceHolder": "Please enter route No. or destination",
-    "searchPrompt": "Searching {transportType}: {{query}}",
-    "clearSearch": "Clear",
-    "starredPrompt": "Starred {transportType}",
-    "inbound": "In",
-    "outbound": "Out",
-    "noItem": "No item to display",
-    "noItemHint": "Starred items will be displayed here",
-    "showFerry": "Display all ferries",
-    "toggleRouteKeypad": "Toogle Route Keypad"
-  },
-  "listView":{
-    "title": "All {transportType} Routes",
-    "hint": "Please select route",
-    "eastbound": "East",
-    "westbound": "West"
-  },
-  "badges":{
-    "kmb": "KMB",
-    "ctb": "CTB",
-    "lwb": "LWB",
-    "nwfb": "NWFB",
-    "db": "Discovery Bay",
-    "nlb": "Lantau",
-    "pi": "Ma Wan",
-    "xb": "Boundary",
-    "lrt": "MTR",
-    "night": "Night",
-    "special": "Special",
-    "hki": "Hong Kong Island",
-    "kln": "Kowloon",
-    "nt": "New Territories",
-    "kaito": "Kai-to",
-    "outlying": "Outlying Islands",
-    "inner": "Inner Routes"
-  },
-  "option":{
-    "title": "Options",
-    "basic": "Basic",
-    "theme": "Theme",
-    "selectTheme": "Please select theme",
-    "light": "Light",
-    "dark": "Dark",
-    "systemTheme": "Follow System",
-    "dataSource": "Data source",
-    "selectSource": "Please select data source",
-    "defaultSource": "Prefetched data from API (Recommended)",
-    "govApi": "Download from gov.hk API directly",
-    "selfHost": "Use your own API",
-    "selfHostUrl": "Self Host Instance URL",
-    "autoScroll": "Auto Scroll to nearest station",
-    "manageData": "Manage Data",
-    "updateRoute": "Update routes data",
-    "reloadRoute": "Reload all routes data",
-    "removeAllStar": "Clear all stars from route",
-    "removeAllStarPrompt": "This will clear all stars from route.\n Do you want to proceed?",
-    "resetAll": "Reset all settings",
-    "resetAllPrompt": "All route data will be reloaded and all stars will be cleared.\n Do you want to proceed?",
-    "updatingData": "Updating data",
-    "redownloadData": "Redownloading all route data"
-  },
-  "etaPopup":{
-    "frame": {
-      "upcoming": "Upcoming",
-      "info": "Info",
-      "map": "Map",
-      "otherDirection": "Other directions"
+    "common": {
+        "back": "Back",
+        "next": "Next",
+        "skip": "Skip",
+        "finish": "Finish",
+        "bus": "Bus",
+        "minibus": "Minibus",
+        "mtr": "MTR",
+        "underground": "MTR",
+        "tram": "Tram",
+        "lightRail": "Light Rail",
+        "ferry": "Ferry",
+        "minute": "min"
     },
-    "upcoming":{
-      "noService": "No Service"
+    "landing": {
+        "quicktour": "Quick Tour",
+        "hint1": "You can choose from most of the transport type in Hong Kong. Enter the route number or destination name to search your route.",
+        "hint2": "Quick access to route keyboard is also avaliable.",
+        "hint3": "Information including the route timetable, arrival time and map is avaliable",
+        "hint4": "Mark your route with star and the route will be stored and viewed.",
+        "hint5": "Everything will be avaliable after the app finish downloading",
+        "autoStart": "Automatically start app after finish downloading",
+        "nullUrl": "The URL is empty, default api endpoint will be used."
     },
-    "info":{
-      "journeyTime": "Journey Time",
-      "fullFare": "Full Fare",
-      "details": "Route Details",
-      "MF": "Monday to Friday",
-      "S": "Saturday",
-      "H": "Sunday and Public Holidays",
-      "D": "Daily"
+    "searchView": {
+        "title": "{transportType} Routes",
+        "searchPlaceHolder": "Please enter route No. or destination",
+        "searchPrompt": "Searching {transportType}: {{query}}",
+        "clearSearch": "Clear",
+        "starredPrompt": "Starred {transportType}",
+        "inbound": "In",
+        "outbound": "Out",
+        "noItem": "No item to display",
+        "noItemHint": "Starred items will be displayed here",
+        "showFerry": "Display all ferries",
+        "toggleRouteKeypad": "Toogle Route Keypad"
     },
-    "map":{
-      "selectStation": "Please select station",
-      "currentLocation": "Current GPS Location"
+    "listView": {
+        "title": "All {transportType} Routes",
+        "hint": "Please select route",
+        "eastbound": "East",
+        "westbound": "West"
+    },
+    "badges": {
+        "kmb": "KMB",
+        "ctb": "CTB",
+        "lwb": "LWB",
+        "nwfb": "NWFB",
+        "db": "Discovery Bay",
+        "nlb": "Lantau",
+        "pi": "Ma Wan",
+        "xb": "Boundary",
+        "lrt": "MTR",
+        "night": "Night",
+        "special": "Special",
+        "hki": "Hong Kong Island",
+        "kln": "Kowloon",
+        "nt": "New Territories",
+        "kaito": "Kai-to",
+        "outlying": "Outlying Islands",
+        "inner": "Inner Routes"
+    },
+    "option": {
+        "title": "Options",
+        "basic": "Basic",
+        "theme": "Theme",
+        "selectTheme": "Please select theme",
+        "light": "Light",
+        "dark": "Dark",
+        "systemTheme": "Follow System",
+        "dataSource": "Data source",
+        "selectSource": "Please select data source",
+        "defaultSource": "Prefetched data from API (Recommended)",
+        "govApi": "Download from gov.hk API directly",
+        "selfHost": "Use your own API",
+        "selfHostUrl": "Self Host Instance URL",
+        "autoScroll": "Auto Scroll to nearest station",
+        "manageData": "Manage Data",
+        "updateRoute": "Update routes data",
+        "reloadRoute": "Reload all routes data",
+        "removeAllStar": "Clear all stars from route",
+        "removeAllStarPrompt": "This will clear all stars from route.\n Do you want to proceed?",
+        "resetAll": "Reset all settings",
+        "resetAllPrompt": "All route data will be reloaded and all stars will be cleared.\n Do you want to proceed?",
+        "updatingData": "Updating data",
+        "redownloadData": "Redownloading all route data",
+        "about": "About this app",
+        "license": "License",
+        "support": "Support this app",
+        "supportDescription": "Show your support by buying me a cone",
+        "sourceCode": "Show me the source code",
+        "otherApp": "Other apps on 12a.app",
+        "promise": "Promise",
+        "promiseDescription": "The purpose of this app is to provide an ad-less and private alternative for viewing tranpsort in Hong Kong. This app do not and will not implement any ads and invasive trackers. All the data will be saved on the user's device and will never be uploaded to the server."
+    },
+    "etaPopup": {
+        "frame": {
+            "upcoming": "Upcoming",
+            "info": "Info",
+            "map": "Map",
+            "otherDirection": "Other directions"
+        },
+        "upcoming": {
+            "noService": "No Service"
+        },
+        "info": {
+            "journeyTime": "Journey Time",
+            "fullFare": "Full Fare",
+            "details": "Route Details",
+            "MF": "Monday to Friday",
+            "S": "Saturday",
+            "H": "Sunday and Public Holidays",
+            "D": "Daily"
+        },
+        "map": {
+            "selectStation": "Please select station",
+            "currentLocation": "Current GPS Location"
+        }
+    },
+    "toast": {
+        "noEta": "This route does not provide ETA service",
+        "removedStar": "All stars were cleared",
+        "resetAll": "All settins are reseted, the page will reload in 3 seconds",
+        "networkError": "Network error. Please check the source api and your network",
+        "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs"
     }
-  },
-  "toast":{
-    "noEta": "This route does not provide ETA service",
-    "removedStar": "All stars were cleared",
-    "resetAll": "All settins are reseted, the page will reload in 3 seconds",
-    "networkError": "Network error. Please check the source api and your network",
-    "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs"
-  }
 }

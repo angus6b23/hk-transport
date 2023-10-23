@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 import SearchView from '@/views/Search-view.vue'
 
 export default defineComponent({
     name: 'minibus',
-    components: { SearchView }
+    components: { SearchView },
 })
 </script>

@@ -1,13 +1,13 @@
 <template>
-	<SearchView dataType="bus"></SearchView>
+    <SearchView dataType="bus"></SearchView>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 import SearchView from '@/views/Search-view.vue'
 
 export default defineComponent({
-	name: 'bus',
-	components: { SearchView }
+    name: 'bus',
+    components: { SearchView },
 })
 </script>
