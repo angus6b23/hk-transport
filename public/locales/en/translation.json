@@ -84,7 +84,15 @@
         "resetAll": "Reset all settings",
         "resetAllPrompt": "All route data will be reloaded and all stars will be cleared.\n Do you want to proceed?",
         "updatingData": "Updating data",
-        "redownloadData": "Redownloading all route data"
+        "redownloadData": "Redownloading all route data",
+        "about": "About this app",
+        "license": "License",
+        "support": "Support this app",
+        "supportDescription": "Show your support by buying me a cone",
+        "sourceCode": "Show me the source code",
+        "otherApp": "Other apps on 12a.app",
+        "promise": "Promise",
+        "promiseDescription": "The purpose of this app is to provide an ad-less and private alternative for viewing tranpsort in Hong Kong. This app do not and will not implement any ads and invasive trackers. All the data will be saved on the user's device and will never be uploaded to the server."
     },
     "etaPopup": {
         "frame": {

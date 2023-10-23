@@ -16,57 +16,57 @@
         <ion-list>
             <ion-item button @click="presentLangAction">
                 <ion-icon :icon="languageOutline" slot="start" />
-                <ion-label>
-                    <h5>語言 / Language</h5>
-                    <p v-if="config.lang == 'zh'">正體中文</p>
-                    <p v-else-if="config.lang == 'en'">English</p>
-                </ion-label>
+                    <ion-label>
+                        <h5>語言 / Language</h5>
+                        <p v-if="config.lang == 'zh'">正體中文</p>
+                        <p v-else-if="config.lang == 'en'">English</p>
+                    </ion-label>
             </ion-item>
             <ion-item button @click="presentThemeAction">
                 <ion-icon :icon="colorPaletteOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.theme') }}</h5>
-                    <p v-if="config.theme == 'light'">
-                        {{ $t('option.light') }}
-                    </p>
-                    <p v-else-if="config.theme == 'dark'">
-                        {{ $t('option.dark') }}
-                    </p>
-                    <p v-else-if="config.theme == 'system'">
-                        {{ $t('option.systemTheme') }}
-                    </p>
-                </ion-label>
+                    <ion-label>
+                        <h5>{{ $t('option.theme') }}</h5>
+                        <p v-if="config.theme == 'light'">
+                            {{ $t('option.light') }}
+                        </p>
+                        <p v-else-if="config.theme == 'dark'">
+                            {{ $t('option.dark') }}
+                        </p>
+                        <p v-else-if="config.theme == 'system'">
+                            {{ $t('option.systemTheme') }}
+                        </p>
+                    </ion-label>
             </ion-item>
             <ion-item button @click="presentSourceAction">
                 <ion-icon :icon="serverOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.dataSource') }}</h5>
-                    <p v-if="config.fetchMethod == 'default'">
-                        {{ $t('option.defaultSource') }}
-                    </p>
-                    <p v-else-if="config.fetchMethod == 'hkgov'">
-                        {{ $t('option.govApi') }}
-                    </p>
-                    <p v-else-if="config.fetchMethod == 'self'">
-                        {{ $t('option.selfHost') }}
-                    </p>
-                </ion-label>
+                    <ion-label>
+                        <h5>{{ $t('option.dataSource') }}</h5>
+                        <p v-if="config.fetchMethod == 'default'">
+                            {{ $t('option.defaultSource') }}
+                        </p>
+                        <p v-else-if="config.fetchMethod == 'hkgov'">
+                            {{ $t('option.govApi') }}
+                        </p>
+                        <p v-else-if="config.fetchMethod == 'self'">
+                            {{ $t('option.selfHost') }}
+                        </p>
+                    </ion-label>
             </ion-item>
             <ion-item v-if="config.fetchMethod == 'self'">
                 <ion-label position="stacked">{{
                     $t('option.selfHostUrl')
-                }}</ion-label>
+                    }}</ion-label>
                 <ion-input
                     placeholder="https://your.api"
                     v-model="apiBaseUrl"
-                ></ion-input>
+                    ></ion-input>
             </ion-item>
             <ion-item>
                 <ion-icon :icon="returnDownForwardOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.autoScroll') }}</h5>
-                </ion-label>
-                <ion-checkbox slot="end" v-model="autoScroll"></ion-checkbox>
+                    <ion-label>
+                        <h5>{{ $t('option.autoScroll') }}</h5>
+                    </ion-label>
+                    <ion-checkbox slot="end" v-model="autoScroll"></ion-checkbox>
             </ion-item>
         </ion-list>
         <ion-list-header>
@@ -75,27 +75,64 @@
         <ion-list class="ion-padding-bottom ion-margin-bottom">
             <ion-item button @click="updateData">
                 <ion-icon :icon="cloudDownloadOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.updateRoute') }}</h5>
-                </ion-label>
+                    <ion-label>
+                        <h5>{{ $t('option.updateRoute') }}</h5>
+                    </ion-label>
             </ion-item>
             <ion-item button @click="downloadData">
                 <ion-icon :icon="reloadOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.reloadRoute') }}</h5>
-                </ion-label>
+                    <ion-label>
+                        <h5>{{ $t('option.reloadRoute') }}</h5>
+                    </ion-label>
             </ion-item>
             <ion-item button @click="clearStarred">
                 <ion-icon :icon="starHalfOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.removeAllStar') }}</h5>
-                </ion-label>
+                    <ion-label>
+                        <h5>{{ $t('option.removeAllStar') }}</h5>
+                    </ion-label>
             </ion-item>
             <ion-item button @click="confirmClearData">
                 <ion-icon :icon="trashOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.resetAll') }}</h5>
-                </ion-label>
+                    <ion-label>
+                        <h5>{{ $t('option.resetAll') }}</h5>
+                    </ion-label>
+            </ion-item>
+            <ion-list-header>
+                <ion-label>{{ $t('option.about') }}</ion-label>
+            </ion-list-header>
+            <ion-item button href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">
+                <ion-icon :icon="bookOutline" slot="start" />
+                    <ion-label>
+                        <h5>{{ $t('option.license') }}</h5>
+                        <p>GPLv3</p>
+                    </ion-label>
+            </ion-item>
+            <ion-item button href="https://github.com/angus6b23/hk-transport" target="_blank">
+                <ion-icon :icon="codeSlashOutline" slot="start" />
+                    <ion-label>
+                        <h5>{{ $t('option.sourceCode') }}</h5>
+                    </ion-label>
+            </ion-item>
+            <ion-item>
+                <ion-icon :icon="shieldCheckmarkOutline" slot="start" />
+                    <ion-label>
+                        <h5>{{ $t('option.promise') }}</h5>
+                        <p class="ion-text-wrap">{{ $t('option.promiseDescription') }}</p>
+                    </ion-label>
+            </ion-item>
+            <ion-item button href="https://liberapay.com/12a.app/donate" target="_blank">
+                <ion-icon :icon="iceCreamOutline" slot="start" />
+                    <ion-label>
+                        <h5>{{ $t('option.support') }}</h5>
+                        <p>{{ $t('option.supportDescription') }}</p>
+                    </ion-label>
+            </ion-item>
+            <ion-item button href="https://12a.app" target="_blank">
+                <ion-icon :icon="linkOutline" slot="start" />
+                    <ion-label>
+                        <h5>{{ $t('option.otherApp') }}</h5>
+                        <p>https://12a.app</p>
+                    </ion-label>
             </ion-item>
         </ion-list>
     </ion-content>
@@ -131,6 +168,11 @@ import {
     trashOutline,
     colorPaletteOutline,
     returnDownForwardOutline,
+    bookOutline,
+    iceCreamOutline,
+    codeSlashOutline,
+    shieldCheckmarkOutline,
+    linkOutline,
 } from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js'
@@ -161,7 +203,11 @@ export default {
         const body = document.body
         return {
             chevronBack,
+            linkOutline,
+            codeSlashOutline,
+            shieldCheckmarkOutline,
             languageOutline,
+            iceCreamOutline,
             serverOutline,
             cloudDownloadOutline,
             reloadOutline,
@@ -169,6 +215,7 @@ export default {
             trashOutline,
             colorPaletteOutline,
             returnDownForwardOutline,
+            bookOutline,
             config,
             apiBaseUrl,
             body,
@@ -219,8 +266,8 @@ export default {
         async updateData() {
             const loading = await loadingController.create({
                 message:
-                    this.$t('option.updatingData') +
-                    '<br><span id="loading-progress"><span>',
+                this.$t('option.updatingData') +
+                '<br><span id="loading-progress"><span>',
             })
             try {
                 let res
@@ -244,8 +291,8 @@ export default {
         async downloadData() {
             const loading = await loadingController.create({
                 message:
-                    this.$t('option.redownloadData') +
-                    '<br><span id="loading-progress"><span>',
+                this.$t('option.redownloadData') +
+                '<br><span id="loading-progress"><span>',
             })
             loading.present()
             let keys = await localforage.keys()
