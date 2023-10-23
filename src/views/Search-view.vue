@@ -631,8 +631,8 @@ export default defineComponent({
     justify-content: space-between;
     align-items: center;
 }
-.hint{
-    font-size: 1.2rem
+.hint {
+    font-size: 1.2rem;
 }
 .swap-icon {
     margin-right: 1rem;

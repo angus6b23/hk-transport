@@ -342,21 +342,27 @@ export async function fetchMtrEta(route) {
         return etaData
     }
 }
-export async function fetchLightRailEta(route, baseUrl = "https://api.12a.app/hk-transport/"){
+export async function fetchLightRailEta(
+    route,
+    baseUrl = 'https://api.12a.app/hk-transport/'
+) {
     let etaData = {
         status: '',
-        data: []
+        data: [],
     }
-    const { routeId, direction } = route;
-    try{
-        let res = await axios(`lightRailEta?routeNo=${routeId}&direction=${direction}`, {
-            baseURL: baseUrl
-        })
-        etaData.status = 'success';
+    const { routeId, direction } = route
+    try {
+        let res = await axios(
+            `lightRailEta?routeNo=${routeId}&direction=${direction}`,
+            {
+                baseURL: baseUrl,
+            }
+        )
+        etaData.status = 'success'
         etaData.data = res.data
-        console.log(etaData);
+        console.log(etaData)
         return etaData
-    } catch (err){
+    } catch (err) {
         console.error(err)
         etaData.status = 'failed'
         etaData.data = err
