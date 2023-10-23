@@ -84,7 +84,15 @@
         "resetAll": "重設所有設定",
         "resetAllPrompt": "所有路線資料需再次下載，已標記的路線亦會被清除。\n你確定要重設所有資料嗎？",
         "updatingData": "正在更新資料",
-        "redownloadData": "正在重新下載資料"
+        "redownloadData": "正在重新下載資料",
+        "about": "關於",
+        "license": "使用條款",
+        "support": "支持",
+        "supportDescription": "如果你中意呢個app，可以捐少少以示支持",
+        "sourceCode": "顯示原代碼",
+        "otherApp": "其他在12a.app 的app",
+        "promise": "承諾",
+        "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。"
     },
     "etaPopup": {
         "frame": {
