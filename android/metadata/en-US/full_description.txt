@@ -1,0 +1,10 @@
+HK Transport makes use of data from HK gov
+In the app, you can find data of
+- Bus
+- MTR
+- Minibus
+- Tram（Estimated time of arrival not available）
+- Light Rail
+- Ferry（Estimated time of arrival not available）
+License: GPL v3.0
+Webapp Version: https://hk-transport.12a.app
