@@ -29,14 +29,16 @@
                                 >English</ion-button
                             >
                             <div class="ion-margin-top customApiDiag">
-                                <ion-checkbox
-                                    slot="start"
-                                    v-model="useOwnAPI"
-                                ></ion-checkbox>
-                                <ion-label
-                                    >使用自訂的站台 / Use your own
-                                    endpoint</ion-label
-                                >
+                                <ion-item>
+                                    <ion-checkbox
+                                        slot="start"
+                                        v-model="useOwnAPI"
+                                    ></ion-checkbox>
+                                    <ion-label
+                                        >使用自訂的站台 <br />
+                                        Use your own endpoint</ion-label
+                                    >
+                                </ion-item>
                                 <ion-item
                                     :class="{
                                         hidden: !useOwnAPI,
@@ -55,13 +57,13 @@
                 </ion-card>
             </div>
             <div v-if="step == 2" class="card-wrapper">
-                <ion-card style="max-height: 75vh">
+                <ion-card class="tour-card">
                     <ion-card-header>
                         <ion-card-title>
                             {{ $t('landing.quicktour') }}
                         </ion-card-title>
                     </ion-card-header>
-                    <ion-card-content style="height: 70vh">
+                    <ion-card-content>
                         <swiper
                             style="max-height: 60vh"
                             :modules="modules"
@@ -147,21 +149,28 @@
                                 </div>
                             </swiper-slide>
                         </swiper>
-                        <div class="optionWrapper">
+                        <div class="option-wrapper">
                             <div>
-                                <ion-checkbox
-                                    slot="start"
-                                    v-model="autoStart"
-                                />
-                                <ion-label class="ion-margin-start">{{
-                                    $t('landing.autoStart')
-                                }}</ion-label>
+                                <ion-item>
+                                    <ion-checkbox
+                                        slot="start"
+                                        v-model="autoStart"
+                                    />
+                                    <ion-label class="ion-text-wrap">{{
+                                        $t('landing.autoStart')
+                                    }}</ion-label>
+                                </ion-item>
                             </div>
-                            <ion-button
-                                @click="finishConfig()"
-                                :disabled="!downloadFinish"
-                                >{{ $t('common.finish') }}</ion-button
-                            >
+                            <div class="finish-wrapper">
+                                <ion-text class="ion-margin-end">
+                                    {{ downloadText }}
+                                </ion-text>
+                                <ion-button
+                                    @click="finishConfig()"
+                                    :disabled="!downloadFinish"
+                                    >{{ $t('common.finish') }}</ion-button
+                                >
+                            </div>
                         </div>
                         <ion-progress-bar
                             :value="downloadProgress"
@@ -225,6 +234,7 @@ export default defineComponent({
         const hostUrl = ref('')
         const step = ref(1)
         const downloadProgress = ref(0)
+        const downloadText = ref('')
         const downloadFinish = ref(false)
         const autoStart = ref(true)
         return {
@@ -237,6 +247,7 @@ export default defineComponent({
             downloadProgress,
             downloadFinish,
             autoStart,
+            downloadText,
             modules: [Pagination],
         }
     },
@@ -271,9 +282,23 @@ export default defineComponent({
         handleDownloadProgress(progress) {
             this.downloadProgress =
                 progress.detail.current / progress.detail.objSize
+            this.downloadText = `${progress.detail.current} / ${progress.detail.objSize}`
+        },
+        checkURL() {
+            try {
+                const url = new URL(this.hostUrl)
+                return url.protocol === 'http:' || url.protocol === 'https:'
+            } catch (err) {
+                return false
+            }
         },
         async initiateDownload() {
             try {
+                if (this.useOwnAPI) {
+                    if (!this.checkURL()) {
+                        throw new Error('Invalid Url')
+                    }
+                }
                 let isSuccess = false
                 let config = {
                     lang: this.lang,
@@ -289,33 +314,31 @@ export default defineComponent({
                         break
                     case 'self':
                         isSuccess = await fetchAPIData(
-                            config.apiBaseUrl.this.$el
+                            config.apiBaseUrl,
+                            this.$el
                         )
                         break
-                    case 'hkgov':
-                        console.log('hkgov')
-                        break
+                    default:
+                        throw new Error('Unknown fetch method')
                 }
+                console.log(isSuccess)
                 if (isSuccess) {
                     this.downloadFinish = true
                     if (this.autoStart) {
                         this.$emit('finishConfig', config)
                     }
                 } else {
-                    if (config.lang == 'zh') {
-                        presentToast(
-                            'error',
-                            '未能取得路線資料，請檢查網路設定'
-                        )
-                    } else {
-                        presentToast(
-                            'error',
-                            'Unable to fetch route data, please check your internet connection'
-                        )
-                    }
+                    throw new Error('Fetch Failed')
                 }
             } catch (err) {
-                console.error(err)
+                this.step = 1
+                if (err.message === 'Fetch Failed') {
+                    console.log('hit')
+                    presentToast('error', this.$i18next.t('toast.networkError'))
+                } else if (err.message === 'Invalid Url') {
+                    console.log('invalidurl')
+                    presentToast('error', this.$i18next.t('toast.invalidUrl'))
+                }
             }
         },
     },
@@ -333,18 +356,20 @@ export default defineComponent({
 
 #welcome_card {
     display: flex;
+    padding: 2rem;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    width: 30vw;
+    min-width: fit-content;
     height: 50vh;
     min-width: 300px;
     min-height: 300px;
 }
-.optionWrapper {
+.option-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 .hidden {
     visibility: hidden;
@@ -378,5 +403,18 @@ export default defineComponent({
 .swipe-slide > p {
     margin-top: 0.5rem;
     margin-bottom: 2rem;
+}
+.tour-card {
+    min-height: fit-content;
+}
+.finish-wrapper {
+    display: flex;
+    align-items: center;
+}
+@media only screen and (max-width: 640px) {
+    .finish-wrapper {
+        width: 100%;
+        justify-content: space-around;
+    }
 }
 </style>

@@ -28,7 +28,6 @@
 
 <script>
 import { ref, toRaw } from 'vue'
-import { Geolocation } from '@capacitor/geolocation'
 import { IonSelect, IonSelectOption } from '@ionic/vue'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
@@ -108,9 +107,10 @@ export default {
         }
     },
     async mounted() {
-        this.watchLocation = await Geolocation.watchPosition(
+        this.watchLocation = navigator.geolocation.watchPosition(
+            (location) => this.setLocation(location),
+            () => null,
             { enableHighAccuracy: true },
-            (location) => this.setLocation(location)
         )
         // Default showing hong kong with zome level 10
         this.map = L.map('mapContainer').setView([22.3745, 114.19849], 10)
@@ -203,7 +203,7 @@ export default {
             toRaw(this.map).remove()
         }
         if (this.watchLocation) {
-            Geolocation.clearWatch(this.watchLocation)
+            navigator.geolocation.clearWatch(this.watch)
         }
     },
     watch: {
