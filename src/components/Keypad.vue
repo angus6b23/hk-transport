@@ -13,7 +13,9 @@
             <div class="grid keypad-wrapper">
                 <div class="numbers">
                     <div>
-                        <ion-row class="ion-justify-content-around ion-align-items-center">
+                        <ion-row
+                            class="ion-justify-content-around ion-align-items-center"
+                        >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -36,7 +38,9 @@
                                 >3</ion-button
                             >
                         </ion-row>
-                        <ion-row class="ion-justify-content-around ion-align-items-center">
+                        <ion-row
+                            class="ion-justify-content-around ion-align-items-center"
+                        >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -59,7 +63,9 @@
                                 >6</ion-button
                             >
                         </ion-row>
-                        <ion-row class="ion-justify-content-around ion-align-items-center">
+                        <ion-row
+                            class="ion-justify-content-around ion-align-items-center"
+                        >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -82,7 +88,9 @@
                                 >9</ion-button
                             >
                         </ion-row>
-                        <ion-row class="ion-justify-content-around ion-align-items-center">
+                        <ion-row
+                            class="ion-justify-content-around ion-align-items-center"
+                        >
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
@@ -274,14 +282,14 @@ export default {
     height: 2.5rem;
     font-size: 1.5rem;
 }
-.grid .md.button.icon-button{
+.grid .md.button.icon-button {
     font-size: 1rem;
 }
-.grid .md.button{
+.grid .md.button {
     height: 2.5rem;
     font-size: 1.5rem;
 }
-.keypad-wrapper{
+.keypad-wrapper {
     height: 25vh;
 }
 .numbers {

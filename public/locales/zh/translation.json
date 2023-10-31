@@ -124,6 +124,7 @@
         "resetAll": "己重設所有設定，頁面會在3 秒內重新載入",
         "networkError": "網絡錯誤。請檢查來源url 和網絡狀況。",
         "changeSourceHint": "請按管理資料 > 重新下載路線資料 以反映設定",
-        "invalidUrl": "網絡地址不正確，請確保地址包含協定 http:// 或 https://"
+        "invalidUrl": "網絡地址不正確，請確保地址包含協定 http:// 或 https://",
+        "locationFail": "無法獲得現時地點"
     }
 }
