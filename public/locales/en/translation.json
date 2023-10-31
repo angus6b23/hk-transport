@@ -123,6 +123,7 @@
         "removedStar": "All stars were cleared",
         "resetAll": "All settins are reseted, the page will reload in 3 seconds",
         "networkError": "Network error. Please check the source api and your network",
-        "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs"
+        "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs",
+        "invalidUrl": "The Url is invalid. Please remember to include http:// or https://"
     }
 }
