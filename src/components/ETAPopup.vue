@@ -131,7 +131,6 @@ import {
     chevronBack,
     swapHorizontalOutline,
 } from 'ionicons/icons'
-import { Geolocation } from '@capacitor/geolocation'
 import { getDistance } from 'geolib'
 
 import {
@@ -266,8 +265,50 @@ export default {
             this.getLightRail()
         }
         // Get Coordinates
-        try {
-            this.currentLocation = await Geolocation.getCurrentPosition()
+        navigator.geolocation.getCurrentPosition(
+            this.onLocationSuccess,
+            this.onLocationFail,
+            { enableHighAccuracy: true }
+        )
+    },
+    computed: {
+        checkbusStar() {
+            //Return true if route is in starred array.
+            if (this.starred) {
+                let starredClone = [...this.starred]
+                if (starredClone.length == 0) {
+                    return false
+                } else {
+                    let indexResult = starredClone.findIndex(
+                        (x) =>
+                            x.routeId == this.item.routeId &&
+                            x.direction == this.item.direction
+                    )
+                    if (indexResult == -1) {
+                        return false
+                    } else {
+                        return true
+                    }
+                }
+            }
+            return false
+        },
+    },
+    methods: {
+        closeModal() {
+            this.$emit('closeModal')
+        },
+        addStar() {
+            this.$emit('addStar')
+        },
+        removeStar() {
+            this.$emit('removeStar')
+        },
+        swapDirection() {
+            this.$emit('swapDirection', this.altRoutes[0])
+        },
+        onLocationSuccess(position) {
+            this.currentLocation = position;
             const stopDistance = this.item.stops.map((stop) => {
                 //Create an array hold all stops id and distance between current coord
                 if (stop.coord && stop.coord.length > 0) {
@@ -310,46 +351,9 @@ export default {
                     )
                 }
             }
-            //console.log(this.nearestStop);
-        } catch (err) {
-            console.error(err)
-        }
-    },
-    computed: {
-        checkbusStar() {
-            //Return true if route is in starred array.
-            if (this.starred) {
-                let starredClone = [...this.starred]
-                if (starredClone.length == 0) {
-                    return false
-                } else {
-                    let indexResult = starredClone.findIndex(
-                        (x) =>
-                            x.routeId == this.item.routeId &&
-                            x.direction == this.item.direction
-                    )
-                    if (indexResult == -1) {
-                        return false
-                    } else {
-                        return true
-                    }
-                }
-            }
-            return false
         },
-    },
-    methods: {
-        closeModal() {
-            this.$emit('closeModal')
-        },
-        addStar() {
-            this.$emit('addStar')
-        },
-        removeStar() {
-            this.$emit('removeStar')
-        },
-        swapDirection() {
-            this.$emit('swapDirection', this.altRoutes[0])
+        onLocationFail(){
+            presentToast('error', this.$i18next.t('toast.locationFail'))
         },
         populateETABySeq(etaData) {
             if (etaData.status == 'success' && etaData.data.length > 0) {
