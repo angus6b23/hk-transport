@@ -1,0 +1,130 @@
+{
+    "common": {
+        "back": "返回",
+        "next": "下一步",
+        "skip": "跳過",
+        "finish": "完成",
+        "bus": "巴士",
+        "minibus": "專線小巴",
+        "underground": "地鐵",
+        "mtr": "地鐵",
+        "tram": "電車",
+        "lightRail": "輕鐵",
+        "ferry": "渡輪",
+        "minute": "分鐘"
+    },
+    "landing": {
+        "quicktour": "導覽",
+        "hint1": "先選擇想搜尋的交通工具，再在上方搜尋路線號碼或目的地。",
+        "hint2": "你亦可以使用路線鍵盤進行搜尋。",
+        "hint3": "路線頁面有提供各類資料參考，如時間表、地圖等。",
+        "hint4": "你可標記路線以方便下次再次使用。",
+        "hint5": "請稍侯，資料正在下載",
+        "autoStart": "資料下載完畢後自動啟動",
+        "nullUrl": "站台地址為空白，將使用預設的站台"
+    },
+    "searchView": {
+        "title": "{transportType}路線",
+        "searchPlaceHolder": "請輪入路線號碼或終點站",
+        "searchPrompt": "搜尋{transportType}: {{query}}",
+        "clearSearch": "清除搜尋",
+        "starredPrompt": "已標記的{transportType}",
+        "inbound": "順行",
+        "outbound": "逆行",
+        "noItem": "尚未有顯示項目",
+        "noItemHint": "可於搜尋後標記星號以方便使用",
+        "showFerry": "顯示所有渡輪",
+        "toggleRouteKeypad": "展開 / 收起路線鍵盤"
+    },
+    "listView": {
+        "title": "所有{transportType}路線",
+        "hint": "請選擇路線",
+        "eastbound": "東行",
+        "westbound": "西行"
+    },
+    "badges": {
+        "kmb": "九巴",
+        "ctb": "城巴",
+        "lwb": "龍運",
+        "nwfb": "新巴",
+        "db": "愉景",
+        "nlb": "大嶼",
+        "pi": "馬灣",
+        "xb": "過境",
+        "lrt": "港鐵",
+        "night": "夜間",
+        "special": "特別",
+        "hki": "港島",
+        "kln": "九龍",
+        "nt": "新界",
+        "kaito": "街渡",
+        "outlying": "離島",
+        "inner": "內陸"
+    },
+    "option": {
+        "title": "設定",
+        "basic": "基本",
+        "theme": "主題",
+        "selectTheme": "請選擇主題",
+        "light": "亮色",
+        "dark": "暗色",
+        "systemTheme": "跟隨系統",
+        "dataSource": "資料來源",
+        "selectSource": "請選擇資料來源",
+        "defaultSource": "預設來源",
+        "govApi": "使用來自gov.hk 的api",
+        "selfHost": "自行建設的站台",
+        "selfHostUrl": "站台網址",
+        "autoScroll": "自動滾動到最接近的車站",
+        "manageData": "管理資料",
+        "updateRoute": "更新路線資料",
+        "reloadRoute": "重新下載路線資料",
+        "removeAllStar": "清除所有已標記的路線",
+        "removeAllStarPrompt": "你確定要清除所有已標記的路線嗎？",
+        "resetAll": "重設所有設定",
+        "resetAllPrompt": "所有路線資料需再次下載，已標記的路線亦會被清除。\n你確定要重設所有資料嗎？",
+        "updatingData": "正在更新資料",
+        "redownloadData": "正在重新下載資料",
+        "about": "關於",
+        "license": "使用條款",
+        "support": "支持",
+        "supportDescription": "如果你中意呢個app，可以捐少少以示支持",
+        "sourceCode": "顯示原代碼",
+        "otherApp": "其他在12a.app 的app",
+        "promise": "承諾",
+        "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。"
+    },
+    "etaPopup": {
+        "frame": {
+            "upcoming": "預報",
+            "info": "資訊",
+            "map": "地圖",
+            "otherDirection": "其他方向"
+        },
+        "upcoming": {
+            "noService": "暫無班次"
+        },
+        "info": {
+            "journeyTime": "總車程",
+            "fullFare": "全程收費",
+            "details": "路線資料",
+            "MF": "星期一至五",
+            "S": "星期六",
+            "H": "星期日及公眾假期",
+            "D": "每日"
+        },
+        "map": {
+            "selectStation": "請選擇車站",
+            "currentLocation": "目前GPS位置"
+        }
+    },
+    "toast": {
+        "noEta": "此路線未有提供到站報時服務",
+        "removedStar": "已清除所有已標記的路線",
+        "resetAll": "己重設所有設定，頁面會在3 秒內重新載入",
+        "networkError": "網絡錯誤。請檢查來源url 和網絡狀況。",
+        "changeSourceHint": "請按管理資料 > 重新下載路線資料 以反映設定",
+        "invalidUrl": "網絡地址不正確，請確保地址包含協定 http:// 或 https://",
+        "locationFail": "無法獲得現時地點"
+    }
+}
