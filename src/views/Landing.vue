@@ -369,7 +369,7 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    flex-wrap: wrap
+    flex-wrap: wrap;
 }
 .hidden {
     visibility: hidden;
@@ -412,10 +412,9 @@ export default defineComponent({
     align-items: center;
 }
 @media only screen and (max-width: 640px) {
-    .finish-wrapper{
+    .finish-wrapper {
         width: 100%;
         justify-content: space-around;
     }
-    
 }
 </style>
