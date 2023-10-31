@@ -10,10 +10,10 @@
                     {{ $t('searchView.toggleRouteKeypad') }}
                 </ion-text>
             </summary>
-            <div class="grid">
+            <div class="grid keypad-wrapper">
                 <div class="numbers">
                     <div>
-                        <ion-row class="ion-justify-content-around">
+                        <ion-row class="ion-justify-content-around ion-align-items-center">
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -36,7 +36,7 @@
                                 >3</ion-button
                             >
                         </ion-row>
-                        <ion-row class="ion-justify-content-around">
+                        <ion-row class="ion-justify-content-around ion-align-items-center">
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -59,7 +59,7 @@
                                 >6</ion-button
                             >
                         </ion-row>
-                        <ion-row class="ion-justify-content-around">
+                        <ion-row class="ion-justify-content-around ion-align-items-center">
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -82,7 +82,7 @@
                                 >9</ion-button
                             >
                         </ion-row>
-                        <ion-row class="ion-justify-content-around">
+                        <ion-row class="ion-justify-content-around ion-align-items-center">
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
@@ -270,8 +270,19 @@ export default {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
 }
-.grid ion-button {
-    font-size: 1.2rem;
+.grid ion-button.ios {
+    height: 2.5rem;
+    font-size: 1.5rem;
+}
+.grid .md.button.icon-button{
+    font-size: 1rem;
+}
+.grid .md.button{
+    height: 2.5rem;
+    font-size: 1.5rem;
+}
+.keypad-wrapper{
+    height: 25vh;
 }
 .numbers {
     grid-column: span 9 / span 9;
@@ -281,7 +292,7 @@ export default {
 }
 .letters {
     grid-column: span 3 / span 3;
-    max-height: 25vh;
+    height: 100%;
     overflow-y: auto;
 }
 .grid ion-button.icon-button {
