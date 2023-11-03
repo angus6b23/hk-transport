@@ -4,9 +4,9 @@
             <ion-toolbar>
                 <ion-title>
                     <i18next :translation="$t('searchView.title')">
-                        <template #transportType>
-                            <span>{{ $t(`common.${type}`) }}</span>
-                        </template>
+                    <template #transportType>
+                        <span>{{ $t(`common.${type}`) }}</span>
+                    </template>
                     </i18next>
                 </ion-title>
                 <ion-buttons slot="end">
@@ -20,13 +20,13 @@
                     autocorrect="off"
                     v-model="query"
                     :placeholder="$t('searchView.searchPlaceHolder')"
-                ></ion-searchbar>
+                    ></ion-searchbar>
                 <Keypad
                     v-if="type != 'ferry'"
                     :query="query"
                     :data="data"
                     @padClick="padUpdateQuery"
-                />
+                    />
             </ion-toolbar>
         </ion-header>
         <ion-content :fullscreen="true">
@@ -36,9 +36,9 @@
                     <ion-label class="hint">
                         <i18next
                             :translation="
-                                $t('searchView.searchPrompt', { query: query })
+                            $t('searchView.searchPrompt', { query: query })
                             "
-                        >
+                            >
                             <template #transportType>
                                 <span>{{ $t(`common.${type}`) }}</span>
                             </template>
@@ -46,14 +46,14 @@
                     </ion-label>
                     <ion-button fill="clear" @click="clearQuery">{{
                         $t('searchView.clearSearch')
-                    }}</ion-button>
+                        }}</ion-button>
                 </ion-list-header>
                 <ion-list-header v-else>
                     <div class="star-wrapper" v-if="starred.length > 0">
                         <ion-label>
                             <i18next
                                 :translation="$t('searchView.starredPrompt')"
-                            >
+                                >
                                 <template #transportType>
                                     <span>{{ $t(`common.${type}`) }}</span>
                                 </template>
@@ -64,22 +64,22 @@
                             fill="clear"
                             @click="toggleReorder()"
                             class="swap-icon"
-                        >
+                            >
                             <ion-icon
                                 slot="icon-only"
                                 :icon="swapVerticalOutline"
-                            />
+                                />
                         </ion-button>
                         <ion-button
                             v-else
                             fill="solid"
                             @click="toggleReorder()"
                             class="swap-icon"
-                        >
+                            >
                             <ion-icon
                                 slot="icon-only"
                                 :icon="swapVerticalOutline"
-                            />
+                                />
                         </ion-button>
                     </div>
                 </ion-list-header>
@@ -88,12 +88,12 @@
                     <ion-reorder-group
                         :disabled="disableReorder"
                         @ionItemReorder="reorder($event)"
-                    >
+                        >
                         <ion-item
                             v-for="(route, index) in displayArray"
                             :key="route.id"
                             button
-                        >
+                            >
                             <ion-grid>
                                 <!-- Rows for Bus and minibus -->
                                 <ion-row
@@ -101,12 +101,12 @@
                                     class="open-modal"
                                     expand="block"
                                     @click="openModal(index)"
-                                >
+                                    >
                                     <ion-col
                                         size-xs="3"
                                         size-md="1"
                                         class="route-no ion-align-items-center"
-                                    >
+                                        >
                                         <h3 v-if="route.routeNo.length < 10">
                                             {{ route.routeNo }}
                                         </h3>
@@ -118,13 +118,13 @@
                                         <h5
                                             v-if="$i18next.language === 'zh'"
                                             class="ion-no-margin ion-margin-start"
-                                        >
+                                            >
                                             {{ route.destTC }}
                                         </h5>
                                         <h5
                                             v-else
                                             class="ion-no-margin ion-margin-start"
-                                        >
+                                            >
                                             {{ route.destEN }}
                                         </h5>
                                     </ion-col>
@@ -135,19 +135,19 @@
                                     class="open-modal"
                                     expand="block"
                                     @click="openModal(index)"
-                                >
+                                    >
                                     <ion-col size-xs="8" size-md="10">
                                         <Badges :route="route" />
                                         <h5
                                             v-if="$i18next.language === 'zh'"
                                             class="ion-no-margin ion-margin-start"
-                                        >
+                                            >
                                             {{ route.routeNameTC }}
                                         </h5>
                                         <h5
                                             v-else
                                             class="ion-no-margin ion-margin-start"
-                                        >
+                                            >
                                             {{ route.routeNameEN }}
                                         </h5>
                                     </ion-col>
@@ -155,12 +155,12 @@
                                         size-xs="2"
                                         size-md="1"
                                         class="d-flex"
-                                    >
+                                        >
                                         <ion-button
                                             @click.stop="openModal(index)"
                                             class="direction1-button direction-button"
                                             >{{
-                                                $t('searchView.inbound')
+                                            $t('searchView.inbound')
                                             }}</ion-button
                                         >
                                     </ion-col>
@@ -168,12 +168,12 @@
                                         size-xs="2"
                                         size-md="1"
                                         class="d-flex"
-                                    >
+                                        >
                                         <ion-button
                                             @click.stop="openAltModal(index)"
                                             class="direction2-button direction-button"
                                             >{{
-                                                $t('searchView.outbound')
+                                            $t('searchView.outbound')
                                             }}</ion-button
                                         >
                                     </ion-col>
@@ -210,13 +210,13 @@
                 @addStar="addStar"
                 @removeStar="removeStar"
                 @swapDirection="swapDirection"
-            />
+                />
         </ion-modal>
         <ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
             <Option
                 @closeOption="closeOption"
                 @changeLanguage="changeLanguage"
-            />
+                />
         </ion-modal>
     </ion-page>
 </template>
@@ -254,6 +254,8 @@ import sleep from '@/components/sleep.js'
 import localforage from 'localforage'
 import presentToast from '@/components/presentToast.js'
 import Keypad from '@/components/Keypad'
+import { useMemoize } from '@vueuse/core'
+import { filterData } from '@/components/search'
 
 export default defineComponent({
     components: {
@@ -298,6 +300,7 @@ export default defineComponent({
         const type = ref(props.dataType)
         const dataReady = ref(false)
         const disableReorder = ref(true)
+const memoFilterQuery = useMemoize(filterData, {getKey: (data, type, query, lang) => `${query.toUpperCase()}-${lang}`})
         // Event listeners
         addEventListener('ionModalDidDismiss', function () {
             modalIsOpen.value = false
@@ -305,6 +308,7 @@ export default defineComponent({
 
         return {
             data,
+            memoFilterQuery,
             query,
             displayArray,
             itemSelected,
@@ -334,8 +338,8 @@ export default defineComponent({
             let alt = this.displayArray[index]
             let targetIndex = this.data.findIndex(
                 (item) =>
-                    item.routeId === alt.routeId &&
-                    item.direction != alt.direction
+                item.routeId === alt.routeId &&
+                item.direction != alt.direction
             )
             if (targetIndex != -1) {
                 this.itemSelected = JSON.parse(
@@ -368,8 +372,8 @@ export default defineComponent({
         async removeStar() {
             const removeIndex = this.starred.findIndex(
                 (route) =>
-                    route.routeId === this.itemSelected.routeId &&
-                    route.direction === this.itemSelected.direction
+                route.routeId === this.itemSelected.routeId &&
+                route.direction === this.itemSelected.direction
             )
             this.starred.splice(removeIndex, 1)
             await this.saveStar()
@@ -383,25 +387,25 @@ export default defineComponent({
             await localforage.setItem('starred', starredClone)
         },
         /*
-		Old Code, saveData currently not used
-		async saveData(data) {
-			if (this.type == 'bus') {
-	// Link to currently displayed bus
-				const displayIndex = this.displayArray.findIndex(this.currentSelectedItem)
-				this.displayArray[displayIndex] = data;
-	// Link to global bus array
-				const index = this.data.findIndex(this.currentSelectedItem);
-				this.data[index] = JSON.parse(JSON.stringify(data));
-	// console.log(index);
-	// Save to localforage
-				const key = 'busData-chunk' + Math.floor(index / 100);
-				const chunkIndex = index % 100;
-				let chunk = await loadData(key, false, false);
-				chunk[chunkIndex] = JSON.parse(JSON.stringify(data));
-				await setData(key, chunk);
-			}
+        Old Code, saveData currently not used
+        async saveData(data) {
+            if (this.type == 'bus') {
+    // Link to currently displayed bus
+                const displayIndex = this.displayArray.findIndex(this.currentSelectedItem)
+                this.displayArray[displayIndex] = data;
+    // Link to global bus array
+                const index = this.data.findIndex(this.currentSelectedItem);
+                this.data[index] = JSON.parse(JSON.stringify(data));
+    // console.log(index);
+    // Save to localforage
+                const key = 'busData-chunk' + Math.floor(index / 100);
+                const chunkIndex = index % 100;
+                let chunk = await loadData(key, false, false);
+                chunk[chunkIndex] = JSON.parse(JSON.stringify(data));
+                await setData(key, chunk);
+            }
 
-		}, */
+        }, */
         currentSelectedItem(x) {
             // For finding index of currently selected bus
             return (
@@ -409,67 +413,66 @@ export default defineComponent({
                 x.routeDirection == this.itemSelected.routeDirection
             )
         },
-        updateQuery(newQuery) {
+        filterQuery(newQuery){
+            let resArr = []
             if (newQuery === '') {
-                this.displayArray = this.starred //Show starred bus if query is empty
+                return this.starred
             } else {
                 if (this.type == 'ferry') {
-                    this.displayArray = this.data.filter(
+                    resArr = this.data.filter(
                         (x) =>
-                            x.direction == 1 &&
-                            (x.routeNameTC.includes(newQuery) ||
-                                x.routeNameEN
-                                    .toLowerCase()
-                                    .includes(newQuery.toLowerCase()))
+                        x.direction == 1 &&
+                        (x.routeNameTC.includes(newQuery) ||
+                            x.routeNameEN
+                            .toLowerCase()
+                            .includes(newQuery.toLowerCase()))
                     )
                 } else {
                     if (this.$i18next.language === 'zh') {
-                        this.displayArray =
-                            newQuery < 10
-                                ? this.data.filter(
-                                      (x) =>
-                                          (x.routeNo.length <= 2 &&
-                                              x.routeNo.indexOf(
-                                                  newQuery.toUpperCase()
-                                              ) == 0) ||
-                                          x.destTC.includes(newQuery)
-                                  )
-                                : this.data.filter(
-                                      (x) =>
-                                          x.routeNo.indexOf(
-                                              newQuery.toUpperCase()
-                                          ) == 0 || x.destTC.includes(newQuery)
-                                  ) // Filter by route numbers and destinations.
+                        resArr = newQuery < 10
+                            ? this.data.filter(
+                                (x) =>
+                                (x.routeNo.length <= 2 &&
+                                    x.routeNo.indexOf(
+                                        newQuery.toUpperCase()
+                                    ) == 0) ||
+                                x.destTC.includes(newQuery)
+                            )
+                            : this.data.filter(
+                                (x) =>
+                                x.routeNo.indexOf(
+                                    newQuery.toUpperCase()
+                                ) == 0 || x.destTC.includes(newQuery)
+                            ) // Filter by route numbers and destinations.
                     } else {
-                        this.displayArray =
-                            newQuery < 10
-                                ? this.data.filter(
-                                      (x) =>
-                                          (x.routeNo.length <= 2 &&
-                                              x.routeNo.indexOf(
-                                                  newQuery.toUpperCase()
-                                              ) == 0) ||
-                                          x.destEN
-                                              .toLowerCase()
-                                              .includes(newQuery.toLowerCase())
-                                  )
-                                : this.data.filter(
-                                      (x) =>
-                                          x.routeNo.indexOf(
-                                              newQuery.toUpperCase()
-                                          ) == 0 ||
-                                          x.destEN
-                                              .toLowerCase()
-                                              .includes(newQuery.toLowerCase())
-                                  ) // Filter by route numbers and destinations.
+                        resArr = newQuery < 10
+                            ? this.data.filter(
+                                (x) =>
+                                (x.routeNo.length <= 2 &&
+                                    x.routeNo.indexOf(
+                                        newQuery.toUpperCase()
+                                    ) == 0) ||
+                                x.destEN
+                                .toLowerCase()
+                                .includes(newQuery.toLowerCase())
+                            )
+                            : this.data.filter(
+                                (x) =>
+                                x.routeNo.indexOf(
+                                    newQuery.toUpperCase()
+                                ) == 0 ||
+                                x.destEN
+                                .toLowerCase()
+                                .includes(newQuery.toLowerCase())
+                            ) // Filter by route numbers and destinations.
                     }
                     // Limit small number query
-                    this.displayArray.sort(function (a, b) {
+                    resArr = resArr.sort(function (a, b) {
                         a = Number(a.routeNo.replace(/[A-Z]/g, 0))
                         b = Number(b.routeNo.replace(/[A-Z]/g, 0))
                         return a - b
                     })
-                    this.displayArray.splice(50) // Only show first 50 results
+                    return resArr.slice(0, 50) // Only show first 50 results
                 }
             }
         },
@@ -508,14 +511,14 @@ export default defineComponent({
                 //Filter for KMB: Same company, same routeNo (different direction / servicemode / specialtype)
                 this.altRoutes = this.data.filter(
                     (altRoute) =>
-                        altRoute.routeNo == this.itemSelected.routeNo &&
-                        altRoute.company.join('') ==
-                            this.itemSelected.company.join('') &&
-                        (altRoute.direction != this.itemSelected.direction ||
-                            altRoute.serviceMode !=
-                                this.itemSelected.serviceMode ||
-                            altRoute.specialType !=
-                                this.itemSelected.specialType)
+                    altRoute.routeNo == this.itemSelected.routeNo &&
+                    altRoute.company.join('') ==
+                    this.itemSelected.company.join('') &&
+                    (altRoute.direction != this.itemSelected.direction ||
+                        altRoute.serviceMode !=
+                        this.itemSelected.serviceMode ||
+                        altRoute.specialType !=
+                        this.itemSelected.specialType)
                 )
             } else if (
                 this.itemSelected.type == 'bus' &&
@@ -524,33 +527,33 @@ export default defineComponent({
                 // Filter for NLB: Same routeNo with different routeId
                 this.altRoutes = this.data.filter(
                     (altRoute) =>
-                        altRoute.company.includes('NLB') &&
-                        altRoute.routeNo == this.itemSelected.routeNo &&
-                        altRoute.routeId != this.itemSelected.routeId
+                    altRoute.company.includes('NLB') &&
+                    altRoute.routeNo == this.itemSelected.routeNo &&
+                    altRoute.routeId != this.itemSelected.routeId
                 )
             } else if (this.itemSelected.type == 'bus') {
                 this.altRoutes = this.data.filter(
                     (altRoute) =>
-                        altRoute.company.join('') ==
-                            this.itemSelected.company.join('') &&
-                        altRoute.routeNo == this.itemSelected.routeNo &&
-                        (altRoute.routeId != this.itemSelected.routeId ||
-                            altRoute.direction != this.itemSelected.direction)
+                    altRoute.company.join('') ==
+                    this.itemSelected.company.join('') &&
+                    altRoute.routeNo == this.itemSelected.routeNo &&
+                    (altRoute.routeId != this.itemSelected.routeId ||
+                        altRoute.direction != this.itemSelected.direction)
                 )
             } else if (this.itemSelected.type == 'minibus') {
                 // Filter for minibus: Same district, same routeNo, different routeId / direction
                 this.altRoutes = this.data.filter(
                     (altRoute) =>
-                        altRoute.routeNo == this.itemSelected.routeNo &&
-                        altRoute.district == this.itemSelected.district &&
-                        (altRoute.routeId != this.itemSelected.routeId ||
-                            altRoute.direction != this.itemSelected.direction)
+                    altRoute.routeNo == this.itemSelected.routeNo &&
+                    altRoute.district == this.itemSelected.district &&
+                    (altRoute.routeId != this.itemSelected.routeId ||
+                        altRoute.direction != this.itemSelected.direction)
                 )
             } else {
                 this.altRoutes = this.data.filter(
                     (altRoute) =>
-                        altRoute.routeId == this.itemSelected.routeId &&
-                        altRoute.direction != this.itemSelected.direction
+                    altRoute.routeId == this.itemSelected.routeId &&
+                    altRoute.direction != this.itemSelected.direction
                 )
             }
         },
@@ -576,8 +579,11 @@ export default defineComponent({
     },
     watch: {
         query(newQuery) {
-            //Update bus array upon change of bus query
-            this.updateQuery(newQuery)
+            if (newQuery === ''){
+                this.displayArray = this.starred
+            } else {
+                this.displayArray = this.memoFilterQuery(this.data, this.type, newQuery, this.$i18next.language )
+            }
             this.disableReorder = true
         },
     },
@@ -590,6 +596,9 @@ export default defineComponent({
             }
         },
     },
+    unmounted() {
+        this.memoFilterQuery.clear();
+    }
 })
 </script>
 <style scoped>

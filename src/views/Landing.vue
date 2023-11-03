@@ -199,6 +199,7 @@ import {
     IonCheckbox,
     IonProgressBar,
     IonItem,
+    IonText,
 } from '@ionic/vue'
 import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons'
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -226,6 +227,7 @@ export default defineComponent({
         SwiperSlide,
         IonProgressBar,
         IonItem,
+        IonText
     },
     emits: ['finishConfig'],
     setup() {
@@ -321,7 +323,6 @@ export default defineComponent({
                     default:
                         throw new Error('Unknown fetch method')
                 }
-                console.log(isSuccess)
                 if (isSuccess) {
                     this.downloadFinish = true
                     if (this.autoStart) {

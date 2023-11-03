@@ -187,9 +187,6 @@ export default {
         }
     },
     mounted() {
-        if (this.data.length > 0) {
-            this.hydrateList()
-        }
     },
     methods: {
         hydrateList: function () {
