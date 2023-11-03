@@ -20,11 +20,13 @@
                     autocorrect="off"
                     v-model="query"
                     :placeholder="$t('searchView.searchPlaceHolder')"
+                    @ionFocus="hideKeypad"
                     ></ion-searchbar>
                 <Keypad
                     v-if="type != 'ferry'"
                     :query="query"
                     :data="data"
+                    :keypadOpen="keypadOpen"
                     @padClick="padUpdateQuery"
                     />
             </ion-toolbar>
@@ -299,7 +301,8 @@ export default defineComponent({
         const starred = ref([])
         const type = ref(props.dataType)
         const dataReady = ref(false)
-        const disableReorder = ref(true)
+        const disableReorder = ref(true);
+        const keypadOpen = ref(false)
 const memoFilterQuery = useMemoize(filterData, {getKey: (data, type, query, lang) => `${query.toUpperCase()}-${lang}`})
         // Event listeners
         addEventListener('ionModalDidDismiss', function () {
@@ -312,6 +315,7 @@ const memoFilterQuery = useMemoize(filterData, {getKey: (data, type, query, lang
             query,
             displayArray,
             itemSelected,
+            keypadOpen,
             altRoutes,
             config,
             modalIsOpen,
@@ -385,6 +389,9 @@ const memoFilterQuery = useMemoize(filterData, {getKey: (data, type, query, lang
                 [this.type]: JSON.parse(JSON.stringify(this.starred)),
             }
             await localforage.setItem('starred', starredClone)
+        },
+        hideKeypad() {
+            this.keypadOpen = !this.keypadOpen
         },
         /*
         Old Code, saveData currently not used

@@ -1,12 +1,12 @@
 <template>
     <div>
-        <details>
+        <details ref="keypad">
             <summary id="summary-tag">
                 <ion-text color="primary">
                     <ion-icon
                         :icon="keypadOutline"
                         class="ion-margin-end keypad-icon"
-                    ></ion-icon>
+                        ></ion-icon>
                     {{ $t('searchView.toggleRouteKeypad') }}
                 </ion-text>
             </summary>
@@ -15,7 +15,7 @@
                     <div>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -40,7 +40,7 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -65,7 +65,7 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -90,18 +90,18 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
                                 size="4"
                                 :disabled="query.length === 0"
                                 @click="emitClick('clear')"
-                            >
+                                >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="trashBinOutline"
-                                />
+                                    />
                             </ion-button>
                             <ion-button
                                 fill="clear"
@@ -116,11 +116,11 @@
                                 size="4"
                                 :disabled="query.length === 0"
                                 @click="emitClick('back')"
-                            >
+                                >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="backspaceOutline"
-                                />
+                                    />
                             </ion-button>
                         </ion-row>
                     </div>
@@ -130,7 +130,6 @@
                         fill="clear"
                         v-for="(letter, index) of letterRow"
                         :key="index"
-                        :disabled="!letter.enable"
                         @click="emitClick(letter.letter)"
                         >{{ letter.letter }}</ion-button
                     >
@@ -143,9 +142,7 @@
 <script>
 import { ref } from 'vue'
 import {
-    IonGrid,
     IonRow,
-    IonCol,
     IonButton,
     IonIcon,
     IonText,
@@ -155,11 +152,12 @@ import {
     trashBinOutline,
     keypadOutline,
 } from 'ionicons/icons'
-
+import { getKeypadList, getKeypadLetter, updateButtonState } from '@/components/search'
+import { useMemoize } from '@vueuse/core'
 export default {
     name: 'ComponentName',
-    components: { IonGrid, IonRow, IonCol, IonButton, IonIcon, IonText },
-    props: ['data', 'query'],
+    components: { IonRow, IonButton, IonIcon, IonText },
+    props: ['data', 'query', 'keypadOpen'],
     emits: ['padClick'],
     setup() {
         const numberInitState = {
@@ -176,11 +174,13 @@ export default {
         }
         const numpad = ref(numberInitState)
         const letterRow = ref([])
-        const routeNoList = ref([])
+        const routeNoList = ref([]);
+        const memoUpdateButton = useMemoize(updateButtonState, {getKey: (list, query) => query})
         return {
             numpad,
             letterRow,
             routeNoList,
+            memoUpdateButton,
             backspaceOutline,
             trashBinOutline,
             keypadOutline,
@@ -190,68 +190,52 @@ export default {
     },
     methods: {
         hydrateList: function () {
-            let letters = new Set()
-            let routeNoList = new Set(
-                this.data
-                    .map((route) => route.routeNo)
-                    .filter((no) => no.length <= 5)
-            )
-            this.routeNoList = Array.from(routeNoList)
-            const regex = /([A-Za-z])/g
-            for (let routeNo of routeNoList) {
-                if (routeNo.match(regex)) {
-                    routeNo.match(regex).forEach((val) => letters.add(val))
-                }
-            }
-            this.letterRow = Array.from(letters)
-                .sort()
-                .map((letter) => {
-                    return { letter: letter, enable: false }
-                })
+            this.routeNoList = getKeypadList(this.data)
+            this.letterRow = getKeypadLetter(this.routeNoList)
         },
-        updateButtonStates: function (query) {
-            let updated = this.routeNoList.filter(
-                (route) =>
-                    route.indexOf(query) === 0 && route.length > query.length
-            )
-            let numberState = {
-                0: false,
-                1: false,
-                2: false,
-                3: false,
-                4: false,
-                5: false,
-                6: false,
-                7: false,
-                8: false,
-                9: false,
-            }
-            let letterState = this.letterRow
-                .map((item) => {
-                    return { ...item, enable: false }
-                })
-                .sort((a, b) => a.letter.localeCompare(b.letter))
-            for (let route of updated) {
-                if (route[query.length].match(/\d/)) {
-                    numberState[route[query.length]] = true
-                } else {
-                    letterState = letterState.map((letter) => {
-                        if (route[query.length] == letter.letter) {
-                            return { ...letter, enable: true }
-                        } else {
-                            return { ...letter }
-                        }
-                    })
-                }
-            }
-            this.letterRow = [
-                ...letterState.filter((item) => item.enable),
-                ...letterState.filter((item) => !item.enable),
-            ]
-            this.numpad = numberState
-            //            console.log(letterState);
-            //            console.log(numberState);
-        },
+        //        updateButtonStates: function (query) {
+        //            let updated = this.routeNoList.filter(
+        //                (route) =>
+        //                route.indexOf(query) === 0 && route.length > query.length
+        //            )
+        //            let numberState = {
+        //                0: false,
+        //                1: false,
+        //                2: false,
+        //                3: false,
+        //                4: false,
+        //                5: false,
+        //                6: false,
+        //                7: false,
+        //                8: false,
+        //                9: false,
+        //            }
+        //            let letterState = this.letterRow
+        //                .map((item) => {
+        //                    return { ...item, enable: false }
+        //                })
+        //                .sort((a, b) => a.letter.localeCompare(b.letter))
+        //            for (let route of updated) {
+        //                if (route[query.length].match(/\d/)) {
+        //                    numberState[route[query.length]] = true
+        //                } else {
+        //                    letterState = letterState.map((letter) => {
+        //                        if (route[query.length] == letter.letter) {
+        //                            return { ...letter, enable: true }
+        //                        } else {
+        //                            return { ...letter }
+        //                        }
+        //                    })
+        //                }
+        //            }
+        //            this.letterRow = [
+        //                ...letterState.filter((item) => item.enable),
+        //                ...letterState.filter((item) => !item.enable),
+        //            ]
+        //            this.numpad = numberState
+        //            //            console.log(letterState);
+        //            //            console.log(numberState);
+        //        },
         emitClick: function (value) {
             this.$emit('padClick', value)
         },
@@ -260,14 +244,23 @@ export default {
         data(data) {
             if (data.length) {
                 this.hydrateList()
-                this.updateButtonStates('')
+                const updatedState = this.memoUpdateButton(this.routeNoList, '');
+                this.letterRow = updatedState.letterState;
+                this.numpad = updatedState.numberState
             }
         },
         query: function (newQuery) {
-            this.updateButtonStates(newQuery)
+            const updatedState = this.memoUpdateButton(this.routeNoList, newQuery);
+            this.letterRow = updatedState.letterState;
+            this.numpad = updatedState.numberState
         },
+        keypadOpen(){
+            this.$refs.keypad.open = false;
+        }
     },
-    beforeUnmount() {},
+    beforeUnmount() {
+        this.memoUpdateButton.clear()
+    },
 }
 </script>
 <style scoped>

@@ -40,3 +40,33 @@ export const getKeypadLetter = (list) => {
             return { letter: letter, enable: false }
         })
 }
+
+export const updateButtonState = (list, query) => {
+    const candidateList = list.filter(no => no.indexOf(query) === 0 && no.length > query.length);
+    let letterSet = new Set()
+    let numberState = {
+        0: false,
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+        6: false,
+        7: false,
+        8: false,
+        9: false,
+    }
+    for (let no of candidateList){
+        let nextChar = no[query.length];
+        if (nextChar.match(/\d/)){
+            numberState[nextChar] = true
+        } else {
+            letterSet.add(nextChar);
+        }
+    }
+    const letterState = Array.from(letterSet).sort((a, b) => a.localeCompare(b)).map(item => {return {letter: item, enabled: true}})
+    return {
+        numberState: numberState,
+        letterState: letterState
+    }
+}
