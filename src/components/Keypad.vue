@@ -6,7 +6,7 @@
                     <ion-icon
                         :icon="keypadOutline"
                         class="ion-margin-end keypad-icon"
-                        ></ion-icon>
+                    ></ion-icon>
                     {{ $t('searchView.toggleRouteKeypad') }}
                 </ion-text>
             </summary>
@@ -15,7 +15,7 @@
                     <div>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -40,7 +40,7 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -65,7 +65,7 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 fill="clear"
                                 size="4"
@@ -90,18 +90,18 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
                                 size="4"
                                 :disabled="query.length === 0"
                                 @click="emitClick('clear')"
-                                >
+                            >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="trashBinOutline"
-                                    />
+                                />
                             </ion-button>
                             <ion-button
                                 fill="clear"
@@ -116,11 +116,11 @@
                                 size="4"
                                 :disabled="query.length === 0"
                                 @click="emitClick('back')"
-                                >
+                            >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="backspaceOutline"
-                                    />
+                                />
                             </ion-button>
                         </ion-row>
                     </div>
@@ -141,18 +141,17 @@
 
 <script>
 import { ref } from 'vue'
-import {
-    IonRow,
-    IonButton,
-    IonIcon,
-    IonText,
-} from '@ionic/vue'
+import { IonRow, IonButton, IonIcon, IonText } from '@ionic/vue'
 import {
     backspaceOutline,
     trashBinOutline,
     keypadOutline,
 } from 'ionicons/icons'
-import { getKeypadList, getKeypadLetter, updateButtonState } from '@/components/search'
+import {
+    getKeypadList,
+    getKeypadLetter,
+    updateButtonState,
+} from '@/components/search'
 import { useMemoize } from '@vueuse/core'
 export default {
     name: 'ComponentName',
@@ -174,8 +173,10 @@ export default {
         }
         const numpad = ref(numberInitState)
         const letterRow = ref([])
-        const routeNoList = ref([]);
-        const memoUpdateButton = useMemoize(updateButtonState, {getKey: (list, query) => query})
+        const routeNoList = ref([])
+        const memoUpdateButton = useMemoize(updateButtonState, {
+            getKey: (list, query) => query,
+        })
         return {
             numpad,
             letterRow,
@@ -186,8 +187,7 @@ export default {
             keypadOutline,
         }
     },
-    mounted() {
-    },
+    mounted() {},
     methods: {
         hydrateList: function () {
             this.routeNoList = getKeypadList(this.data)
@@ -244,19 +244,22 @@ export default {
         data(data) {
             if (data.length) {
                 this.hydrateList()
-                const updatedState = this.memoUpdateButton(this.routeNoList, '');
-                this.letterRow = updatedState.letterState;
+                const updatedState = this.memoUpdateButton(this.routeNoList, '')
+                this.letterRow = updatedState.letterState
                 this.numpad = updatedState.numberState
             }
         },
         query: function (newQuery) {
-            const updatedState = this.memoUpdateButton(this.routeNoList, newQuery);
-            this.letterRow = updatedState.letterState;
+            const updatedState = this.memoUpdateButton(
+                this.routeNoList,
+                newQuery
+            )
+            this.letterRow = updatedState.letterState
             this.numpad = updatedState.numberState
         },
-        keypadOpen(){
-            this.$refs.keypad.open = false;
-        }
+        keypadOpen() {
+            this.$refs.keypad.open = false
+        },
     },
     beforeUnmount() {
         this.memoUpdateButton.clear()

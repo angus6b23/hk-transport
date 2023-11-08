@@ -1,0 +1,217 @@
+<ion-page>
+    <ion-header>
+        <ion-toolbar>
+            <!-- Title -->
+            <ion-title>
+                <i18next :translation="$t('searchView.title')">
+                    <template #transportType>
+                        <span>{{ $t(`common.${type}`) }}</span>
+                    </template>
+                </i18next>
+            </ion-title>
+            <!-- Option icon -->
+            <ion-buttons slot="end">
+                <ion-button @click="openOption">
+                    <ion-icon :icon="cog"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
+        <!-- SearchBar -->
+        <ion-toolbar>
+            <ion-searchbar
+                autocorrect="off"
+                v-model="query"
+                :placeholder="$t('searchView.searchPlaceHolder')"
+                @ionFocus="hideKeypad"
+            ></ion-searchbar>
+            <!-- Keypad -->
+            <Keypad
+                v-if="type != 'ferry'"
+                :query="query"
+                :data="data"
+                :keypadOpen="keypadOpen"
+                @padClick="padUpdateQuery"
+            />
+        </ion-toolbar>
+    </ion-header>
+    <!-- Main Screen -->
+    <ion-content :fullscreen="true">
+        <ion-list v-if="dataReady">
+            <!-- Change List Header according to search -->
+            <!-- Hint on Search -->
+            <ion-list-header v-if="query.length > 0">
+                <ion-label class="hint">
+                    <i18next
+                        :translation="
+                                $t('searchView.searchPrompt', { query: query })
+                            "
+                    >
+                        <template #transportType>
+                            <span>{{ $t(`common.${type}`) }}</span>
+                        </template>
+                    </i18next>
+                </ion-label>
+                <ion-button fill="clear" @click="clearQuery"
+                    >{{ $t('searchView.clearSearch') }}</ion-button
+                >
+            </ion-list-header>
+            <!-- Hint for Starred bus -->
+            <ion-list-header v-else>
+                <div class="star-wrapper" v-if="starred.length > 0">
+                    <ion-label>
+                        <i18next :translation="$t('searchView.starredPrompt')">
+                            <template #transportType>
+                                <span>{{ $t(`common.${type}`) }}</span>
+                            </template>
+                        </i18next>
+                    </ion-label>
+                    <!-- Sort Button -->
+                    <ion-button
+                        v-if="disableReorder"
+                        fill="clear"
+                        @click="toggleReorder()"
+                        class="swap-icon"
+                    >
+                        <ion-icon
+                            slot="icon-only"
+                            :icon="swapVerticalOutline"
+                        />
+                    </ion-button>
+                    <ion-button
+                        v-else
+                        fill="solid"
+                        @click="toggleReorder()"
+                        class="swap-icon"
+                    >
+                        <ion-icon
+                            slot="icon-only"
+                            :icon="swapVerticalOutline"
+                        />
+                    </ion-button>
+                </div>
+            </ion-list-header>
+            <!-- Route display list here -->
+            <div v-if="displayArray.length > 0">
+                <ion-reorder-group
+                    :disabled="disableReorder"
+                    @ionItemReorder="reorder($event)"
+                >
+                    <ion-item
+                        v-for="(route, index) in displayArray"
+                        :key="route.id"
+                        button
+                    >
+                        <ion-grid>
+                            <!-- Rows for Bus and minibus -->
+                            <ion-row
+                                v-if="type == 'bus' || type == 'minibus'"
+                                class="open-modal"
+                                expand="block"
+                                @click="openModal(index)"
+                            >
+                                <ion-col
+                                    size-xs="3"
+                                    size-md="1"
+                                    class="route-no ion-align-items-center"
+                                >
+                                    <h3 v-if="route.routeNo.length < 10">
+                                        {{ route.routeNo }}
+                                    </h3>
+                                    <h3 v-else></h3>
+                                    <!-- Hide Route with long route number -->
+                                </ion-col>
+                                <ion-col size-xs="9" size-md="11">
+                                    <Badges :route="route" />
+                                    <h5
+                                        v-if="$i18next.language === 'zh'"
+                                        class="ion-no-margin ion-margin-start"
+                                    >
+                                        {{ route.destTC }}
+                                    </h5>
+                                    <h5
+                                        v-else
+                                        class="ion-no-margin ion-margin-start"
+                                    >
+                                        {{ route.destEN }}
+                                    </h5>
+                                </ion-col>
+                            </ion-row>
+                            <!-- Rows for Ferry -->
+                            <ion-row
+                                v-else
+                                class="open-modal"
+                                expand="block"
+                                @click="openModal(index)"
+                            >
+                                <ion-col size-xs="8" size-md="10">
+                                    <Badges :route="route" />
+                                    <h5
+                                        v-if="$i18next.language === 'zh'"
+                                        class="ion-no-margin ion-margin-start"
+                                    >
+                                        {{ route.routeNameTC }}
+                                    </h5>
+                                    <h5
+                                        v-else
+                                        class="ion-no-margin ion-margin-start"
+                                    >
+                                        {{ route.routeNameEN }}
+                                    </h5>
+                                </ion-col>
+                                <ion-col size-xs="2" size-md="1" class="d-flex">
+                                    <ion-button
+                                        @click.stop="openModal(index)"
+                                        class="direction1-button direction-button"
+                                        >{{ $t('searchView.inbound')
+                                        }}</ion-button
+                                    >
+                                </ion-col>
+                                <ion-col size-xs="2" size-md="1" class="d-flex">
+                                    <ion-button
+                                        @click.stop="openAltModal(index)"
+                                        class="direction2-button direction-button"
+                                        >{{ $t('searchView.outbound')
+                                        }}</ion-button
+                                    >
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                        <ion-reorder slot="end" />
+                    </ion-item>
+                </ion-reorder-group>
+            </div>
+            <!-- No item to display here -->
+            <div v-else class="no-content">
+                <ion-text color="medium">
+                    <p>{{ $t('searchView.noItem') }}</p>
+                </ion-text>
+                <ion-text color="medium">
+                    <p>{{ $t('searchView.noItemHint') }}</p>
+                </ion-text>
+                <!-- Show all Ferry button -->
+                <ion-button v-if="type == 'ferry'" fill="clear" @click="listAll"
+                    >{{ $t('searchView.showFerry') }}</ion-button
+                >
+            </div>
+        </ion-list>
+    </ion-content>
+    <!-- Modal for displaying bus details -->
+    <ion-modal :is-open="modalIsOpen" @WillDismiss="closeModal">
+        <ETAPopup
+            :item="itemSelected"
+            :starred="starred"
+            :noEta="checkNoEta"
+            :altRoutes="altRoutes"
+            @closeModal="closeModal"
+            @addStar="addStar"
+            @removeStar="removeStar"
+            @swapDirection="swapDirection"
+        />
+    </ion-modal>
+    <ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
+        <OptionView
+            @closeOption="closeOption"
+            @changeLanguage="changeLanguage"
+        />
+    </ion-modal>
+</ion-page>

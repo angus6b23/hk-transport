@@ -91,11 +91,24 @@ export default {
         async setLocation(location) {
             this.currentLocation = location
         },
+        setIconSize(targetSize) {
+            const layer = this.markersGroup.getLayers()
+            for (const marker of layer) {
+                const iconUrl = toRaw(marker.getIcon()).options.iconUrl
+                const newIcon = L.icon({
+                    iconUrl: iconUrl,
+                    iconSize: [targetSize, targetSize],
+                    iconAnchor: [targetSize/2, targetSize],
+                    popupAnchor: [0, -targetSize],
+                })
+                marker.setIcon(newIcon)
+            }
+        },
     },
     setup(props) {
         const routeLocations = ref(props.routeLocations)
         const currentLocation = ref(props.currentLocation)
-        const watchLocation = ''
+        const watchLocation = undefined
         const locationFound = false
         const zoomIndex = ref('null')
         return {
@@ -107,10 +120,11 @@ export default {
         }
     },
     async mounted() {
+        // Watch location
         this.watchLocation = navigator.geolocation.watchPosition(
             (location) => this.setLocation(location),
             () => null,
-            { enableHighAccuracy: true },
+            { enableHighAccuracy: true }
         )
         // Default showing hong kong with zome level 10
         this.map = L.map('mapContainer').setView([22.3745, 114.19849], 10)
@@ -197,6 +211,25 @@ export default {
             this.gpsCircle = L.circle(latlng, radius).addTo(self.map)
             //toRaw(this.map).setView(latlng, 18);
         }
+        toRaw(this.map).on('zoomend', (e) => {
+            const zoomLevel = e.target._zoom
+            //console.log(zoomLevel)
+            //Zoom level 10-11
+            if (zoomLevel <= 11) {
+                this.setIconSize(10)
+            }
+            //Zoom level 12-13
+            else if (zoomLevel <= 13) {
+                this.setIconSize(15)
+            }
+            //Zoom level 14-15
+            else if (zoomLevel <= 15) {
+                this.setIconSize(25)
+            } else {
+            // Zoom level >= 16
+                this.setIconSize(35)
+            }
+        })
     },
     beforeUnmount() {
         if (this.map) {

@@ -308,7 +308,7 @@ export default {
             this.$emit('swapDirection', this.altRoutes[0])
         },
         onLocationSuccess(position) {
-            this.currentLocation = position;
+            this.currentLocation = position
             const stopDistance = this.item.stops.map((stop) => {
                 //Create an array hold all stops id and distance between current coord
                 if (stop.coord && stop.coord.length > 0) {
@@ -352,7 +352,7 @@ export default {
                 }
             }
         },
-        onLocationFail(){
+        onLocationFail() {
             presentToast('error', this.$i18next.t('toast.locationFail'))
         },
         populateETABySeq(etaData) {

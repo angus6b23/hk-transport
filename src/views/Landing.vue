@@ -227,7 +227,7 @@ export default defineComponent({
         SwiperSlide,
         IonProgressBar,
         IonItem,
-        IonText
+        IonText,
     },
     emits: ['finishConfig'],
     setup() {
