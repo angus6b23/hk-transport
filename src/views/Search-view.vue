@@ -81,8 +81,8 @@ export default defineComponent({
         const keypadOpen = ref(false)
 
         const memoFilterQuery = useMemoize(filterData, {
-            getKey: (data, type, query, lang) =>
-                `${query.toUpperCase()}-${lang}`,
+            getKey: (data, type, query, lang, maxResults) =>
+            `${query.toUpperCase()}-${lang}-${maxResults}`,
         })
         // Event listeners
         addEventListener('ionModalDidDismiss', function () {
@@ -371,7 +371,8 @@ export default defineComponent({
                     this.data,
                     this.type,
                     newQuery,
-                    this.$i18next.language
+                    this.$i18next.language,
+                    this.config.maxResults
                 )
             }
             this.disableReorder = true

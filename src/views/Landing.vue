@@ -234,7 +234,7 @@ export default defineComponent({
         const lang = ref('')
         const useOwnAPI = ref(false)
         const hostUrl = ref('')
-        const step = ref(1)
+        const step = ref(1);
         const downloadProgress = ref(0)
         const downloadText = ref('')
         const downloadFinish = ref(false)
@@ -278,6 +278,7 @@ export default defineComponent({
                 apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                 dataFilled: false,
                 autoScroll: true,
+                maxResults: 20
             }
             this.$emit('finishConfig', config)
         },
@@ -302,21 +303,15 @@ export default defineComponent({
                     }
                 }
                 let isSuccess = false
-                let config = {
-                    lang: this.lang,
-                    theme: 'system',
-                    fetchMethod: this.useOwnAPI ? 'self' : 'default',
-                    apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
-                    dataFilled: false,
-                    autoScroll: true,
-                }
-                switch (config.fetchMethod) {
+                const fetchMethod = this.useOwnAPI ? 'self' : 'default';
+                const apiBaseUrl = this.useOwnAPI ? this.hostUrl: '' 
+                switch (fetchMethod) {
                     case 'default':
                         isSuccess = await fetchAPIData(undefined, this.$el)
                         break
                     case 'self':
                         isSuccess = await fetchAPIData(
-                            config.apiBaseUrl,
+                            apiBaseUrl,
                             this.$el
                         )
                         break
@@ -326,7 +321,7 @@ export default defineComponent({
                 if (isSuccess) {
                     this.downloadFinish = true
                     if (this.autoStart) {
-                        this.$emit('finishConfig', config)
+                        this.finishConfig()
                     }
                 } else {
                     throw new Error('Fetch Failed')

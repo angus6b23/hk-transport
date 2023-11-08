@@ -8,11 +8,13 @@
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
+<!-- Basic Settings -->
 <ion-content class="ion-padding-bottom">
     <ion-list-header>
         <ion-label>{{ $t('option.basic') }}</ion-label>
     </ion-list-header>
     <ion-list>
+        <!-- Language settings -->
         <ion-item button @click="presentLangAction">
             <ion-icon :icon="languageOutline" slot="start" />
             <ion-label>
@@ -21,6 +23,7 @@
                 <p v-else-if="config.lang == 'en'">English</p>
             </ion-label>
         </ion-item>
+        <!-- Theme Settins -->
         <ion-item button @click="presentThemeAction">
             <ion-icon :icon="colorPaletteOutline" slot="start" />
             <ion-label>
@@ -34,6 +37,7 @@
                 </p>
             </ion-label>
         </ion-item>
+        <!-- Data source Settings -->
         <ion-item button @click="presentSourceAction">
             <ion-icon :icon="serverOutline" slot="start" />
             <ion-label>
@@ -49,6 +53,7 @@
                 </p>
             </ion-label>
         </ion-item>
+        <!-- API Endpoint setting -->
         <ion-item v-if="config.fetchMethod == 'self'">
             <ion-label position="stacked"
                 >{{ $t('option.selfHostUrl') }}</ion-label
@@ -58,6 +63,7 @@
                 v-model="config.apiBaseUrl"
             ></ion-input>
         </ion-item>
+        <!-- AutoScroll Setting -->
         <ion-item>
             <ion-icon :icon="returnDownForwardOutline" slot="start" />
             <ion-label>
@@ -69,38 +75,53 @@
                 v-model="config.autoScroll"
             ></ion-checkbox>
         </ion-item>
+        <!-- Max Results -->
+        <ion-item>
+            <ion-icon :icon="listOutline" slot="start" />
+                <ion-label>
+                    <h5>{{ $t('option.maxResults') }}</h5>
+                </ion-label>
+                    <ion-range v-model="config.maxResults" :min="10" :max="50" :step="5" :snaps="true" :pin="true" />
+        </ion-item>
     </ion-list>
+    <!-- Data settings -->
     <ion-list-header>
         <ion-label>{{ $t('option.manageData') }}</ion-label>
     </ion-list-header>
     <ion-list class="ion-padding-bottom ion-margin-bottom">
+    <!-- Update route data -->
         <ion-item button @click="updateData">
             <ion-icon :icon="cloudDownloadOutline" slot="start" />
             <ion-label>
                 <h5>{{ $t('option.updateRoute') }}</h5>
             </ion-label>
         </ion-item>
+        <!-- Reload Route Data -->
         <ion-item button @click="downloadData">
             <ion-icon :icon="reloadOutline" slot="start" />
             <ion-label>
                 <h5>{{ $t('option.reloadRoute') }}</h5>
             </ion-label>
         </ion-item>
+        <!-- Remove all stars -->
         <ion-item button @click="clearStarred">
             <ion-icon :icon="starHalfOutline" slot="start" />
             <ion-label>
                 <h5>{{ $t('option.removeAllStar') }}</h5>
             </ion-label>
         </ion-item>
+        <!-- Reset All --> 
         <ion-item button @click="confirmClearData">
             <ion-icon :icon="trashOutline" slot="start" />
             <ion-label>
                 <h5>{{ $t('option.resetAll') }}</h5>
             </ion-label>
         </ion-item>
+        <!-- About Section -->
         <ion-list-header>
             <ion-label>{{ $t('option.about') }}</ion-label>
         </ion-list-header>
+        <!-- License -->
         <ion-item
             button
             href="https://www.gnu.org/licenses/gpl-3.0.en.html"
@@ -112,6 +133,7 @@
                 <p>GPLv3</p>
             </ion-label>
         </ion-item>
+        <!-- Source Code -->
         <ion-item
             button
             href="https://github.com/angus6b23/hk-transport"
@@ -131,6 +153,7 @@
                 </p>
             </ion-label>
         </ion-item>
+        <!-- Support -->
         <ion-item
             button
             href="https://liberapay.com/12a.app/donate"
@@ -142,6 +165,7 @@
                 <p>{{ $t('option.supportDescription') }}</p>
             </ion-label>
         </ion-item>
+        <!-- Self promote -->
         <ion-item button href="https://12a.app" target="_blank">
             <ion-icon :icon="linkOutline" slot="start" />
             <ion-label>

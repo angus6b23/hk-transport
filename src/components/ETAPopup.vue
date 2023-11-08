@@ -78,12 +78,8 @@
         <div class="segment-content">
             <!-- Segment for route etas -->
             <section v-if="popupView == 'default'">
-                <!-- Skeleton view for loading -->
-                <ion-list v-if="popupLoading">
-                    <SkeletonItems />
-                </ion-list>
                 <!-- Show list view for stops and etas -->
-                <ion-list v-else>
+                <ion-list>
                     <div ref="stopItemWrapper">
                     <StopItems
                         v-for="stop in item.stops"
@@ -341,7 +337,7 @@ export default {
                 }
             })
             setTimeout(() => {
-                const node = this.$refs.stopItemWrapper.querySelector('.nearest')
+                const node = this.$refs.stopItemWrapper ? this.$refs.stopItemWrapper.querySelector('.nearest') : null 
                 if (node && this.config.autoScroll){
                     node.scrollIntoView({behavior: 'smooth', block: 'center'})
                 }

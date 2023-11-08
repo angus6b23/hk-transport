@@ -1,4 +1,4 @@
-export const filterData = (data, type, query, lang) => {
+export const filterData = (data, type, query, lang, maxLength = 20) => {
     let resArr = []
     if (type === 'ferry') {
         resArr = data.filter(
@@ -42,7 +42,7 @@ export const filterData = (data, type, query, lang) => {
         b = Number(b.routeNo.replace(/[A-Z]/g, 0))
         return a - b
     })
-    return resArr.slice(0, 50) // Only show first 50 results
+    return resArr.slice(0, maxLength) // Only show first n results
 }
 
 export const getKeypadList = (data) => {

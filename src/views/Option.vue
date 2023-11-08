@@ -17,6 +17,7 @@ import {
     IonToolbar,
     IonInput,
     IonCheckbox,
+    IonRange,
     actionSheetController,
     loadingController,
 } from '@ionic/vue'
@@ -35,6 +36,7 @@ import {
     codeSlashOutline,
     shieldCheckmarkOutline,
     linkOutline,
+    listOutline
 } from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js'
@@ -56,6 +58,7 @@ export default {
         IonToolbar,
         IonInput,
         IonCheckbox,
+        IonRange,
     },
     emits: ['closeOption', 'updateData', 'downloadData', 'changeLanguage'],
     setup() {
@@ -68,6 +71,7 @@ export default {
                 config.value.fetchMethod,
                 config.value.theme,
                 config.value.lang,
+                config.value.maxResults
             ],
             async () => {
                 await localforage.setItem(
@@ -91,11 +95,12 @@ export default {
             colorPaletteOutline,
             returnDownForwardOutline,
             bookOutline,
+            listOutline,
             config,
             body,
         }
     },
-    async mounted() {},
+    async mounted() {console.log(this.config)},
     methods: {
         closeOption() {
             this.$emit('closeOption')

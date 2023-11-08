@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkhk_bus"]=self["webpackChunkhk_bus"]||[]).push([[435],{8435:function(e,n,u){u.r(n),u.d(n,{default:function(){return o}});var r=u(6252);function a(e,n,u,a,s,t){const c=(0,r.up)("SearchView");return(0,r.wg)(),(0,r.j4)(c,{dataType:"bus"})}var s=u(1459),t=(0,r.aZ)({name:"bus",components:{SearchView:s.Z}}),c=u(3744);const h=(0,c.Z)(t,[["render",a]]);var o=h}}]);
-//# sourceMappingURL=435.8d00b413.js.map
