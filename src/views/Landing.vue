@@ -334,10 +334,8 @@ export default defineComponent({
             } catch (err) {
                 this.step = 1
                 if (err.message === 'Fetch Failed') {
-                    console.log('hit')
                     presentToast('error', this.$i18next.t('toast.networkError'))
                 } else if (err.message === 'Invalid Url') {
-                    console.log('invalidurl')
                     presentToast('error', this.$i18next.t('toast.invalidUrl'))
                 }
             }

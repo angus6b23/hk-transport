@@ -24,7 +24,7 @@ import { cog } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import presentToast from '@/components/presentToast'
 import ETAPopup from '@/components/ETAPopup.vue'
-import Option from '@/views/Option.vue'
+import OptionView from '@/views/Option.vue'
 import sleep from '@/components/sleep.js'
 
 export default defineComponent({

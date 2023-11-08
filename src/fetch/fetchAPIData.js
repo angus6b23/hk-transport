@@ -20,38 +20,48 @@ const fetchAPIData = async (
         }
         // Get remote Hashes
         const { data: remoteHashes } = await axios(`${baseURL}/get-hash`)
-        let objSize = Object.keys(remoteHashes).length
-        let current = 0
+
         // Compare Hashes and generate
+        const filesToDownload = []
         for (let keyName in remoteHashes) {
-            const progress = document.querySelector('#loading-progress')
-            if (progress) {
-                progress.textContent = `${current}/${objSize}`
-            }
-            if (el) {
-                const data = { current: current, objSize: objSize }
-                const event = new CustomEvent('downloadProgress', {
-                    detail: data,
-                })
-                el.dispatchEvent(event)
-            }
             if (
                 !localHashes[keyName] ||
                 localHashes[keyName] !== remoteHashes[keyName]
             ) {
-                const { data: remoteData } = await axios(
-                    `${baseURL}/chunked/${keyName}.json`
-                )
-
-                await localforage.setItem(keyName, remoteData)
+                filesToDownload.push(keyName)
             }
-            current++
         }
+        const objSize = filesToDownload.length
+        let current = 0
+        const axiosPromises = filesToDownload.map((keyName) =>
+            axios({
+                method: 'get',
+                baseURL: baseURL,
+                url: `/chunked/${keyName}.json`,
+            }).then(({ data }) => {
+                current++
+                emitEvent(el, current, objSize)
+                return localforage.setItem(keyName, data)
+            })
+        )
+        await Promise.all(axiosPromises)
         return true
     } catch (err) {
         console.error(err)
         return false
     }
 }
-
+const emitEvent = (el, current, objSize) => {
+    const progress = document.querySelector('#loading-progress')
+    if (progress) {
+        progress.textContent = `${current}/${objSize}`
+    }
+    const data = { current: current, objSize: objSize }
+    const event = new CustomEvent('downloadProgress', {
+        detail: data,
+    })
+    if (el) {
+        el.dispatchEvent(event)
+    }
+}
 export default fetchAPIData

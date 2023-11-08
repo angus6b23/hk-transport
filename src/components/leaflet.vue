@@ -98,7 +98,7 @@ export default {
                 const newIcon = L.icon({
                     iconUrl: iconUrl,
                     iconSize: [targetSize, targetSize],
-                    iconAnchor: [targetSize/2, targetSize],
+                    iconAnchor: [targetSize / 2, targetSize],
                     popupAnchor: [0, -targetSize],
                 })
                 marker.setIcon(newIcon)
@@ -226,7 +226,7 @@ export default {
             else if (zoomLevel <= 15) {
                 this.setIconSize(25)
             } else {
-            // Zoom level >= 16
+                // Zoom level >= 16
                 this.setIconSize(35)
             }
         })

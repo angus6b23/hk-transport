@@ -1,0 +1,5 @@
+更新
+
+- 改善頁面表格控制和版面
+- 改善路線鍵盤大小
+- 棄用 capacitor/geolocation 並改用 cordova geolocation

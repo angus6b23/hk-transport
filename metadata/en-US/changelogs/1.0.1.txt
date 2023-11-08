@@ -1,0 +1,5 @@
+Updates
+
+- Better form control and css on landing page
+- Keypad size will scale better on devices
+- Migrate from capacitor/geolocation to cordova geolocation plugin

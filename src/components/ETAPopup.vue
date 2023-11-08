@@ -84,14 +84,15 @@
                 </ion-list>
                 <!-- Show list view for stops and etas -->
                 <ion-list v-else>
+                    <div ref="stopItemWrapper">
                     <StopItems
                         v-for="stop in item.stops"
                         :key="stop.id"
                         :stop="stop"
                         :noEta="noEta"
                         :class="{ nearest: isNearestStop(stop.stopId) }"
-                        ref="stopItem"
                     ></StopItems>
+                    </div>
                 </ion-list>
             </section>
             <section v-if="popupView == 'info'">
@@ -179,8 +180,9 @@ export default {
         const noEta = ref(props.noEta)
         const currentLocation = ref()
         const nearestStop = ref()
+        const stopItemWrapper = ref(null)
         const stopItem = ref(null)
-        const injectConfig = inject('globalConfig')
+        const config = inject('globalConfig')
         return {
             popupLoading,
             item,
@@ -189,13 +191,14 @@ export default {
             altRoutes,
             currentLocation,
             nearestStop,
+            stopItemWrapper,
             noEta,
             stopItem,
             chevronBack,
             starOutline,
             star,
             swapHorizontalOutline,
-            injectConfig,
+            config,
         }
     },
     async mounted() {
@@ -337,20 +340,26 @@ export default {
                     return acc
                 }
             })
-            // Auto scroll to nearest station ETA if the distance is less than 1000
-            if (this.nearestStop && this.nearestStop.distance < 1000) {
-                let index = this.item.stops.findIndex(
-                    (stop) => stop.stopId == this.nearestStop.id
-                )
-                if (index != -1 && this.$refs.stopItem) {
-                    let height = this.$refs.stopItem[0].$el.clientHeight
-                    this.$refs.content.$el.scrollToPoint(
-                        0,
-                        height * index - height / 2,
-                        500
-                    )
+            setTimeout(() => {
+                const node = this.$refs.stopItemWrapper.querySelector('.nearest')
+                if (node && this.config.autoScroll){
+                    node.scrollIntoView({behavior: 'smooth', block: 'center'})
                 }
-            }
+            }, 100)
+            // Auto scroll to nearest station ETA if the distance is less than 1000
+            //  if (this.nearestStop && this.nearestStop.distance < 1000) {
+            //      let index = this.item.stops.findIndex(
+            //          (stop) => stop.stopId == this.nearestStop.id
+            //      )
+            //      if (index != -1 && this.$refs.stopItem) {
+            //          let height = this.$refs.stopItem[0].$el.clientHeight
+            //          this.$refs.content.$el.scrollToPoint(
+            //              0,
+            //              height * index - height / 2,
+            //              500
+            //          )
+            //      }
+            //  }
         },
         onLocationFail() {
             presentToast('error', this.$i18next.t('toast.locationFail'))
@@ -434,9 +443,9 @@ export default {
         },
         async getLightRail() {
             const url =
-                this.injectConfig.apiBaseUrl === ''
+                this.config.apiBaseUrl === ''
                     ? undefined
-                    : this.injectConfig.apiBaseUrl
+                    : this.config.apiBaseUrl
             const etaData = await fetchLightRailEta(this.item, url)
             this.populateETAById(etaData)
         },
@@ -501,7 +510,7 @@ export default {
                 stop.data.sort((a, b) => a.eta - b.eta)
             }
             // Populate the combined List
-            console.log(combinedList)
+            // console.log(combinedList)
             for (let i = 0; i < combinedList.length; i++) {
                 let targetItem = combinedList[i]
                 let targetStopIndex = this.item.stops.findIndex(
