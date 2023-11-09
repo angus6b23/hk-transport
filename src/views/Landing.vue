@@ -20,12 +20,14 @@
                                 expand="block"
                                 class="ion-margin-top"
                                 @click="setLang('zh')"
+                                data-testid="zh-button"
                                 >正體中文</ion-button
                             >
                             <ion-button
                                 expand="block"
                                 class="ion-margin-top"
                                 @click="setLang('en')"
+                                data-testid="en-button"
                                 >English</ion-button
                             >
                             <div class="ion-margin-top customApiDiag">
@@ -33,6 +35,7 @@
                                     <ion-checkbox
                                         slot="start"
                                         v-model="useOwnAPI"
+                                        data-testid="endpoint-checkbox"
                                     ></ion-checkbox>
                                     <ion-label
                                         >使用自訂的站台 <br />
@@ -48,6 +51,7 @@
                                     <ion-input
                                         v-model="hostUrl"
                                         placeholder="https://your.endpoint.api/"
+                                        data-testid="endpoint-input"
                                         required
                                     ></ion-input>
                                 </ion-item>
@@ -59,7 +63,7 @@
             <div v-if="step == 2" class="card-wrapper">
                 <ion-card class="tour-card">
                     <ion-card-header>
-                        <ion-card-title>
+                        <ion-card-title data-testid="tour-title">
                             {{ $t('landing.quicktour') }}
                         </ion-card-title>
                     </ion-card-header>
@@ -155,6 +159,7 @@
                                     <ion-checkbox
                                         slot="start"
                                         v-model="autoStart"
+                                        data-testid="tour-checkbox"
                                     />
                                     <ion-label class="ion-text-wrap">{{
                                         $t('landing.autoStart')
@@ -168,6 +173,7 @@
                                 <ion-button
                                     @click="finishConfig()"
                                     :disabled="!downloadFinish"
+                                    data-testid="tour-finish-button"
                                     >{{ $t('common.finish') }}</ion-button
                                 >
                             </div>

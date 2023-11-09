@@ -16,6 +16,7 @@
                     tab="bus"
                     href="/tabs/bus"
                     class="scrollable-item"
+                    data-testid="tab-bus"
                 >
                     <ion-icon v-if="currentTab == 'bus'" :icon="bus" />
                     <ion-icon v-else :icon="busOutline" />
@@ -27,6 +28,7 @@
                     tab="mtr"
                     href="/tabs/mtr"
                     class="scrollable-item"
+                    data-testid="tab-mtr"
                 >
                     <BIconTrainFrontFill
                         v-if="currentTab == 'mtr'"
@@ -41,6 +43,7 @@
                     tab="minibus"
                     href="/tabs/minibus"
                     class="scrollable-item"
+                    data-testid="tab-minibus"
                 >
                     <BIconTruckFrontFill
                         v-if="currentTab == 'minibus'"
@@ -55,6 +58,7 @@
                     tab="tram"
                     href="/tabs/tram"
                     class="scrollable-item"
+                    data-testid="tab-tram"
                 >
                     <ion-icon v-if="currentTab == 'tram'" :icon="train" />
                     <ion-icon v-else :icon="trainOutline" />
@@ -66,6 +70,7 @@
                     tab="lightRail"
                     href="/tabs/light-rail"
                     class="scrollable-item"
+                    data-testid="tab-light-rail"
                 >
                     <BIconTrainLightrailFrontFill
                         v-if="currentTab == 'lightRail'"
@@ -80,6 +85,7 @@
                     tab="ferry"
                     href="/tabs/ferry"
                     class="scrollable-item"
+                    data-testid="tab-ferry"
                 >
                     <ion-icon v-if="currentTab == 'ferry'" :icon="boat" />
                     <ion-icon v-else :icon="boatOutline" />

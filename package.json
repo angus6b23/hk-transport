@@ -8,7 +8,8 @@
         "build": "vue-cli-service build",
         "test:unit": "vue-cli-service test:unit",
         "test:e2e": "vue-cli-service test:e2e",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "cypress:open": "cypress open"
     },
     "dependencies": {
         "@babel/core": "^7.23.2",
@@ -54,9 +55,12 @@
         "@vue/test-utils": "^2.0.0-rc.16",
         "@vue/vue3-jest": "^27.0.0-alpha.3",
         "babel-jest": "^27.3.1",
-        "cypress": "^8.7.0",
+        "cypress": "^13.5.0",
+        "cypress-if": "^1.10.5",
+        "cypress-wait-until": "^2.0.1",
         "eslint": "^8.41.0",
         "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-cypress": "^2.15.1",
         "eslint-plugin-vue": "^9.14.1",
         "http-server": "^14.1.1",
         "jest": "^27.3.1",

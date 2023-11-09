@@ -11,7 +11,7 @@
             </ion-title>
             <!-- Option icon -->
             <ion-buttons slot="end">
-                <ion-button @click="openOption">
+                <ion-button @click="openOption" data-testid="open-option">
                     <ion-icon :icon="cog"></ion-icon>
                 </ion-button>
             </ion-buttons>
@@ -23,6 +23,7 @@
                 v-model="query"
                 :placeholder="$t('searchView.searchPlaceHolder')"
                 @ionFocus="hideKeypad"
+                :data-testid="`search-bar-${type}`"
             ></ion-searchbar>
             <!-- Keypad -->
             <Keypad
@@ -95,10 +96,12 @@
                 <ion-reorder-group
                     :disabled="disableReorder"
                     @ionItemReorder="reorder($event)"
+                    data-testid="search-list"
                 >
                     <ion-item
                         v-for="(route, index) in displayArray"
                         :key="route.id"
+                        :data-testid="`search-item-${type}`"
                         button
                     >
                         <ion-grid>

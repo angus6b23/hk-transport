@@ -76,6 +76,7 @@
         "selfHost": "Use your own API",
         "selfHostUrl": "Self Host Instance URL",
         "autoScroll": "Auto Scroll to nearest station",
+        "maxResults": "Max results in search",
         "manageData": "Manage Data",
         "updateRoute": "Update routes data",
         "reloadRoute": "Reload all routes data",

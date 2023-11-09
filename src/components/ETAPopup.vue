@@ -3,7 +3,7 @@
     <ion-header>
         <!-- Toolbar -->
         <ion-toolbar>
-            <ion-title v-if="item.type == 'bus' || item.type == 'minibus'">
+            <ion-title data-testid="eta-title" v-if="item.type == 'bus' || item.type == 'minibus'">
                 <span>{{ item.routeNo }}</span>
                 <span
                     v-if="$i18next.language === 'zh'"
@@ -12,7 +12,7 @@
                 >
                 <span v-else class="ion-margin-start">{{ item.destEN }}</span>
             </ion-title>
-            <ion-title v-else-if="item.type == 'lightRail'">
+            <ion-title data-testid="eta-title" v-else-if="item.type == 'lightRail'">
                 {{ item.routeNameEN }}
                 <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
                     >{{ item.originTC }} - {{ item.destTC }}</span
@@ -29,6 +29,7 @@
             </ion-title>
             <ion-buttons slot="start" class="top-buttons">
                 <ion-button @click="closeModal"
+                    data-testid="close-modal"
                     ><ion-icon :icon="chevronBack"></ion-icon
                 ></ion-button>
             </ion-buttons>
@@ -58,18 +59,20 @@
         <!-- Segment select -->
         <section slot="fixed" class="popup-segment">
             <ion-segment v-model="popupView">
-                <ion-segment-button value="default">
+                <ion-segment-button value="default" data-testid="eta-tab-default">
                     <ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button
                     v-if="item.type != 'mtr' && item.type != 'lightRail'"
                     value="info"
+                    data-testid="eta-tab-info"
                 >
                     <ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button
                     v-if="item.type != 'mtr' && item.type != 'lightRail'"
                     value="map"
+                    data-testid="eta-tab-map"
                 >
                     <ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
                 </ion-segment-button>
