@@ -3,7 +3,8 @@ module.exports = {
     env: {
         node: true,
     },
-    extends: ['plugin:vue/vue3-essential', 'eslint:recommended'],
+    plugins: ["cypress"],
+    extends: ['plugin:vue/vue3-essential', 'eslint:recommended', 'plugin:cypress/recommended'],
     parserOptions: {
         ecmaVersion: 2020,
     },
@@ -11,6 +12,7 @@ module.exports = {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
         'vue/no-deprecated-slot-attribute': 'off',
+        'jest/expect-expect': 'off'
     },
     overrides: [
         {

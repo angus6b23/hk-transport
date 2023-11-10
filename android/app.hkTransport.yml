@@ -1,0 +1,31 @@
+Categories:
+  - Navigation
+License: GPL-3.0-or-later
+WebSite: https://hk-transport.12a.app
+SourceCode: https://github.com/angus6b23/hk-transport
+Liberapay: 12a.app
+
+AutoName: HK Transport
+
+RepoType: git
+Repo: https://github.com/angus6b23/hk-transport
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 100
+    commit: v1.0.0
+    subdir: android/app
+    sudo:
+      - apt-get update || apt-get update
+      - apt-get install -y openjdk-17-jdk-headless openjdk-17-jdk npm nodejs
+      - update-alternatives --auto java
+    gradle:
+      - yes
+    prebuild: npm i
+    scanignore:
+      - node_modules
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.0.0
+CurrentVersionCode: 100

@@ -23,7 +23,9 @@ import '@ionic/vue/css/display.css'
 /* Theme variables */
 import './theme/variables.css'
 
-const app = i18n(createApp(App)).use(IonicVue).use(router)
+const app = i18n(createApp(App))
+    .use(IonicVue, { innerHTMLTemplatesEnabled: true })
+    .use(router)
 
 router.isReady().then(() => {
     app.mount('#app')

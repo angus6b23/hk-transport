@@ -40,10 +40,6 @@ const routes = [
                 path: 'light-rail',
                 component: () => import('@/views/Light-rail.vue'),
             },
-            {
-                path: 'tab3',
-                component: () => import('@/views/Tab3Page.vue'),
-            },
         ],
     },
 ]

@@ -3,7 +3,7 @@
     <ion-header>
         <!-- Toolbar -->
         <ion-toolbar>
-            <ion-title v-if="item.type == 'bus' || item.type == 'minibus'">
+            <ion-title data-testid="eta-title" v-if="item.type == 'bus' || item.type == 'minibus'">
                 <span>{{ item.routeNo }}</span>
                 <span
                     v-if="$i18next.language === 'zh'"
@@ -12,7 +12,7 @@
                 >
                 <span v-else class="ion-margin-start">{{ item.destEN }}</span>
             </ion-title>
-            <ion-title v-else-if="item.type == 'lightRail'">
+            <ion-title data-testid="eta-title" v-else-if="item.type == 'lightRail'">
                 {{ item.routeNameEN }}
                 <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
                     >{{ item.originTC }} - {{ item.destTC }}</span
@@ -29,6 +29,7 @@
             </ion-title>
             <ion-buttons slot="start" class="top-buttons">
                 <ion-button @click="closeModal"
+                    data-testid="close-modal"
                     ><ion-icon :icon="chevronBack"></ion-icon
                 ></ion-button>
             </ion-buttons>
@@ -58,18 +59,20 @@
         <!-- Segment select -->
         <section slot="fixed" class="popup-segment">
             <ion-segment v-model="popupView">
-                <ion-segment-button value="default">
+                <ion-segment-button value="default" data-testid="eta-tab-default">
                     <ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button
                     v-if="item.type != 'mtr' && item.type != 'lightRail'"
                     value="info"
+                    data-testid="eta-tab-info"
                 >
                     <ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
                 </ion-segment-button>
                 <ion-segment-button
                     v-if="item.type != 'mtr' && item.type != 'lightRail'"
                     value="map"
+                    data-testid="eta-tab-map"
                 >
                     <ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
                 </ion-segment-button>
@@ -78,20 +81,17 @@
         <div class="segment-content">
             <!-- Segment for route etas -->
             <section v-if="popupView == 'default'">
-                <!-- Skeleton view for loading -->
-                <ion-list v-if="popupLoading">
-                    <SkeletonItems />
-                </ion-list>
                 <!-- Show list view for stops and etas -->
-                <ion-list v-else>
+                <ion-list>
+                    <div ref="stopItemWrapper">
                     <StopItems
                         v-for="stop in item.stops"
                         :key="stop.id"
                         :stop="stop"
                         :noEta="noEta"
                         :class="{ nearest: isNearestStop(stop.stopId) }"
-                        ref="stopItem"
                     ></StopItems>
+                    </div>
                 </ion-list>
             </section>
             <section v-if="popupView == 'info'">
@@ -131,7 +131,6 @@ import {
     chevronBack,
     swapHorizontalOutline,
 } from 'ionicons/icons'
-import { Geolocation } from '@capacitor/geolocation'
 import { getDistance } from 'geolib'
 
 import {
@@ -180,8 +179,9 @@ export default {
         const noEta = ref(props.noEta)
         const currentLocation = ref()
         const nearestStop = ref()
+        const stopItemWrapper = ref(null)
         const stopItem = ref(null)
-        const injectConfig = inject('globalConfig')
+        const config = inject('globalConfig')
         return {
             popupLoading,
             item,
@@ -190,13 +190,14 @@ export default {
             altRoutes,
             currentLocation,
             nearestStop,
+            stopItemWrapper,
             noEta,
             stopItem,
             chevronBack,
             starOutline,
             star,
             swapHorizontalOutline,
-            injectConfig,
+            config,
         }
     },
     async mounted() {
@@ -266,54 +267,11 @@ export default {
             this.getLightRail()
         }
         // Get Coordinates
-        try {
-            this.currentLocation = await Geolocation.getCurrentPosition()
-            const stopDistance = this.item.stops.map((stop) => {
-                //Create an array hold all stops id and distance between current coord
-                if (stop.coord && stop.coord.length > 0) {
-                    const currentLat = this.currentLocation.coords.latitude
-                    const currentLong = this.currentLocation.coords.longitude
-                    const stopLat = stop.coord[1]
-                    const stopLong = stop.coord[0]
-                    return {
-                        id: stop.stopId,
-                        distance: getDistance(
-                            { latitude: currentLat, longitude: currentLong },
-                            { latitude: stopLat, longitude: stopLong }
-                        ),
-                    }
-                } else {
-                    return {
-                        distance: 9999999,
-                    }
-                }
-            })
-            this.nearestStop = stopDistance.reduce((acc, cur) => {
-                // Reduce the distance array for nearest id and distance
-                if (cur.distance < acc.distance) {
-                    return cur
-                } else {
-                    return acc
-                }
-            })
-            // Auto scroll to nearest station ETA if the distance is less than 1000
-            if (this.nearestStop && this.nearestStop.distance < 1000) {
-                let index = this.item.stops.findIndex(
-                    (stop) => stop.stopId == this.nearestStop.id
-                )
-                if (index != -1 && this.$refs.stopItem) {
-                    let height = this.$refs.stopItem[0].$el.clientHeight
-                    this.$refs.content.$el.scrollToPoint(
-                        0,
-                        height * index - height / 2,
-                        500
-                    )
-                }
-            }
-            //console.log(this.nearestStop);
-        } catch (err) {
-            console.error(err)
-        }
+        navigator.geolocation.getCurrentPosition(
+            this.onLocationSuccess,
+            this.onLocationFail,
+            { enableHighAccuracy: true }
+        )
     },
     computed: {
         checkbusStar() {
@@ -350,6 +308,60 @@ export default {
         },
         swapDirection() {
             this.$emit('swapDirection', this.altRoutes[0])
+        },
+        onLocationSuccess(position) {
+            this.currentLocation = position
+            const stopDistance = this.item.stops.map((stop) => {
+                //Create an array hold all stops id and distance between current coord
+                if (stop.coord && stop.coord.length > 0) {
+                    const currentLat = this.currentLocation.coords.latitude
+                    const currentLong = this.currentLocation.coords.longitude
+                    const stopLat = stop.coord[1]
+                    const stopLong = stop.coord[0]
+                    return {
+                        id: stop.stopId,
+                        distance: getDistance(
+                            { latitude: currentLat, longitude: currentLong },
+                            { latitude: stopLat, longitude: stopLong }
+                        ),
+                    }
+                } else {
+                    return {
+                        distance: 9999999,
+                    }
+                }
+            })
+            this.nearestStop = stopDistance.reduce((acc, cur) => {
+                // Reduce the distance array for nearest id and distance
+                if (cur.distance < acc.distance) {
+                    return cur
+                } else {
+                    return acc
+                }
+            })
+            setTimeout(() => {
+                const node = this.$refs.stopItemWrapper ? this.$refs.stopItemWrapper.querySelector('.nearest') : null 
+                if (node && this.config.autoScroll){
+                    node.scrollIntoView({behavior: 'smooth', block: 'center'})
+                }
+            }, 100)
+            // Auto scroll to nearest station ETA if the distance is less than 1000
+            //  if (this.nearestStop && this.nearestStop.distance < 1000) {
+            //      let index = this.item.stops.findIndex(
+            //          (stop) => stop.stopId == this.nearestStop.id
+            //      )
+            //      if (index != -1 && this.$refs.stopItem) {
+            //          let height = this.$refs.stopItem[0].$el.clientHeight
+            //          this.$refs.content.$el.scrollToPoint(
+            //              0,
+            //              height * index - height / 2,
+            //              500
+            //          )
+            //      }
+            //  }
+        },
+        onLocationFail() {
+            presentToast('error', this.$i18next.t('toast.locationFail'))
         },
         populateETABySeq(etaData) {
             if (etaData.status == 'success' && etaData.data.length > 0) {
@@ -430,9 +442,9 @@ export default {
         },
         async getLightRail() {
             const url =
-                this.injectConfig.apiBaseUrl === ''
+                this.config.apiBaseUrl === ''
                     ? undefined
-                    : this.injectConfig.apiBaseUrl
+                    : this.config.apiBaseUrl
             const etaData = await fetchLightRailEta(this.item, url)
             this.populateETAById(etaData)
         },
@@ -497,7 +509,7 @@ export default {
                 stop.data.sort((a, b) => a.eta - b.eta)
             }
             // Populate the combined List
-            console.log(combinedList)
+            // console.log(combinedList)
             for (let i = 0; i < combinedList.length; i++) {
                 let targetItem = combinedList[i]
                 let targetStopIndex = this.item.stops.findIndex(
