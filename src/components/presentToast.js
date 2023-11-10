@@ -11,6 +11,7 @@ export default async function presentToast(type, message) {
         message: message,
         duration: 1500,
         position: 'bottom',
+        htmlAttributes: {'data-testid': 'toast'},
         icon:
             type == 'error'
                 ? alertCircleOutline

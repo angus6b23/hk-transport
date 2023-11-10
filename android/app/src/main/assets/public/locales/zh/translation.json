@@ -76,6 +76,7 @@
         "selfHost": "自行建設的站台",
         "selfHostUrl": "站台網址",
         "autoScroll": "自動滾動到最接近的車站",
+        "maxResults": "最大搜尋數目",
         "manageData": "管理資料",
         "updateRoute": "更新路線資料",
         "reloadRoute": "重新下載路線資料",

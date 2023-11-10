@@ -6,5 +6,5 @@
 - 電車（未提供到站時間）
 - 輕鐵
 - 渡輪（未提供到站時間）
-使用條款: GPL v3.0
+使用條款: GPL v3.0 或之後
 Webapp 版（免安裝）: https://hk-transport.12a.app

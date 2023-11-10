@@ -20,12 +20,14 @@
                                 expand="block"
                                 class="ion-margin-top"
                                 @click="setLang('zh')"
+                                data-testid="zh-button"
                                 >正體中文</ion-button
                             >
                             <ion-button
                                 expand="block"
                                 class="ion-margin-top"
                                 @click="setLang('en')"
+                                data-testid="en-button"
                                 >English</ion-button
                             >
                             <div class="ion-margin-top customApiDiag">
@@ -33,6 +35,7 @@
                                     <ion-checkbox
                                         slot="start"
                                         v-model="useOwnAPI"
+                                        data-testid="endpoint-checkbox"
                                     ></ion-checkbox>
                                     <ion-label
                                         >使用自訂的站台 <br />
@@ -48,6 +51,7 @@
                                     <ion-input
                                         v-model="hostUrl"
                                         placeholder="https://your.endpoint.api/"
+                                        data-testid="endpoint-input"
                                         required
                                     ></ion-input>
                                 </ion-item>
@@ -59,7 +63,7 @@
             <div v-if="step == 2" class="card-wrapper">
                 <ion-card class="tour-card">
                     <ion-card-header>
-                        <ion-card-title>
+                        <ion-card-title data-testid="tour-title">
                             {{ $t('landing.quicktour') }}
                         </ion-card-title>
                     </ion-card-header>
@@ -155,6 +159,7 @@
                                     <ion-checkbox
                                         slot="start"
                                         v-model="autoStart"
+                                        data-testid="tour-checkbox"
                                     />
                                     <ion-label class="ion-text-wrap">{{
                                         $t('landing.autoStart')
@@ -168,6 +173,7 @@
                                 <ion-button
                                     @click="finishConfig()"
                                     :disabled="!downloadFinish"
+                                    data-testid="tour-finish-button"
                                     >{{ $t('common.finish') }}</ion-button
                                 >
                             </div>
@@ -199,6 +205,7 @@ import {
     IonCheckbox,
     IonProgressBar,
     IonItem,
+    IonText,
 } from '@ionic/vue'
 import { chevronBackOutline, checkmarkOutline } from 'ionicons/icons'
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -226,13 +233,14 @@ export default defineComponent({
         SwiperSlide,
         IonProgressBar,
         IonItem,
+        IonText,
     },
     emits: ['finishConfig'],
     setup() {
         const lang = ref('')
         const useOwnAPI = ref(false)
         const hostUrl = ref('')
-        const step = ref(1)
+        const step = ref(1);
         const downloadProgress = ref(0)
         const downloadText = ref('')
         const downloadFinish = ref(false)
@@ -276,6 +284,7 @@ export default defineComponent({
                 apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                 dataFilled: false,
                 autoScroll: true,
+                maxResults: 20
             }
             this.$emit('finishConfig', config)
         },
@@ -300,32 +309,25 @@ export default defineComponent({
                     }
                 }
                 let isSuccess = false
-                let config = {
-                    lang: this.lang,
-                    theme: 'system',
-                    fetchMethod: this.useOwnAPI ? 'self' : 'default',
-                    apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
-                    dataFilled: false,
-                    autoScroll: true,
-                }
-                switch (config.fetchMethod) {
+                const fetchMethod = this.useOwnAPI ? 'self' : 'default';
+                const apiBaseUrl = this.useOwnAPI ? this.hostUrl: '' 
+                switch (fetchMethod) {
                     case 'default':
                         isSuccess = await fetchAPIData(undefined, this.$el)
                         break
                     case 'self':
                         isSuccess = await fetchAPIData(
-                            config.apiBaseUrl,
+                            apiBaseUrl,
                             this.$el
                         )
                         break
                     default:
                         throw new Error('Unknown fetch method')
                 }
-                console.log(isSuccess)
                 if (isSuccess) {
                     this.downloadFinish = true
                     if (this.autoStart) {
-                        this.$emit('finishConfig', config)
+                        this.finishConfig()
                     }
                 } else {
                     throw new Error('Fetch Failed')
@@ -333,10 +335,8 @@ export default defineComponent({
             } catch (err) {
                 this.step = 1
                 if (err.message === 'Fetch Failed') {
-                    console.log('hit')
                     presentToast('error', this.$i18next.t('toast.networkError'))
                 } else if (err.message === 'Invalid Url') {
-                    console.log('invalidurl')
                     presentToast('error', this.$i18next.t('toast.invalidUrl'))
                 }
             }

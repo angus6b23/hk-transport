@@ -1,0 +1,5 @@
+Updates
+
+- Improve initial download speed
+- Map markers will scale with zoom level
+- Better auto scroll logic
