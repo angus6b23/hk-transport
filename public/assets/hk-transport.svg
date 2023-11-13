@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(182, 189, 137); stroke-linecap: round; stroke-width: 34px; stroke-dasharray: 500;" d="M 16.234 250.205 L 482.829 249.892"/>
+  <path style="fill: rgb(216, 216, 216); stroke-width: 33px; stroke-linecap: round; stroke: rgb(213, 126, 123); stroke-dasharray: 500;" d="M 16.234 217.19 L 482.829 216.877"/>
+  <path style="fill: rgb(216, 216, 216); stroke-width: 33px; stroke-linecap: round; stroke: rgb(137, 160, 194); stroke-dasharray: 500;" d="M 16.049 283.282 L 482.644 282.969"/>
+  <path style="stroke-width: 33px; stroke-linecap: round; stroke: rgb(217, 166, 126); fill: rgba(255, 255, 255, 0); fill-opacity: 0; stroke-dasharray: 1000;" d="M 16.234 400 L 146.68 400 L 350.647 100 L 482.829 100"/>
+  <g style="transform-origin: 250px 248.813px;">
+    <rect x="200" y="200" width="100" height="100" style="fill: rgb(216, 216, 216); stroke: rgb(31, 34, 49); stroke-width: 20px;"/>
+    <ellipse style="fill: rgb(198, 200, 208); stroke: rgb(31, 34, 49); stroke-width: 20px;" cx="250" cy="303.844" rx="50" ry="50"/>
+    <ellipse style="fill: rgb(198, 200, 208); stroke: rgb(31, 34, 49); stroke-width: 20px;" cx="250" cy="193.783" rx="50" ry="50"/>
+    <rect x="210" y="194.506" width="80" height="108.718" style="fill: rgb(198, 200, 208); stroke: rgb(31, 34, 49); stroke-width: 0px;"/>
+  </g>
+</svg>
