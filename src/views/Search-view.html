@@ -11,6 +11,9 @@
             </ion-title>
             <!-- Option icon -->
             <ion-buttons slot="end">
+                <ion-button @click="openNews" data-testid="open-news">
+                    <ion-icon :icon="newspaperOutline"></ion-icon>
+                </ion-button>
                 <ion-button @click="openOption" data-testid="open-option">
                     <ion-icon :icon="cog"></ion-icon>
                 </ion-button>
@@ -215,6 +218,11 @@
         <OptionView
             @closeOption="closeOption"
             @changeLanguage="changeLanguage"
+        />
+    </ion-modal>
+    <ion-modal :is-open="newsIsOpen" @WillDismiss="closeNews">
+        <News
+            @closeNews="closeNews"
         />
     </ion-modal>
 </ion-page>
