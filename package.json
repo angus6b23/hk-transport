@@ -1,6 +1,6 @@
 {
   "name": "hk-transport",
-  "version": "1.0.4",
+  "version": "1.0.3",
   "private": true,
   "description": "An app viewing all major modes of transport in Hong Kong.",
   "scripts": {
