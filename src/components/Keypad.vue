@@ -6,7 +6,7 @@
                     <ion-icon
                         :icon="keypadOutline"
                         class="ion-margin-end keypad-icon"
-                    ></ion-icon>
+                        ></ion-icon>
                     {{ $t('searchView.toggleRouteKeypad') }}
                 </ion-text>
             </summary>
@@ -15,24 +15,24 @@
                     <div>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small"
                                 :disabled="!numpad[1]"
                                 @click="emitClick(1)"
                                 >1</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[2]"
                                 @click="emitClick(2)"
                                 >2</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[3]"
                                 @click="emitClick(3)"
                                 >3</ion-button
@@ -40,24 +40,24 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[4]"
                                 @click="emitClick(4)"
                                 >4</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[5]"
                                 @click="emitClick(5)"
                                 >5</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[6]"
                                 @click="emitClick(6)"
                                 >6</ion-button
@@ -65,24 +65,24 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[7]"
                                 @click="emitClick(7)"
                                 >7</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[8]"
                                 @click="emitClick(8)"
                                 >8</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[9]"
                                 @click="emitClick(9)"
                                 >9</ion-button
@@ -90,22 +90,22 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                        >
+                            >
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="query.length === 0"
                                 @click="emitClick('clear')"
-                            >
+                                >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="trashBinOutline"
-                                />
+                                    />
                             </ion-button>
                             <ion-button
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="!numpad[0]"
                                 @click="emitClick(0)"
                                 >0</ion-button
@@ -113,14 +113,14 @@
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
-                                size="4"
+                                size="small" 
                                 :disabled="query.length === 0"
                                 @click="emitClick('back')"
-                            >
+                                >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="backspaceOutline"
-                                />
+                                    />
                             </ion-button>
                         </ion-row>
                     </div>
@@ -128,6 +128,7 @@
                 <div class="letters">
                     <ion-button
                         fill="clear"
+                        size="small"
                         v-for="(letter, index) of letterRow"
                         :key="index"
                         @click="emitClick(letter.letter)"
@@ -270,9 +271,12 @@ export default {
 .grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
 }
 .grid ion-button.ios {
-    height: 2.5rem;
+    height: 1.5rem;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
     font-size: 1.5rem;
 }
 .grid .md.button.icon-button {
@@ -282,9 +286,6 @@ export default {
     height: 2.5rem;
     font-size: 1.5rem;
 }
-.keypad-wrapper {
-    height: 25vh;
-}
 .numbers {
     grid-column: span 9 / span 9;
     display: flex;
@@ -293,7 +294,7 @@ export default {
 }
 .letters {
     grid-column: span 3 / span 3;
-    height: 100%;
+    height: 25vh;
     overflow-y: auto;
 }
 .grid ion-button.icon-button {
