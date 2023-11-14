@@ -20,11 +20,12 @@ import {
     IonButtons,
     IonButton,
 } from '@ionic/vue'
-import { cog } from 'ionicons/icons'
+import { cog, newspaperOutline } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import presentToast from '@/components/presentToast'
 import ETAPopup from '@/components/ETAPopup.vue'
 import OptionView from '@/views/Option.vue'
+import News from './News.vue'
 import sleep from '@/components/sleep.js'
 
 export default defineComponent({
@@ -48,6 +49,7 @@ export default defineComponent({
         IonButton,
         ETAPopup,
         OptionView,
+        News
     },
     props: ['dataType'],
     setup(props) {
@@ -55,6 +57,7 @@ export default defineComponent({
         const itemSelected = ref({}) // Reference for selected bus on query
         const modalIsOpen = ref(false)
         const optionIsOpen = ref(false)
+        const newsIsOpen = ref(false)
         const data = ref([]) // For storage of routes and stops
         const type = ref(props.dataType)
         const dataReady = ref(false)
@@ -69,9 +72,11 @@ export default defineComponent({
             altRoutes,
             modalIsOpen,
             optionIsOpen,
+            newsIsOpen,
             type,
             dataReady,
             cog,
+            newspaperOutline
         }
     },
     methods: {
@@ -103,6 +108,12 @@ export default defineComponent({
         },
         closeOption() {
             this.optionIsOpen = false
+        },
+        openNews() {
+            this.newsIsOpen = true
+        },
+        closeNews() {
+            this.newsIsOpen = false
         },
         currentSelectedItem(x) {
             // For finding index of currently selected bus

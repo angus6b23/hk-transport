@@ -24,10 +24,11 @@ import {
     IonReorder,
     IonReorderGroup,
 } from '@ionic/vue'
-import { cog, chevronBack, swapVerticalOutline } from 'ionicons/icons'
+import { cog, chevronBack, swapVerticalOutline, newspaperOutline } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
 import OptionView from '@/views/Option.vue'
+import News from './News.vue'
 import Badges from '@/components/Badges'
 import sleep from '@/components/sleep.js'
 import localforage from 'localforage'
@@ -59,6 +60,7 @@ export default defineComponent({
         IonButtons,
         ETAPopup,
         OptionView,
+        News,
         Keypad,
         IonReorder,
         IonReorderGroup,
@@ -73,6 +75,7 @@ export default defineComponent({
         const altRoutes = ref([]) //Reference for alternate routes of selected bus
         const modalIsOpen = ref(false) // For controlling the showing of ETA Modal
         const optionIsOpen = ref(false) //For controlling the showing of Option Modal
+        const newsIsOpen = ref(false) // For controlling the showing of news modal
         const data = ref([]) // For storage of bus routes and stops
         const starred = ref([])
         const type = ref(props.dataType)
@@ -100,6 +103,7 @@ export default defineComponent({
             config,
             modalIsOpen,
             optionIsOpen,
+            newsIsOpen,
             disableReorder,
             starred,
             type,
@@ -107,6 +111,7 @@ export default defineComponent({
             cog,
             chevronBack,
             swapVerticalOutline,
+            newspaperOutline
         }
     },
     methods: {
@@ -143,8 +148,14 @@ export default defineComponent({
         openOption() {
             this.optionIsOpen = true
         },
+        openNews() {
+            this.newsIsOpen = true
+        },
         closeOption() {
             this.optionIsOpen = false
+        },
+        closeNews() {
+            this.newsIsOpen = false
         },
         async addStar() {
             this.starred.push(this.itemSelected)

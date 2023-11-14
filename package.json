@@ -56,8 +56,6 @@
     "@vue/cli-plugin-unit-jest": "~5.0.0-rc.1",
     "@vue/cli-service": "^5.0.8",
     "@vue/test-utils": "^2.0.0-rc.16",
-    "@vue/vue3-jest": "^27.0.0-alpha.3",
-    "babel-jest": "^27.3.1",
     "cypress": "^13.5.0",
     "cypress-if": "^1.10.5",
     "cypress-wait-until": "^2.0.1",
@@ -66,7 +64,6 @@
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-vue": "^9.14.1",
     "http-server": "^14.1.1",
-    "jest": "^27.3.1",
     "prettier": "^3.0.3",
     "serve": "^14.2.1"
   }

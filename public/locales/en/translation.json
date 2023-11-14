@@ -119,6 +119,10 @@
             "currentLocation": "Current GPS Location"
         }
     },
+    "news": {
+        "title": "Traffic News",
+        "fetching": "Fetching traffic news"
+    },
     "toast": {
         "noEta": "This route does not provide ETA service",
         "removedStar": "All stars were cleared",

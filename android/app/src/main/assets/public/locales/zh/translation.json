@@ -119,6 +119,10 @@
             "currentLocation": "目前GPS位置"
         }
     },
+    "news": {
+        "title": "交通消息",
+        "fetching": "正在獲取交通消息"
+    },
     "toast": {
         "noEta": "此路線未有提供到站報時服務",
         "removedStar": "已清除所有已標記的路線",
