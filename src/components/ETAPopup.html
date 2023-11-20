@@ -1,0 +1,109 @@
+<!-- Header -->
+<ion-header>
+    <!-- Toolbar -->
+    <ion-toolbar>
+        <ion-title
+            data-testid="eta-title"
+            v-if="item.type == 'bus' || item.type == 'minibus'"
+        >
+            <span>{{ item.routeNo }}</span>
+            <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
+                >{{ item.destTC }}</span
+            >
+            <span v-else class="ion-margin-start">{{ item.destEN }}</span>
+        </ion-title>
+        <ion-title data-testid="eta-title" v-else-if="item.type == 'lightRail'">
+            {{ item.routeNameEN }}
+            <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
+                >{{ item.originTC }} - {{ item.destTC }}</span
+            >
+            <span v-else class="ion-margin-start"
+                >{{ item.originEN }} - {{ item.destEN }}</span
+            >
+        </ion-title>
+        <ion-title class="marquee" v-else>
+            <span v-if="$i18next.language === 'zh'"
+                >{{ item.routeNameTC }}</span
+            >
+            <span v-else>{{ item.routeNameEN }}</span>
+        </ion-title>
+        <ion-buttons slot="start" class="top-buttons">
+            <ion-button @click="closeModal" data-testid="close-modal"
+                ><ion-icon :icon="chevronBack"></ion-icon
+            ></ion-button>
+        </ion-buttons>
+        <ion-buttons slot="end" class="top-buttons">
+            <span v-if="altRoutes && altRoutes.length == 1">
+                <ion-button @click="swapDirection">
+                    <ion-icon :icon="swapHorizontalOutline" />
+                </ion-button>
+            </span>
+            <span v-if="altRoutes && altRoutes.length > 1">
+                <ion-button @click="presentActionSheet">
+                    <ion-icon :icon="swapHorizontalOutline" />
+                </ion-button>
+            </span>
+            <span v-if="starred != undefined">
+                <ion-button v-if="checkbusStar" @click="removeStar">
+                    <ion-icon :icon="star" />
+                </ion-button>
+                <ion-button v-else @click="addStar">
+                    <ion-icon :icon="starOutline" />
+                </ion-button>
+            </span>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<ion-content ref="content" class="ion-padding-bottom">
+    <!-- Segment select -->
+    <section slot="fixed" class="popup-segment">
+        <ion-segment v-model="popupView">
+            <ion-segment-button value="default" data-testid="eta-tab-default">
+                <ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
+            </ion-segment-button>
+            <ion-segment-button
+                v-if="item.type != 'mtr' && item.type != 'lightRail'"
+                value="info"
+                data-testid="eta-tab-info"
+            >
+                <ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
+            </ion-segment-button>
+            <ion-segment-button
+                v-if="item.type != 'mtr' && item.type != 'lightRail'"
+                value="map"
+                data-testid="eta-tab-map"
+            >
+                <ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
+            </ion-segment-button>
+        </ion-segment>
+    </section>
+    <div class="segment-content">
+        <!-- Segment for route etas -->
+        <section v-if="popupView == 'default'">
+            <!-- Show list view for stops and etas -->
+            <ion-list>
+                <div ref="stopItemWrapper">
+                    <StopItems
+                        v-for="(stop, index) in item.stops"
+                        :key="stop.id"
+                        :stop="stop"
+                        :noEta="noEta"
+                        :eta="eta[index]"
+                        :class="{ nearest: isNearestStop(stop.stopId) }"
+                    ></StopItems>
+                </div>
+            </ion-list>
+        </section>
+        <section v-if="popupView == 'info'">
+            <RouteInfo :item="item"></RouteInfo>
+            <!-- Route Info -->
+        </section>
+        <!-- Map View -->
+        <section v-if="popupView == 'map'" class="max-size">
+            <LeafletMap
+                :routeLocations="item.stops"
+                :currentLocation="currentLocation"
+            />
+        </section>
+    </div>
+</ion-content>

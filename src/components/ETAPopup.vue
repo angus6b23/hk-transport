@@ -1,113 +1,4 @@
-<template>
-    <!-- Header -->
-    <ion-header>
-        <!-- Toolbar -->
-        <ion-toolbar>
-            <ion-title data-testid="eta-title" v-if="item.type == 'bus' || item.type == 'minibus'">
-                <span>{{ item.routeNo }}</span>
-                <span
-                    v-if="$i18next.language === 'zh'"
-                    class="ion-margin-start"
-                    >{{ item.destTC }}</span
-                >
-                <span v-else class="ion-margin-start">{{ item.destEN }}</span>
-            </ion-title>
-            <ion-title data-testid="eta-title" v-else-if="item.type == 'lightRail'">
-                {{ item.routeNameEN }}
-                <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
-                    >{{ item.originTC }} - {{ item.destTC }}</span
-                >
-                <span v-else class="ion-margin-start"
-                    >{{ item.originEN }} - {{ item.destEN }}</span
-                >
-            </ion-title>
-            <ion-title class="marquee" v-else>
-                <span v-if="$i18next.language === 'zh'">{{
-                    item.routeNameTC
-                }}</span>
-                <span v-else>{{ item.routeNameEN }}</span>
-            </ion-title>
-            <ion-buttons slot="start" class="top-buttons">
-                <ion-button @click="closeModal"
-                    data-testid="close-modal"
-                    ><ion-icon :icon="chevronBack"></ion-icon
-                ></ion-button>
-            </ion-buttons>
-            <ion-buttons slot="end" class="top-buttons">
-                <span v-if="altRoutes && altRoutes.length == 1">
-                    <ion-button @click="swapDirection">
-                        <ion-icon :icon="swapHorizontalOutline" />
-                    </ion-button>
-                </span>
-                <span v-if="altRoutes && altRoutes.length > 1">
-                    <ion-button @click="presentActionSheet">
-                        <ion-icon :icon="swapHorizontalOutline" />
-                    </ion-button>
-                </span>
-                <span v-if="starred != undefined">
-                    <ion-button v-if="checkbusStar" @click="removeStar">
-                        <ion-icon :icon="star" />
-                    </ion-button>
-                    <ion-button v-else @click="addStar">
-                        <ion-icon :icon="starOutline" />
-                    </ion-button>
-                </span>
-            </ion-buttons>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content ref="content" class="ion-padding-bottom">
-        <!-- Segment select -->
-        <section slot="fixed" class="popup-segment">
-            <ion-segment v-model="popupView">
-                <ion-segment-button value="default" data-testid="eta-tab-default">
-                    <ion-label>{{ $t('etaPopup.frame.upcoming') }}</ion-label>
-                </ion-segment-button>
-                <ion-segment-button
-                    v-if="item.type != 'mtr' && item.type != 'lightRail'"
-                    value="info"
-                    data-testid="eta-tab-info"
-                >
-                    <ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
-                </ion-segment-button>
-                <ion-segment-button
-                    v-if="item.type != 'mtr' && item.type != 'lightRail'"
-                    value="map"
-                    data-testid="eta-tab-map"
-                >
-                    <ion-label>{{ $t('etaPopup.frame.map') }}</ion-label>
-                </ion-segment-button>
-            </ion-segment>
-        </section>
-        <div class="segment-content">
-            <!-- Segment for route etas -->
-            <section v-if="popupView == 'default'">
-                <!-- Show list view for stops and etas -->
-                <ion-list>
-                    <div ref="stopItemWrapper">
-                    <StopItems
-                        v-for="stop in item.stops"
-                        :key="stop.id"
-                        :stop="stop"
-                        :noEta="noEta"
-                        :class="{ nearest: isNearestStop(stop.stopId) }"
-                    ></StopItems>
-                    </div>
-                </ion-list>
-            </section>
-            <section v-if="popupView == 'info'">
-                <RouteInfo :item="item"></RouteInfo>
-                <!-- Route Info -->
-            </section>
-            <!-- Map View -->
-            <section v-if="popupView == 'map'" class="max-size">
-                <LeafletMap
-                    :routeLocations="item.stops"
-                    :currentLocation="currentLocation"
-                />
-            </section>
-        </div>
-    </ion-content>
-</template>
+<template src="@/components/ETAPopup.html"></template>
 
 <script>
 import { ref, inject } from 'vue'
@@ -143,7 +34,6 @@ import {
     fetchBulkCTBETA,
 } from '@/fetch/fetchETA.js'
 // import { fetchBusStopID, reconstructBusStops } from '@/fetch/fetchStopID.js';
-import SkeletonItems from '@/components/SkeletonItems.vue'
 import StopItems from '@/components/StopItems.vue'
 import RouteInfo from '@/components/RouteInfo.vue'
 import LeafletMap from '@/components/leaflet.vue'
@@ -164,15 +54,24 @@ export default {
         IonSegmentButton,
         IonToolbar,
         LeafletMap,
-        SkeletonItems,
         StopItems,
         RouteInfo,
     },
     props: ['item', 'starred', 'noEta', 'altRoutes'],
     emits: ['closeModal', 'addStar', 'removeStar', 'swapDirection'],
     setup(props) {
+        const initEta = props.item.stops.map((stop) => {
+            return {
+                stopId: stop.stopId,
+                seq: stop.seq,
+                eta: [],
+                etaStatus: 'pending',
+                altId: stop.altId,
+            }
+        })
         const popupLoading = ref(false)
-        const item = ref({ ...props.item })
+        const item = ref(props.item)
+        const eta = ref(initEta)
         const popupView = ref('default')
         const starred = ref(props.starred)
         const altRoutes = ref(props.altRoutes)
@@ -192,6 +91,7 @@ export default {
             nearestStop,
             stopItemWrapper,
             noEta,
+            eta,
             stopItem,
             chevronBack,
             starOutline,
@@ -206,65 +106,77 @@ export default {
             presentToast('info', this.$t('toast.noEta'))
         }
         // Fetch KMB ETAs
-        if (
-            this.item.type === 'bus' &&
-            this.item.company.length == 1 &&
-            (this.item.company.includes('KMB') ||
-                this.item.company.includes('LWB'))
-        ) {
-            this.getKMB()
-            this.interval = setInterval(async () => await this.getKMB(), 10000)
-        }
-        // Fetch CTB and NWFB bus stop ids
-        else if (
-            this.item.type === 'bus' &&
-            this.item.company.length == 1 &&
-            (this.item.company.includes('CTB') ||
-                this.item.company.includes('NWFB'))
-        ) {
-            // Fetching stop id will not required now when using api
-            // await this.getStopID();
-            this.getCTB()
-            this.interval = setInterval(async () => await this.getCTB(), 10000)
-        }
-        // Fetch Bus routes operated by multiple companies
-        else if (this.item.type === 'bus' && this.item.company.length >= 2) {
-            this.getMultiple()
-            this.interval = setInterval(
-                async () => await this.getMultiple(),
-                10000
-            )
-        }
-        // Fetch MTR Buses ETAs
-        else if (
-            this.item.type === 'bus' &&
-            this.item.company.includes('LRTFeeder')
-        ) {
-            this.getMtrBus()
-            this.interval = setInterval(
-                async () => await this.getMtrBus(),
-                10000
-            )
-        }
-        // Fetch NLB Buses ETAs
-        else if (
-            this.item.type === 'bus' &&
-            this.item.company.includes('NLB')
-        ) {
-            this.getNLB()
-            this.interval = setInterval(async () => await this.getNLB(), 10000)
-        } else if (this.item.type === 'minibus') {
-            this.getMinibus()
-            this.interval = setInterval(
-                async () => await this.getMinibus(),
-                10000
-            )
-        } else if (this.item.type === 'mtr') {
-            this.getMtr()
-            this.interval = setInterval(async () => await this.getMtr(), 10000)
-        }
-        if (this.item.type === 'lightRail') {
-            this.getLightRail()
+        switch (this.item.type) {
+            case 'bus':
+                if (
+                    this.item.company.length === 1 &&
+                    (this.item.company.includes('KMB') ||
+                        this.item.company.includes('LWB'))
+                ) {
+                    this.getKMB()
+                    this.interval = setInterval(
+                        async () => await this.getKMB(),
+                        10000
+                    )
+                } else if (
+                    this.item.company.length === 1 &&
+                    (this.item.company.includes('CTB') ||
+                        this.item.company.includes('NWFB'))
+                ) {
+                    this.getCTB()
+                    this.interval = setInterval(
+                        async () => await this.getCTB(),
+                        10000
+                    )
+                } else if (this.item.company.includes('LRTFeeder')) {
+                    this.getMtrBus()
+                    this.interval = setInterval(
+                        async () => await this.getMtrBus(),
+                        10000
+                    )
+                } else if (this.item.company.includes('NLB')) {
+                    this.getNLB()
+                    this.interval = setInterval(
+                        async () => await this.getNLB(),
+                        10000
+                    )
+                } else if (this.item.company.length >= 2) {
+                    this.getMultiple()
+                    this.interval = setInterval(
+                        async () => await this.getMultiple(),
+                        10000
+                    )
+                } else {
+                    presentToast('error', this.$t('toast.noEta'))
+                }
+                break
+            case 'minibus':
+                this.getMinibus()
+                this.interval = setInterval(
+                    async () => await this.getMinibus(),
+                    10000
+                )
+                break
+            case 'mtr':
+                this.getMtr()
+                this.interval = setInterval(
+                    async () => await this.getMtr(),
+                    10000
+                )
+                break
+            case 'lightRail':
+                this.getLightRail()
+                this.interval = setInterval(
+                    async () => await this.getLightRail(),
+                    10000
+                )
+                break
+            case 'ferry':
+                break
+            case 'tram':
+                break
+            default:
+                presentToast('error', this.$t('toast.unexpectedTransportType'))
         }
         // Get Coordinates
         navigator.geolocation.getCurrentPosition(
@@ -340,9 +252,11 @@ export default {
                 }
             })
             setTimeout(() => {
-                const node = this.$refs.stopItemWrapper ? this.$refs.stopItemWrapper.querySelector('.nearest') : null 
-                if (node && this.config.autoScroll){
-                    node.scrollIntoView({behavior: 'smooth', block: 'center'})
+                const node = this.$refs.stopItemWrapper
+                    ? this.$refs.stopItemWrapper.querySelector('.nearest')
+                    : null
+                if (node && this.config.autoScroll) {
+                    node.scrollIntoView({ behavior: 'smooth', block: 'center' })
                 }
             }, 100)
             // Auto scroll to nearest station ETA if the distance is less than 1000
@@ -366,37 +280,50 @@ export default {
         populateETABySeq(etaData) {
             if (etaData.status == 'success' && etaData.data.length > 0) {
                 etaData.data.forEach((etaItem) => {
-                    const index = this.item.stops.findIndex(
+                    const index = this.eta.findIndex(
                         (x) => x.seq == etaItem.seq
                     )
                     if (index != -1) {
-                        this.item.stops[index].etaMessage = etaItem.note
-                        this.item.stops[index].etas = [...etaItem.etas]
+                        this.eta[index].etaStatus = etaItem.note
+                        this.eta[index].eta = [...etaItem.etas]
+
+                        //                        this.item.stops[index].etaMessage = etaItem.note
+                        //                        this.item.stops[index].etas = [...etaItem.etas]
                     }
                 })
             }
+            this.eta.forEach((item) => {
+                if (item.etaStatus === 'pending') {
+                    item.etaStatus = 'N/A'
+                }
+            })
         },
         populateETAById(etaData) {
             if (etaData.status == 'success' && etaData.data.length > 0) {
                 etaData.data.forEach((etaItem) => {
                     let index
-                    if (this.item.stops[0].altId) {
-                        index = this.item.stops.findIndex(
-                            (x) => x.altId === etaItem.stopId
+                    if (this.eta[0].altId !== undefined) {
+                        index = this.eta.findIndex(
+                            (x) => x.altId == etaItem.stopId
                         )
                     } else {
-                        index = this.item.stops.findIndex(
+                        index = this.eta.findIndex(
                             (x) =>
                                 x.stopId == etaItem.stopId ||
                                 x.stopId == etaItem.stationId
                         )
                     }
                     if (index != -1) {
-                        this.item.stops[index].etaMessage = etaItem.note
-                        this.item.stops[index].etas = [...etaItem.etas]
+                        this.eta[index].etaStatus = etaItem.note
+                        this.eta[index].eta = [...etaItem.etas]
                     }
                 })
             }
+            this.eta.forEach((item) => {
+                if (item.etaStatus === 'pending') {
+                    item.etaStatus = 'N/A'
+                }
+            })
         },
         /*
         Old code, currently do not require feching data from CTB and NWFB
@@ -512,18 +439,15 @@ export default {
             // console.log(combinedList)
             for (let i = 0; i < combinedList.length; i++) {
                 let targetItem = combinedList[i]
-                let targetStopIndex = this.item.stops.findIndex(
+                let targetStopIndex = this.eta.findIndex(
                     (stop) => stop.seq == targetItem.seq
                 )
                 if (targetStopIndex != -1) {
                     let etaArray = targetItem.data.map((item) => item.eta)
                     if (etaArray.length > 0) {
-                        this.item.stops[targetStopIndex].etas = etaArray.slice(
-                            0,
-                            3
-                        )
+                        this.eta[targetStopIndex].eta = etaArray.slice(0, 3)
                     } else {
-                        this.item.stops[targetStopIndex].etaMessage = 'N/A'
+                        this.eta[targetStopIndex].etaStatus = 'N/A'
                     }
                 }
             }
@@ -548,8 +472,8 @@ export default {
                         (x) => x.code == etaItem.stopId
                     )
                     if (index != -1) {
-                        this.item.stops[index].etaMessage = etaItem.note
-                        this.item.stops[index].etas = [...etaItem.etas]
+                        this.eta[index].etaStatus = etaItem.note
+                        this.eta[index].eta = [...etaItem.etas]
                     }
                 })
             } else if (etaData.status == 'api-error') {

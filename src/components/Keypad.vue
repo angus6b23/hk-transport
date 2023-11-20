@@ -6,7 +6,7 @@
                     <ion-icon
                         :icon="keypadOutline"
                         class="ion-margin-end keypad-icon"
-                        ></ion-icon>
+                    ></ion-icon>
                     {{ $t('searchView.toggleRouteKeypad') }}
                 </ion-text>
             </summary>
@@ -15,7 +15,7 @@
                     <div>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 fill="clear"
                                 size="small"
@@ -25,14 +25,14 @@
                             >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[2]"
                                 @click="emitClick(2)"
                                 >2</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[3]"
                                 @click="emitClick(3)"
                                 >3</ion-button
@@ -40,24 +40,24 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[4]"
                                 @click="emitClick(4)"
                                 >4</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[5]"
                                 @click="emitClick(5)"
                                 >5</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[6]"
                                 @click="emitClick(6)"
                                 >6</ion-button
@@ -65,24 +65,24 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[7]"
                                 @click="emitClick(7)"
                                 >7</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[8]"
                                 @click="emitClick(8)"
                                 >8</ion-button
                             >
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[9]"
                                 @click="emitClick(9)"
                                 >9</ion-button
@@ -90,22 +90,22 @@
                         </ion-row>
                         <ion-row
                             class="ion-justify-content-around ion-align-items-center"
-                            >
+                        >
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="query.length === 0"
                                 @click="emitClick('clear')"
-                                >
+                            >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="trashBinOutline"
-                                    />
+                                />
                             </ion-button>
                             <ion-button
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="!numpad[0]"
                                 @click="emitClick(0)"
                                 >0</ion-button
@@ -113,14 +113,14 @@
                             <ion-button
                                 class="icon-button"
                                 fill="clear"
-                                size="small" 
+                                size="small"
                                 :disabled="query.length === 0"
                                 @click="emitClick('back')"
-                                >
+                            >
                                 <ion-icon
                                     slot="icon-only"
                                     :icon="backspaceOutline"
-                                    />
+                                />
                             </ion-button>
                         </ion-row>
                     </div>

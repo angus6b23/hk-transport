@@ -240,7 +240,7 @@ export default defineComponent({
         const lang = ref('')
         const useOwnAPI = ref(false)
         const hostUrl = ref('')
-        const step = ref(1);
+        const step = ref(1)
         const downloadProgress = ref(0)
         const downloadText = ref('')
         const downloadFinish = ref(false)
@@ -284,7 +284,7 @@ export default defineComponent({
                 apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                 dataFilled: false,
                 autoScroll: true,
-                maxResults: 20
+                maxResults: 20,
             }
             this.$emit('finishConfig', config)
         },
@@ -309,17 +309,14 @@ export default defineComponent({
                     }
                 }
                 let isSuccess = false
-                const fetchMethod = this.useOwnAPI ? 'self' : 'default';
-                const apiBaseUrl = this.useOwnAPI ? this.hostUrl: '' 
+                const fetchMethod = this.useOwnAPI ? 'self' : 'default'
+                const apiBaseUrl = this.useOwnAPI ? this.hostUrl : ''
                 switch (fetchMethod) {
                     case 'default':
                         isSuccess = await fetchAPIData(undefined, this.$el)
                         break
                     case 'self':
-                        isSuccess = await fetchAPIData(
-                            apiBaseUrl,
-                            this.$el
-                        )
+                        isSuccess = await fetchAPIData(apiBaseUrl, this.$el)
                         break
                     default:
                         throw new Error('Unknown fetch method')

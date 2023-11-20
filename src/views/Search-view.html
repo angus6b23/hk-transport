@@ -221,8 +221,6 @@
         />
     </ion-modal>
     <ion-modal :is-open="newsIsOpen" @WillDismiss="closeNews">
-        <News
-            @closeNews="closeNews"
-        />
+        <News @closeNews="closeNews" />
     </ion-modal>
 </ion-page>

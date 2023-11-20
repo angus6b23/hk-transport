@@ -35,17 +35,17 @@
                     class="ion-no-margin ion-text-right"
                     v-if="!noEta"
                 >
-                    <div v-if="stop.etaMessage == 'N/A'">
+                    <div v-if="eta.etaStatus === 'N/A'">
                         <ion-text color="medium">
                             <span>{{ $t('etaPopup.upcoming.noService') }}</span>
                         </ion-text>
                     </div>
-                    <div v-else-if="stop.etaMessage == 'loading'">
-                        <ion-spinner color="primary"></ion-spinner>
-                    </div>
-                    <div v-else-if="stop.etas.length > 0">
+                    <!-- <div v-else-if="eta.etaStatus === 'pending'"> -->
+                    <!--     <ion-spinner color="primary"></ion-spinner> -->
+                    <!-- </div> -->
+                    <div v-else-if="eta.eta.length > 0">
                         <ion-text>
-                            <span>{{ stop.etas.join(', ') }}</span>
+                            <span>{{ eta.eta.join(', ') }}</span>
                             <br />
                             <span>{{ $t('common.minute') }}</span>
                         </ion-text>
@@ -57,7 +57,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import {
     IonGrid,
     IonRow,
@@ -70,16 +69,8 @@ import {
 export default {
     name: 'StopItems',
     components: { IonGrid, IonRow, IonCol, IonItem, IonSpinner, IonText },
-    props: ['stop', 'noEta'],
+    props: ['stop', 'noEta', 'eta'],
     emits: ['getETA'],
-    setup(props) {
-        const stop = ref(props.stop)
-        const noEta = ref(props.noEta)
-        return {
-            stop,
-            noEta,
-        }
-    },
 }
 </script>
 <style scoped></style>

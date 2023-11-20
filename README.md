@@ -15,7 +15,7 @@ The app makes use of api provided by HK government to provide estimated time of 
 ## Features
 
 -   [Live site](https://hk-transport.12a.app)
--   [Google  Play Store](https://play.google.com/store/apps/details?id=app.hkTransport)
+-   [Google Play Store](https://play.google.com/store/apps/details?id=app.hkTransport)
 -   [Fdroid](https://f-droid.org/zh_Hant/packages/app.hkTransport/)
 -   Transport modes include bus, mtr, minibus, tram, light rail, ferry
 -   No annoying ads
@@ -62,6 +62,7 @@ The app makes use of api provided by HK government to provide estimated time of 
 4. Continue with android studio
 
 ## License
+
 ![img](https://www.gnu.org/graphics/gplv3-or-later.svg)
 
 This app is provided under GPL v3.0 or later. For details, please see https://www.gnu.org/licenses/gpl-3.0.en.html
