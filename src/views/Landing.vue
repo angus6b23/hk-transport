@@ -8,14 +8,14 @@
                             <ion-card-title class="ion-text-center"
                                 >歡迎 Welcome</ion-card-title
                             >
+                        </ion-card-header>
+                        <ion-card-content>
                             <ion-card-subtitle class="ion-margin-top"
                                 >請選擇語言</ion-card-subtitle
                             >
                             <ion-card-subtitle
                                 >Please select language</ion-card-subtitle
                             >
-                        </ion-card-header>
-                        <ion-card-content>
                             <ion-button
                                 expand="block"
                                 class="ion-margin-top"
@@ -360,7 +360,7 @@ export default defineComponent({
     min-width: fit-content;
     height: 50vh;
     min-width: 300px;
-    min-height: 300px;
+    min-height: 450px;
 }
 .option-wrapper {
     display: flex;
