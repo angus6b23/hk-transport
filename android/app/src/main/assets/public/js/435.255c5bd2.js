@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkhk_transport"]=self["webpackChunkhk_transport"]||[]).push([[435],{8435:function(n,e,r){r.r(e),r.d(e,{default:function(){return p}});var t=r(6252);function a(n,e,r,a,u,s){const c=(0,t.up)("SearchView");return(0,t.wg)(),(0,t.j4)(c,{dataType:"bus"})}var u=r(2052),s=(0,t.aZ)({name:"bus",components:{SearchView:u.Z}}),c=r(3744);const o=(0,c.Z)(s,[["render",a]]);var p=o}}]);
+//# sourceMappingURL=435.255c5bd2.js.map

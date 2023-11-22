@@ -1,0 +1,4 @@
+Updates
+
+- Fixed not showing 'no services' on certain type of bus
+- Various UI Improvements
