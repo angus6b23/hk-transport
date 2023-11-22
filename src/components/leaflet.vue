@@ -182,9 +182,10 @@ export default {
         )
         // console.log(stopGeometries);
         let polyline = new L.Polyline(stopGeometries, {
-            color: '#647fc0',
-            weight: 3,
-            opacity: 0.7,
+            color: '#3880ff',
+            weight: 4,
+            opacity: 1,
+            interactive: false
         })
         // Apply markers and polyline
         toRaw(this.map).addLayer(this.markersGroup)
