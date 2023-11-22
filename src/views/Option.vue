@@ -272,4 +272,18 @@ export default {
     },
 }
 </script>
-<style></style>
+<style scoped>
+.flex{
+    display: flex;
+}
+.flex-wrap{
+    flex-wrap: wrap;
+}
+.w-full{
+    width: 100%;
+}
+.py-0{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+</style>

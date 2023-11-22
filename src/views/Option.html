@@ -78,17 +78,18 @@
         <!-- Max Results -->
         <ion-item>
             <ion-icon :icon="listOutline" slot="start" />
-            <ion-label>
-                <h5>{{ $t('option.maxResults') }}</h5>
+            <ion-label class="flex flex-wrap">
+                <h5 class="w-full">{{ $t('option.maxResults') }}</h5>
+                <ion-range
+                    class="w-full py-0"
+                    v-model="config.maxResults"
+                    :min="10"
+                    :max="50"
+                    :step="5"
+                    :snaps="true"
+                    :pin="true"
+                />
             </ion-label>
-            <ion-range
-                v-model="config.maxResults"
-                :min="10"
-                :max="50"
-                :step="5"
-                :snaps="true"
-                :pin="true"
-            />
         </ion-item>
     </ion-list>
     <!-- Data settings -->
