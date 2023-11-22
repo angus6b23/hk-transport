@@ -1,6 +1,6 @@
 <template>
     <div>
-        <details ref="keypad">
+        <details ref="keypad" class="py-2">
             <summary id="summary-tag">
                 <ion-text color="primary">
                     <ion-icon
@@ -324,5 +324,9 @@ details > summary {
     .grid ion-button.icon-button {
         font-size: 1.2rem;
     }
+}
+.py-2{
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
 }
 </style>
