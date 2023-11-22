@@ -24,7 +24,12 @@ import {
     IonReorder,
     IonReorderGroup,
 } from '@ionic/vue'
-import { cog, chevronBack, swapVerticalOutline, newspaperOutline } from 'ionicons/icons'
+import {
+    cog,
+    chevronBack,
+    swapVerticalOutline,
+    newspaperOutline,
+} from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
 import OptionView from '@/views/Option.vue'
@@ -85,7 +90,7 @@ export default defineComponent({
 
         const memoFilterQuery = useMemoize(filterData, {
             getKey: (data, type, query, lang, maxResults) =>
-            `${query.toUpperCase()}-${lang}-${maxResults}`,
+                `${query.toUpperCase()}-${lang}-${maxResults}`,
         })
         // Event listeners
         addEventListener('ionModalDidDismiss', function () {
@@ -111,7 +116,7 @@ export default defineComponent({
             cog,
             chevronBack,
             swapVerticalOutline,
-            newspaperOutline
+            newspaperOutline,
         }
     },
     methods: {

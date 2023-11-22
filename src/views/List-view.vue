@@ -49,7 +49,7 @@ export default defineComponent({
         IonButton,
         ETAPopup,
         OptionView,
-        News
+        News,
     },
     props: ['dataType'],
     setup(props) {
@@ -76,7 +76,7 @@ export default defineComponent({
             type,
             dataReady,
             cog,
-            newspaperOutline
+            newspaperOutline,
         }
     },
     methods: {

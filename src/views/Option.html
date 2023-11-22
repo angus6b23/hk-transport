@@ -78,10 +78,18 @@
         <!-- Max Results -->
         <ion-item>
             <ion-icon :icon="listOutline" slot="start" />
-                <ion-label>
-                    <h5>{{ $t('option.maxResults') }}</h5>
-                </ion-label>
-                    <ion-range v-model="config.maxResults" :min="10" :max="50" :step="5" :snaps="true" :pin="true" />
+            <ion-label class="flex flex-wrap">
+                <h5 class="w-full">{{ $t('option.maxResults') }}</h5>
+                <ion-range
+                    class="w-full py-0"
+                    v-model="config.maxResults"
+                    :min="10"
+                    :max="50"
+                    :step="5"
+                    :snaps="true"
+                    :pin="true"
+                />
+            </ion-label>
         </ion-item>
     </ion-list>
     <!-- Data settings -->
@@ -89,7 +97,7 @@
         <ion-label>{{ $t('option.manageData') }}</ion-label>
     </ion-list-header>
     <ion-list class="ion-padding-bottom ion-margin-bottom">
-    <!-- Update route data -->
+        <!-- Update route data -->
         <ion-item button @click="updateData">
             <ion-icon :icon="cloudDownloadOutline" slot="start" />
             <ion-label>
@@ -110,7 +118,7 @@
                 <h5>{{ $t('option.removeAllStar') }}</h5>
             </ion-label>
         </ion-item>
-        <!-- Reset All --> 
+        <!-- Reset All -->
         <ion-item button @click="confirmClearData">
             <ion-icon :icon="trashOutline" slot="start" />
             <ion-label>

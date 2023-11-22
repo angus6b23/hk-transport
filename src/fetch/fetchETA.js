@@ -360,7 +360,7 @@ export async function fetchLightRailEta(
         )
         etaData.status = 'success'
         etaData.data = res.data
-        console.log(etaData)
+        // console.log(etaData)
         return etaData
     } catch (err) {
         console.error(err)

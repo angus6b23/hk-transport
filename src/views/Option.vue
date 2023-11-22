@@ -36,7 +36,7 @@ import {
     codeSlashOutline,
     shieldCheckmarkOutline,
     linkOutline,
-    listOutline
+    listOutline,
 } from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js'
@@ -71,7 +71,7 @@ export default {
                 config.value.fetchMethod,
                 config.value.theme,
                 config.value.lang,
-                config.value.maxResults
+                config.value.maxResults,
             ],
             async () => {
                 await localforage.setItem(
@@ -100,7 +100,9 @@ export default {
             body,
         }
     },
-    async mounted() {console.log(this.config)},
+    async mounted() {
+        console.log(this.config)
+    },
     methods: {
         closeOption() {
             this.$emit('closeOption')
@@ -270,4 +272,18 @@ export default {
     },
 }
 </script>
-<style></style>
+<style scoped>
+.flex{
+    display: flex;
+}
+.flex-wrap{
+    flex-wrap: wrap;
+}
+.w-full{
+    width: 100%;
+}
+.py-0{
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+</style>
