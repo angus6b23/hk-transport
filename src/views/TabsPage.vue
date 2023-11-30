@@ -118,9 +118,8 @@ export default defineComponent({
                 }
                 // Fill unfilled config
                 // Before v1.0.5, search item style should be undefined
-                if (config.selectItemStyle === undefined){
+                if (config.searchItemStyle === undefined){
                     this.config.searchItemStyle = 'comfort' //Default to comfort
-                    console.log(this.config.searchItemStyle)
                     changesApplied = true
                 }
                 if ( changesApplied ){ // Save the new setting if changes apply is detected
