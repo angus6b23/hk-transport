@@ -4,25 +4,25 @@
         :key="route.id"
         :data-testid="`search-item-${type}-${index}`"
         button
-        >
+    >
         <ion-grid>
             <!-- Rows for Bus and minibus -->
             <ion-row
                 v-if="type == 'bus' || type == 'minibus'"
                 expand="block"
                 @click="openModal(index)"
-                >
+            >
                 <ion-col
                     size-xs="3"
                     size-md="1"
                     class="route-no-wrapper ion-align-items-center"
-                    >
+                >
                     <div className="badge-wrapper">
                         <Badges
                             :route="route"
                             :compact="compact"
                             position="default"
-                            />
+                        />
                     </div>
                     <h3 v-if="route.routeNo.length < 10" class="route-no">
                         {{ route.routeNo }}
@@ -31,36 +31,50 @@
                     <!-- Hide Route with long route number -->
                 </ion-col>
                 <ion-col size-xs="9" size-md="11" class="dest-wrapper">
-                    <div v-if="$i18next.language === 'zh'" class="ion-margin-start">
+                    <div
+                        v-if="$i18next.language === 'zh'"
+                        class="ion-margin-start"
+                    >
                         <span class="ion-text item-subtitle">
-                            <span class="small-scale">{{ $t('searchView.from')}}</span> {{ route.originTC }}
+                            <span class="small-scale">{{
+                                $t('searchView.from')
+                            }}</span>
+                            {{ route.originTC }}
                         </span>
                         <h4 class="ion-no-margin">
-                            <span class="small-scale">{{ $t('searchView.to')}}</span> {{ route.destTC }}
+                            <span class="small-scale">{{
+                                $t('searchView.to')
+                            }}</span>
+                            {{ route.destTC }}
                         </h4>
                     </div>
-                    <div v-else-if="$i18next.language === 'en'" class="ion-margin-start">
+                    <div
+                        v-else-if="$i18next.language === 'en'"
+                        class="ion-margin-start"
+                    >
                         <span class="ion-text item-subtitle">
-                            <span class="small-scale">{{ $t('searchView.from') }}</span> {{ route.originEN }}
+                            <span class="small-scale">{{
+                                $t('searchView.from')
+                            }}</span>
+                            {{ route.originEN }}
                         </span>
                         <h5 class="ion-no-margin">
-                            <span class="small-scale">{{ $t('searchView.to')}}</span> {{ route.destEN }}
+                            <span class="small-scale">{{
+                                $t('searchView.to')
+                            }}</span>
+                            {{ route.destEN }}
                         </h5>
                     </div>
                 </ion-col>
             </ion-row>
             <!-- Rows for Ferry -->
-            <ion-row
-                v-else
-                expand="block"
-                @click="openModal(index)"
-                >
+            <ion-row v-else expand="block" @click="openModal(index)">
                 <ion-col size-xs="8" size-md="10">
                     <Badges :route="route" :compact="compact" />
                     <h5
                         v-if="$i18next.language === 'zh'"
                         class="ion-no-margin ion-margin-start"
-                        >
+                    >
                         {{ route.routeNameTC }}
                     </h5>
                     <h5 v-else class="ion-no-margin ion-margin-start">
@@ -128,7 +142,7 @@ export default {
 }
 </script>
 <style scoped>
-ion-col{
+ion-col {
     padding-top: 0px;
     padding-bottom: 0px;
 }
@@ -143,25 +157,25 @@ ion-col{
 .direction2-button {
     --background: #a1905e;
 }
-.item-subtitle{
+.item-subtitle {
     font-size: 1rem;
-    color: var(--ion-color-medium)
+    color: var(--ion-color-medium);
 }
-.route-no-wrapper{
-    display: block
+.route-no-wrapper {
+    display: block;
 }
-.route-no{
+.route-no {
     margin-top: 2px;
     margin-bottom: 2px;
 }
-.badge-wrapper{
+.badge-wrapper {
     margin-left: -16px;
 }
 .dest-wrapper {
     display: flex;
-    align-items: center
+    align-items: center;
 }
-.small-scale{
+.small-scale {
     font-size: 0.8rem;
 }
 </style>

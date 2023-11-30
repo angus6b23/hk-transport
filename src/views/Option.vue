@@ -103,8 +103,7 @@ export default {
             body,
         }
     },
-    async mounted() {
-    },
+    async mounted() {},
     methods: {
         closeOption() {
             this.$emit('closeOption')

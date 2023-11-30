@@ -56,9 +56,13 @@
         "lrt": "港鐵",
         "night": "夜間",
         "special": "特別",
+        "special-short": "特別",
         "hki": "港島",
+        "hki-short": "港島",
         "kln": "九龍",
+        "kln-short": "九龍",
         "nt": "新界",
+        "nt-short": "新界",
         "kaito": "街渡",
         "outlying": "離島",
         "inner": "內陸"

@@ -56,9 +56,13 @@
         "lrt": "MTR",
         "night": "Night",
         "special": "Special",
+        "special-short": "SPL",
         "hki": "Hong Kong Island",
+        "hki-short": "HKI",
         "kln": "Kowloon",
+        "kln-short": "KLN",
         "nt": "New Territories",
+        "nt-short": "N.T.",
         "kaito": "Kai-to",
         "outlying": "Outlying Islands",
         "inner": "Inner Routes"

@@ -3,182 +3,178 @@
     <div
         v-if="route.type === 'bus'"
         :class="{ 'badge-left': position !== 'default' }"
-    >
+        >
         <ion-badge
             v-if="route.company.includes('KMB')"
-            class="kmb-badge"
+            class="kmb-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.kmb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('CTB')"
-            class="ctb-badge"
+            class="ctb-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.ctb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('LWB')"
-            class="lwb-badge"
+            class="lwb-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.lwb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('NWFB')"
-            class="nwfb-badge"
+            class="nwfb-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.nwfb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('DB')"
-            class="db-badge"
+            class="db-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.db') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('NLB')"
-            class="nlb-badge"
+            class="nlb-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.nlb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('PI')"
-            class="pi-badge"
+            class="pi-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.pi') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('XB')"
-            class="xb-badge"
+            class="xb-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.xb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('LRTFeeder')"
-            class="ltr-badge"
+            class="ltr-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.lrt') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode.includes('N')"
-            class="night-badge"
+            class="night-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.night') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode == 'T'"
-            class="special-badge"
+            class="special-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
-            >{{ $t('badges.special') }}</ion-badge
-        >
+            >
+            <span v-if="compact">{{ $t('badges.special-short') }}</span>
+            <span v-else>{{ $t('badges.special') }}</span>
+        </ion-badge>
     </div>
     <div
         v-if="route.type === 'minibus'"
         :class="{ 'badge-left': position !== 'default' }"
-    >
+        >
         <ion-badge
             v-if="route.district.includes('HKI')"
-            class="hki-badge"
+            class="hki-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
-            >{{ $t('badges.hki') }}</ion-badge
+            >
+            <span v-if="compact">{{ $t('badges.hki-short') }}</span>
+            <span v-else>{{ $t('badges.hki') }}</span>
+        </ion-badge
         >
         <ion-badge
             v-if="route.district.includes('KLN')"
-            class="kln-badge"
+            class="kln-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
-            >{{ $t('badges.kln') }}</ion-badge
+            >
+            <span v-if="compact">{{ $t('badges.kln-short') }}</span>
+            <span v-else>{{ $t('badges.kln') }}</span>
+        </ion-badge
         >
         <ion-badge
             v-if="route.district.includes('NT')"
-            class="nt-badge"
+            class="nt-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
-            >{{ $t('badges.nt') }}</ion-badge
+            >
+            <span v-if="compact">{{ $t('badges.nt-short') }}</span>
+            <span v-else>{{ $t('badges.nt') }}</span>
+        </ion-badge
         >
         <ion-badge
             v-if="route.serviceMode.includes('N')"
-            class="night-badge"
+            class="night-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.night') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode == 'T'"
-            class="special-badge"
+            class="special-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
-            >{{ $t('badges.special') }}</ion-badge
+            >
+
+            <span v-if="compact">{{ $t('badges.special-short') }}</span>
+            <span v-else>{{ $t('badges.special') }}</span>
+        </ion-badge
         >
     </div>
     <div v-if="route.type === 'ferry'">
         <ion-badge
             v-if="route.district == 'KAITO'"
-            class="hki-badge"
+            class="hki-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.kaito') }}</ion-badge
         >
         <ion-badge
             v-if="route.district == 'OUTLYING'"
-            class="kln-badge"
+            class="kln-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.outlying') }}</ion-badge
         >
         <ion-badge
             v-if="route.district == 'INNER'"
-            class="nt-badge"
+            class="nt-badge ion-margin-start"
             :class="{
-                compact: compact,
-                'ion-margin-start': position !== 'left',
+            compact: compact,
             }"
             >{{ $t('badges.inner') }}</ion-badge
         >
@@ -263,5 +259,8 @@ export default defineComponent({
     flex-wrap: wrap;
     flex-direction: column;
     gap: 2px;
+}
+.compact {
+    margin-left: 0px;
 }
 </style>

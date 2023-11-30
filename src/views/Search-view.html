@@ -239,9 +239,7 @@
         />
     </ion-modal>
     <ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
-        <OptionView
-            @closeOption="closeOption"
-        />
+        <OptionView @closeOption="closeOption" />
     </ion-modal>
     <ion-modal :is-open="newsIsOpen" @WillDismiss="closeNews">
         <News @closeNews="closeNews" />
