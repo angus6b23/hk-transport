@@ -262,5 +262,6 @@ export default defineComponent({
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
+    gap: 2px;
 }
 </style>

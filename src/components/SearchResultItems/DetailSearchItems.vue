@@ -143,10 +143,6 @@ ion-col{
 .direction2-button {
     --background: #a1905e;
 }
-.route-no{
-    display: flex;
-    align-items:center;
-}
 .item-subtitle{
     font-size: 1rem;
     color: var(--ion-color-medium)
@@ -155,8 +151,8 @@ ion-col{
     display: block
 }
 .route-no{
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 .badge-wrapper{
     margin-left: -16px;

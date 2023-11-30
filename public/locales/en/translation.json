@@ -128,7 +128,8 @@
     },
     "news": {
         "title": "Traffic News",
-        "fetching": "Fetching traffic news"
+        "fetching": "Fetching traffic news",
+        "sourceHeader": "News source provided by RTHK"
     },
     "toast": {
         "noEta": "This route does not provide ETA service",

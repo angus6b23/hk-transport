@@ -128,7 +128,8 @@
     },
     "news": {
         "title": "交通消息",
-        "fetching": "正在獲取交通消息"
+        "fetching": "正在獲取交通消息",
+        "sourceHeader": "交通消息由香港電台提供"
     },
     "toast": {
         "noEta": "此路線未有提供到站報時服務",
