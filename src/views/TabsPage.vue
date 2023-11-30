@@ -119,11 +119,11 @@ export default defineComponent({
                 // Fill unfilled config
                 // Before v1.0.5, search item style should be undefined
                 if (config.selectItemStyle === undefined){
-                    this.config.selectItemStyle = 'comfort' //Default to comfort
+                    this.config.searchItemStyle = 'comfort' //Default to comfort
+                    console.log(this.config.searchItemStyle)
                     changesApplied = true
                 }
                 if ( changesApplied ){ // Save the new setting if changes apply is detected
-                    console.log('Changes detected')
                     await localforage.setItem(
                         'config',
                         JSON.parse(JSON.stringify(this.config))
