@@ -25,7 +25,11 @@
                     <!-- Hide Route with long route number -->
                 </ion-col>
                 <ion-col size-xs="9" size-md="11">
-                    <Badges :route="route" :compact="compact" position="default" />
+                    <Badges
+                        :route="route"
+                        :compact="compact"
+                        position="default"
+                    />
                     <h5
                         v-if="$i18next.language === 'zh'"
                         class="ion-no-margin ion-margin-start"

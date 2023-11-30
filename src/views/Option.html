@@ -71,7 +71,7 @@
             </ion-label>
             <ion-checkbox
                 slot="end"
-                label="$t('option.autoScroll')"
+                aria-label="$t('option.autoScroll')"
                 v-model="config.autoScroll"
             ></ion-checkbox>
         </ion-item>
@@ -89,6 +89,9 @@
                 <p v-else-if="config.searchItemStyle == 'compact_right'">
                     {{ $t('option.itemStyleCompactRight') }}
                 </p>
+                <p v-else-if="config.searchItemStyle == 'detail'">
+                    {{ $t('option.itemStyleDetail') }}
+                </p>
             </ion-label>
         </ion-item>
         <!-- Max Results -->
@@ -99,6 +102,7 @@
                 <ion-range
                     class="w-full py-0"
                     v-model="config.maxResults"
+                    aria-label="$t('option.maxResults')"
                     :min="10"
                     :max="50"
                     :step="5"

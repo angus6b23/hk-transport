@@ -144,9 +144,9 @@ ion-col {
 .direction2-button {
     --background: #a1905e;
 }
-.badge-left{
+.badge-left {
     display: flex;
     flex-direction: row;
-    justify-content: center
+    justify-content: center;
 }
 </style>

@@ -108,13 +108,19 @@
                         @openModal="openModal"
                     />
                     <CompactSearchItemsLeft
-                        v-if="config.searchItemStyle === 'compact_left'"
+                        v-else-if="config.searchItemStyle === 'compact_left'"
                         :displayArray="displayArray"
                         :type="type"
                         @openModal="openModal"
                     />
                     <CompactSearchItemsRight
-                        v-if="config.searchItemStyle === 'compact_right'"
+                        v-else-if="config.searchItemStyle === 'compact_right'"
+                        :displayArray="displayArray"
+                        :type="type"
+                        @openModal="openModal"
+                    />
+                    <DetailSearchItems
+                        v-else-if="config.searchItemStyle === 'detail'"
                         :displayArray="displayArray"
                         :type="type"
                         @openModal="openModal"
@@ -235,7 +241,6 @@
     <ion-modal :is-open="optionIsOpen" @WillDismiss="closeOption">
         <OptionView
             @closeOption="closeOption"
-            @changeLanguage="changeLanguage"
         />
     </ion-modal>
     <ion-modal :is-open="newsIsOpen" @WillDismiss="closeNews">

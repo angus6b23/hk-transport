@@ -7,9 +7,9 @@ import {
     IonHeader,
     IonToolbar,
     IonContent,
-    IonText,
     IonSearchbar,
     IonItem,
+    IonText,
     IonLabel,
     IonList,
     IonListHeader,
@@ -44,6 +44,7 @@ import { filterData } from '@/components/search'
 import RegularSearchItems from '@/components/SearchResultItems/RegularSearchItems.vue'
 import CompactSearchItemsLeft from '@/components/SearchResultItems/CompactSearchItemsLeft.vue'
 import CompactSearchItemsRight from '@/components/SearchResultItems/CompactSearchItemsRight'
+import DetailSearchItems from '../components/SearchResultItems/DetailSearchItems.vue'
 
 export default defineComponent({
     components: {
@@ -74,7 +75,8 @@ export default defineComponent({
         IonReorderGroup,
         RegularSearchItems,
         CompactSearchItemsLeft,
-        CompactSearchItemsRight
+        CompactSearchItemsRight,
+        DetailSearchItems,
     },
     name: 'SearchView',
     props: ['dataType'],

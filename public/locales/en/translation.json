@@ -34,7 +34,9 @@
         "noItem": "No item to display",
         "noItemHint": "Starred items will be displayed here",
         "showFerry": "Display all ferries",
-        "toggleRouteKeypad": "Toogle Route Keypad"
+        "toggleRouteKeypad": "Toogle Route Keypad",
+        "from": "From",
+        "to": "To"
     },
     "listView": {
         "title": "All {transportType} Routes",
@@ -97,7 +99,8 @@
         "selectItemStyle": "Select style of search result items",
         "itemStyleComfort": "Comfort",
         "itemStyleCompactLeft": "Compact - with badges on the left",
-        "itemStyleCompactRight": "Compact - with badges on the right"
+        "itemStyleCompactRight": "Compact - with badges on the right",
+        "itemStyleDetail": "Detail"
     },
     "etaPopup": {
         "frame": {

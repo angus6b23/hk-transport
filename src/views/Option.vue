@@ -37,7 +37,7 @@ import {
     shieldCheckmarkOutline,
     linkOutline,
     listOutline,
-    menuOutline
+    menuOutline,
 } from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js'
@@ -61,7 +61,7 @@ export default {
         IonCheckbox,
         IonRange,
     },
-    emits: ['closeOption', 'updateData', 'downloadData', 'changeLanguage'],
+    emits: ['closeOption', 'updateData', 'downloadData'],
     setup() {
         const config = inject('globalConfig')
         const body = document.body
@@ -73,7 +73,7 @@ export default {
                 config.value.theme,
                 config.value.lang,
                 config.value.maxResults,
-                config.value.searchItemStyle
+                config.value.searchItemStyle,
             ],
             async () => {
                 await localforage.setItem(
@@ -104,7 +104,6 @@ export default {
         }
     },
     async mounted() {
-        console.log(this.config)
     },
     methods: {
         closeOption() {
@@ -246,10 +245,10 @@ export default {
                     text: this.$t('option.itemStyleCompactRight'),
                     data: { action: 'compact_right' },
                 },
-//                {
-//                    text: this.$t('option.itemStyleCompactLeft'),
-//                    data: { action: 'compact_left' },
-//                },
+                {
+                    text: this.$t('option.itemStyleDetail'),
+                    data: { action: 'detail' },
+                },
             ]
             const sourceSheet = await actionSheetController.create({
                 header: this.$t('option.selectItemStyle'),

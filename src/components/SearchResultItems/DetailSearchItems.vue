@@ -4,57 +4,63 @@
         :key="route.id"
         :data-testid="`search-item-${type}-${index}`"
         button
-    >
+        >
         <ion-grid>
             <!-- Rows for Bus and minibus -->
             <ion-row
                 v-if="type == 'bus' || type == 'minibus'"
-                class="open-modal"
                 expand="block"
                 @click="openModal(index)"
-            >
-                <ion-col
-                    size-xs="2"
-                    size-md="1"
-                    class="route-no ion-align-items-center"
                 >
-                    <h3 v-if="route.routeNo.length < 10">
+                <ion-col
+                    size-xs="3"
+                    size-md="1"
+                    class="route-no-wrapper ion-align-items-center"
+                    >
+                    <div className="badge-wrapper">
+                        <Badges
+                            :route="route"
+                            :compact="compact"
+                            position="default"
+                            />
+                    </div>
+                    <h3 v-if="route.routeNo.length < 10" class="route-no">
                         {{ route.routeNo }}
                     </h3>
                     <h3 v-else></h3>
                     <!-- Hide Route with long route number -->
                 </ion-col>
-                <ion-col size-xs="7" size-md="10">
-                    <h5
-                        v-if="$i18next.language === 'zh'"
-                        class="ion-margin-start"
-                    >
-                        {{ route.destTC }}
-                    </h5>
-                    <h5 v-else class="ion-margin-start">
-                        {{ route.destEN }}
-                    </h5>
-                </ion-col>
-                <ion-col size-xs="3" size-md="1" class="badge-col">
-                    <Badges
-                        :route="route"
-                        :compact="compact"
-                        position="right"
-                    />
+                <ion-col size-xs="9" size-md="11" class="dest-wrapper">
+                    <div v-if="$i18next.language === 'zh'" class="ion-margin-start">
+                        <span class="ion-text item-subtitle">
+                            <span class="small-scale">{{ $t('searchView.from')}}</span> {{ route.originTC }}
+                        </span>
+                        <h4 class="ion-no-margin">
+                            <span class="small-scale">{{ $t('searchView.to')}}</span> {{ route.destTC }}
+                        </h4>
+                    </div>
+                    <div v-else-if="$i18next.language === 'en'" class="ion-margin-start">
+                        <span class="ion-text item-subtitle">
+                            <span class="small-scale">{{ $t('searchView.from') }}</span> {{ route.originEN }}
+                        </span>
+                        <h5 class="ion-no-margin">
+                            <span class="small-scale">{{ $t('searchView.to')}}</span> {{ route.destEN }}
+                        </h5>
+                    </div>
                 </ion-col>
             </ion-row>
             <!-- Rows for Ferry -->
             <ion-row
                 v-else
-                class="open-modal"
                 expand="block"
                 @click="openModal(index)"
-            >
+                >
                 <ion-col size-xs="8" size-md="10">
+                    <Badges :route="route" :compact="compact" />
                     <h5
                         v-if="$i18next.language === 'zh'"
                         class="ion-no-margin ion-margin-start"
-                    >
+                        >
                         {{ route.routeNameTC }}
                     </h5>
                     <h5 v-else class="ion-no-margin ion-margin-start">
@@ -107,7 +113,7 @@ export default {
     props: ['displayArray', 'type'],
     emits: ['openModal'],
     setup() {
-        const compact = ref(true)
+        const compact = ref(false)
         return {
             compact,
         }
@@ -122,18 +128,7 @@ export default {
 }
 </script>
 <style scoped>
-ion-grid {
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
-ion-row {
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
-ion-col {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+ion-col{
     padding-top: 0px;
     padding-bottom: 0px;
 }
@@ -148,9 +143,29 @@ ion-col {
 .direction2-button {
     --background: #a1905e;
 }
-.badge-left {
+.route-no{
     display: flex;
-    flex-direction: row;
-    justify-content: center;
+    align-items:center;
+}
+.item-subtitle{
+    font-size: 1rem;
+    color: var(--ion-color-medium)
+}
+.route-no-wrapper{
+    display: block
+}
+.route-no{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.badge-wrapper{
+    margin-left: -16px;
+}
+.dest-wrapper {
+    display: flex;
+    align-items: center
+}
+.small-scale{
+    font-size: 0.8rem;
 }
 </style>

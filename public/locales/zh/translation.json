@@ -34,7 +34,9 @@
         "noItem": "尚未有顯示項目",
         "noItemHint": "可於搜尋後標記星號以方便使用",
         "showFerry": "顯示所有渡輪",
-        "toggleRouteKeypad": "展開 / 收起路線鍵盤"
+        "toggleRouteKeypad": "展開 / 收起路線鍵盤",
+        "from": "從",
+        "to": "往"
     },
     "listView": {
         "title": "所有{transportType}路線",
@@ -95,9 +97,10 @@
         "promise": "承諾",
         "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。",
         "selectItemStyle": "選擇搜尋結果樣式",
-        "itemStyleComfort": "適中",
+        "itemStyleComfort": "簡潔",
         "itemStyleCompactLeft": "緊密 - 標示在左邊",
-        "itemStyleCompactRight": "緊密 - 標示在右邊"
+        "itemStyleCompactRight": "緊密 - 標示在右邊",
+        "itemStyleDetail": "詳盡"
     },
     "etaPopup": {
         "frame": {
