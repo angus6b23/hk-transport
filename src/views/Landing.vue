@@ -284,6 +284,7 @@ export default defineComponent({
                 apiBaseUrl: this.useOwnAPI ? this.hostUrl : '',
                 dataFilled: false,
                 autoScroll: true,
+                searchItemStyle: 'comfort',
                 maxResults: 20,
             }
             this.$emit('finishConfig', config)
