@@ -25,7 +25,7 @@
     },
     "searchView": {
         "title": "{transportType}路線",
-        "searchPlaceHolder": "請輪入路線號碼或終點站",
+        "searchPlaceHolder": "請輸入路線號碼或終點站",
         "searchPrompt": "搜尋{transportType}: {{query}}",
         "clearSearch": "清除搜尋",
         "starredPrompt": "已標記的{transportType}",
