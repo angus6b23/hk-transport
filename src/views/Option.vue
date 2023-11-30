@@ -273,16 +273,16 @@ export default {
 }
 </script>
 <style scoped>
-.flex{
+.flex {
     display: flex;
 }
-.flex-wrap{
+.flex-wrap {
     flex-wrap: wrap;
 }
-.w-full{
+.w-full {
     width: 100%;
 }
-.py-0{
+.py-0 {
     padding-top: 0px;
     padding-bottom: 0px;
 }

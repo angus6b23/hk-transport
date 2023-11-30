@@ -41,6 +41,8 @@ import presentToast from '@/components/presentToast.js'
 import Keypad from '@/components/Keypad'
 import { useMemoize } from '@vueuse/core'
 import { filterData } from '@/components/search'
+import RegularSearchItems from '@/components/RegularSearchItems.vue'
+import CompactSearchItems from '../components/CompactSearchItems.vue'
 
 export default defineComponent({
     components: {
@@ -69,6 +71,8 @@ export default defineComponent({
         Keypad,
         IonReorder,
         IonReorderGroup,
+        RegularSearchItems,
+        CompactSearchItems,
     },
     name: 'SearchView',
     props: ['dataType'],
@@ -123,8 +127,8 @@ export default defineComponent({
         openModal(index) {
             this.itemSelected = JSON.parse(
                 JSON.stringify(this.displayArray[index])
-            ) //Use Deep copy to prevent problems when clicked again
-            console.log(this.itemSelected)
+            ) // Use Deep copy to prevent problems when clicked again
+            // console.log(this.itemSelected)
             this.getAltRoutes()
             this.modalIsOpen = true
         },
@@ -428,17 +432,6 @@ export default defineComponent({
 
 .d-flex {
     display: flex;
-}
-.direction-button {
-    width: 100%;
-    align-self: center;
-    justify-self: center;
-}
-.direction1-button {
-    --background: #5e6fa1;
-}
-.direction2-button {
-    --background: #a1905e;
 }
 .star-wrapper {
     font-size: 1.2rem;

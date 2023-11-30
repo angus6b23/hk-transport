@@ -4,56 +4,67 @@
         <ion-badge
             v-if="route.company.includes('KMB')"
             class="kmb-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.kmb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('CTB')"
             class="ctb-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.ctb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('LWB')"
             class="lwb-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.lwb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('NWFB')"
             class="nwfb-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.nwfb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('DB')"
             class="db-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.db') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('NLB')"
             class="nlb-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.nlb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('PI')"
             class="pi-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.pi') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('XB')"
             class="xb-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.xb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('LRTFeeder')"
             class="ltr-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.lrt') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode.includes('N')"
             class="night-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.night') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode == 'T'"
             class="special-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.special') }}</ion-badge
         >
     </div>
@@ -61,26 +72,31 @@
         <ion-badge
             v-if="route.district.includes('HKI')"
             class="hki-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.hki') }}</ion-badge
         >
         <ion-badge
             v-if="route.district.includes('KLN')"
             class="kln-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.kln') }}</ion-badge
         >
         <ion-badge
             v-if="route.district.includes('NT')"
             class="nt-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.nt') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode.includes('N')"
             class="night-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.night') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode == 'T'"
             class="special-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.special') }}</ion-badge
         >
     </div>
@@ -88,34 +104,32 @@
         <ion-badge
             v-if="route.district == 'KAITO'"
             class="hki-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.kaito') }}</ion-badge
         >
         <ion-badge
             v-if="route.district == 'OUTLYING'"
             class="kln-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.outlying') }}</ion-badge
         >
         <ion-badge
             v-if="route.district == 'INNER'"
             class="nt-badge ion-margin-start"
+            :class="{ compact: compact }"
             >{{ $t('badges.inner') }}</ion-badge
         >
     </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import { IonBadge } from '@ionic/vue'
 export default defineComponent({
     name: 'Badges-component',
-    props: ['route'],
+    props: ['route', 'compact'],
     components: { IonBadge },
-    mount(props) {
-        console.log('setup called')
-        const route = ref(props.route)
-        return {
-            route,
-        }
+    mounted() {
     },
 })
 </script>
@@ -181,5 +195,8 @@ export default defineComponent({
 
 .direction2-badge {
     --background: #a1905e;
+}
+.compact {
+    scale: 0.8;
 }
 </style>

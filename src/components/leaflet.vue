@@ -185,7 +185,7 @@ export default {
             color: '#3880ff',
             weight: 4,
             opacity: 1,
-            interactive: false
+            interactive: false,
         })
         // Apply markers and polyline
         toRaw(this.map).addLayer(this.markersGroup)

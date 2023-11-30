@@ -325,7 +325,7 @@ details > summary {
         font-size: 1.2rem;
     }
 }
-.py-2{
+.py-2 {
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
 }

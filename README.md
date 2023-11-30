@@ -15,34 +15,33 @@ In the app, you can find data of
 香港交通利用香港政府數據並作出整合
 應用中可檢視路線包括
 
-- Bus 巴士
-- MTR 地鐵
-- Minibus 專線小巴
-- Tram（Estimated time of arrival not available）
-電車（未提供到站時間）
-- Light Rail 輕鐵
-- Ferry（Estimated time of arrival not available）
-渡輪（未提供到站時間）
-
+-   Bus 巴士
+-   MTR 地鐵
+-   Minibus 專線小巴
+-   Tram（Estimated time of arrival not available）
+    電車（未提供到站時間）
+-   Light Rail 輕鐵
+-   Ferry（Estimated time of arrival not available）
+    渡輪（未提供到站時間）
 
 ## Features
 
 -   [Live site 線上版](https://hk-transport.12a.app)
--   [Google  Play Store](https://play.google.com/store/apps/details?id=app.hkTransport)
+-   [Google Play Store](https://play.google.com/store/apps/details?id=app.hkTransport)
 -   [Fdroid](https://f-droid.org/zh_Hant/packages/app.hkTransport/)
--   Transport modes include bus, mtr, minibus, tram, light rail, ferry 
-可檢視路線包括巴士，地鐵，專線小巴，電車，輕鐵，渡輪
+-   Transport modes include bus, mtr, minibus, tram, light rail, ferry
+    可檢視路線包括巴士，地鐵，專線小巴，電車，輕鐵，渡輪
 -   No annoying ads
-無任何廣告
+    無任何廣告
 -   Modern interface
-現代介面
+    現代介面
 -   Integrated map for viewing route
-可使用地圖檢視路線
+    可使用地圖檢視路線
 -   Estimated time for arrival for bus, mtr, light rail and minibus 檢視巴士、專線小巴、地鐵和輕鐵的到站時間
 -   Can be used without install
-可直擁於瀏覽器中使用
+    可直擁於瀏覽器中使用
 -   Install option includes PWA, F-droid, Play store
-可安裝版本包括Web app， F-Droid 和 Play store
+    可安裝版本包括Web app， F-Droid 和 Play store
 
 ## Installing
 
