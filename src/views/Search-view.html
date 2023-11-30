@@ -106,7 +106,12 @@
                         :type="type"
                         @openModal="openModal"
                     />
-                    <CompactSearchItems
+                    <CompactSearchItemsLeft
+                        :displayArray="displayArray"
+                        :type="type"
+                        @openModal="openModal"
+                    />
+                    <CompactSearchItemsRight
                         :displayArray="displayArray"
                         :type="type"
                         @openModal="openModal"

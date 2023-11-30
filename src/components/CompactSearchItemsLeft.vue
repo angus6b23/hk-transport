@@ -13,8 +13,11 @@
                 expand="block"
                 @click="openModal(index)"
             >
+                <ion-col size-xs="2" size-md="1">
+                    <Badges :route="route" :compact="compact" position="left" />
+                </ion-col>
                 <ion-col
-                    size-xs="3"
+                    size-xs="2"
                     size-md="1"
                     class="route-no ion-align-items-center"
                 >
@@ -24,19 +27,16 @@
                     <h3 v-else></h3>
                     <!-- Hide Route with long route number -->
                 </ion-col>
-                <ion-col size-xs="6" size-md="10">
+                <ion-col size-xs="8" size-md="10">
                     <h5
                         v-if="$i18next.language === 'zh'"
-                        class="ion-no-margin ion-margin-start"
+                        class="ion-margin-start"
                     >
                         {{ route.destTC }}
                     </h5>
-                    <h5 v-else class="ion-no-margin ion-margin-start">
+                    <h5 v-else class="ion-margin-start">
                         {{ route.destEN }}
                     </h5>
-                </ion-col>
-                <ion-col size-xs="3" size-md="1">
-                    <Badges :route="route" :compact="compact" />
                 </ion-col>
             </ion-row>
             <!-- Rows for Ferry -->
@@ -49,11 +49,11 @@
                 <ion-col size-xs="8" size-md="10">
                     <h5
                         v-if="$i18next.language === 'zh'"
-                        class="ion-no-margin ion-margin-start"
+                        class="ion-margin-start"
                     >
                         {{ route.routeNameTC }}
                     </h5>
-                    <h5 v-else class="ion-no-margin ion-margin-start">
+                    <h5 v-else class="ion-margin-start">
                         {{ route.routeNameEN }}
                     </h5>
                 </ion-col>
@@ -128,7 +128,7 @@ ion-row {
 }
 ion-col {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     padding-top: 0px;
     padding-bottom: 0px;

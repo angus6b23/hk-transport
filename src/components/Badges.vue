@@ -3,120 +3,120 @@
     <div v-if="route.type === 'bus'">
         <ion-badge
             v-if="route.company.includes('KMB')"
-            class="kmb-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="kmb-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.kmb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('CTB')"
-            class="ctb-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="ctb-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.ctb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('LWB')"
-            class="lwb-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="lwb-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.lwb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('NWFB')"
-            class="nwfb-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="nwfb-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.nwfb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('DB')"
-            class="db-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="db-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.db') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('NLB')"
-            class="nlb-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="nlb-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.nlb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('PI')"
-            class="pi-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="pi-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.pi') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('XB')"
-            class="xb-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="xb-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.xb') }}</ion-badge
         >
         <ion-badge
             v-if="route.company.includes('LRTFeeder')"
-            class="ltr-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="ltr-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.lrt') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode.includes('N')"
-            class="night-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="night-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.night') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode == 'T'"
-            class="special-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="special-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.special') }}</ion-badge
         >
     </div>
     <div v-if="route.type === 'minibus'">
         <ion-badge
             v-if="route.district.includes('HKI')"
-            class="hki-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="hki-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.hki') }}</ion-badge
         >
         <ion-badge
             v-if="route.district.includes('KLN')"
-            class="kln-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="kln-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.kln') }}</ion-badge
         >
         <ion-badge
             v-if="route.district.includes('NT')"
-            class="nt-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="nt-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.nt') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode.includes('N')"
-            class="night-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="night-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.night') }}</ion-badge
         >
         <ion-badge
             v-if="route.serviceMode == 'T'"
-            class="special-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="special-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.special') }}</ion-badge
         >
     </div>
     <div v-if="route.type === 'ferry'">
         <ion-badge
             v-if="route.district == 'KAITO'"
-            class="hki-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="hki-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.kaito') }}</ion-badge
         >
         <ion-badge
             v-if="route.district == 'OUTLYING'"
-            class="kln-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="kln-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.outlying') }}</ion-badge
         >
         <ion-badge
             v-if="route.district == 'INNER'"
-            class="nt-badge ion-margin-start"
-            :class="{ compact: compact }"
+            class="nt-badge"
+            :class="{ compact: compact, 'ion-margin-start': position !== 'left' }"
             >{{ $t('badges.inner') }}</ion-badge
         >
     </div>
@@ -127,9 +127,10 @@ import { defineComponent } from 'vue'
 import { IonBadge } from '@ionic/vue'
 export default defineComponent({
     name: 'Badges-component',
-    props: ['route', 'compact'],
+    props: ['route', 'compact', 'position'],
     components: { IonBadge },
     mounted() {
+        console.log(this.position)
     },
 })
 </script>

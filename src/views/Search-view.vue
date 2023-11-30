@@ -42,7 +42,8 @@ import Keypad from '@/components/Keypad'
 import { useMemoize } from '@vueuse/core'
 import { filterData } from '@/components/search'
 import RegularSearchItems from '@/components/RegularSearchItems.vue'
-import CompactSearchItems from '../components/CompactSearchItems.vue'
+import CompactSearchItemsLeft from '@/components/CompactSearchItemsLeft.vue'
+import CompactSearchItemsRight from '@/components/CompactSearchItemsRight'
 
 export default defineComponent({
     components: {
@@ -72,7 +73,8 @@ export default defineComponent({
         IonReorder,
         IonReorderGroup,
         RegularSearchItems,
-        CompactSearchItems,
+        CompactSearchItemsLeft,
+        CompactSearchItemsRight
     },
     name: 'SearchView',
     props: ['dataType'],
