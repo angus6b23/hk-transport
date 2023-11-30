@@ -93,7 +93,11 @@
         "sourceCode": "顯示原代碼",
         "otherApp": "其他在12a.app 的app",
         "promise": "承諾",
-        "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。"
+        "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。",
+        "selectItemStyle": "選擇搜尋結果樣式",
+        "itemStyleComfort": "適中",
+        "itemStyleCompactLeft": "緊密 - 標示在左邊",
+        "itemStyleCompactRight": "緊密 - 標示在右邊"
     },
     "etaPopup": {
         "frame": {

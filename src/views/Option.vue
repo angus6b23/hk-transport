@@ -65,7 +65,6 @@ export default {
     setup() {
         const config = inject('globalConfig')
         const body = document.body
-        console.log(config)
         watch(
             () => [
                 config.value.autoScroll,
@@ -74,10 +73,9 @@ export default {
                 config.value.theme,
                 config.value.lang,
                 config.value.maxResults,
-                config.value.selectItemStyle
+                config.value.searchItemStyle
             ],
             async () => {
-                console.log(config.value)
                 await localforage.setItem(
                     'config',
                     JSON.parse(JSON.stringify(config.value))

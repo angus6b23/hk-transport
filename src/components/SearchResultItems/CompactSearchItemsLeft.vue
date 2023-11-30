@@ -13,7 +13,7 @@
                 expand="block"
                 @click="openModal(index)"
             >
-                <ion-col size-xs="2" size-md="1">
+                <ion-col size-xs="2" size-md="1" class="badge-left">
                     <Badges :route="route" :compact="compact" position="left" />
                 </ion-col>
                 <ion-col
@@ -143,5 +143,10 @@ ion-col {
 }
 .direction2-button {
     --background: #a1905e;
+}
+.badge-left{
+    display: flex;
+    flex-direction: row;
+    justify-content: center
 }
 </style>

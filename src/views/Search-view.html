@@ -102,16 +102,19 @@
                     data-testid="search-list"
                 >
                     <RegularSearchItems
+                        v-if="config.searchItemStyle === 'comfort'"
                         :displayArray="displayArray"
                         :type="type"
                         @openModal="openModal"
                     />
                     <CompactSearchItemsLeft
+                        v-if="config.searchItemStyle === 'compact_left'"
                         :displayArray="displayArray"
                         :type="type"
                         @openModal="openModal"
                     />
                     <CompactSearchItemsRight
+                        v-if="config.searchItemStyle === 'compact_right'"
                         :displayArray="displayArray"
                         :type="type"
                         @openModal="openModal"

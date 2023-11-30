@@ -14,7 +14,7 @@
                 @click="openModal(index)"
             >
                 <ion-col
-                    size-xs="2"
+                    size-xs="3"
                     size-md="1"
                     class="route-no ion-align-items-center"
                 >
@@ -24,19 +24,17 @@
                     <h3 v-else></h3>
                     <!-- Hide Route with long route number -->
                 </ion-col>
-                <ion-col size-xs="7" size-md="10">
+                <ion-col size-xs="9" size-md="11">
+                    <Badges :route="route" :compact="compact" position="default" />
                     <h5
                         v-if="$i18next.language === 'zh'"
-                        class="ion-margin-start"
+                        class="ion-no-margin ion-margin-start"
                     >
                         {{ route.destTC }}
                     </h5>
-                    <h5 v-else class="ion-margin-start">
+                    <h5 v-else class="ion-no-margin ion-margin-start">
                         {{ route.destEN }}
                     </h5>
-                </ion-col>
-                <ion-col size-xs="3" size-md="1">
-                    <Badges :route="route" :compact="compact" position="right" />
                 </ion-col>
             </ion-row>
             <!-- Rows for Ferry -->
@@ -47,6 +45,7 @@
                 @click="openModal(index)"
             >
                 <ion-col size-xs="8" size-md="10">
+                    <Badges :route="route" :compact="compact" />
                     <h5
                         v-if="$i18next.language === 'zh'"
                         class="ion-no-margin ion-margin-start"
@@ -103,7 +102,7 @@ export default {
     props: ['displayArray', 'type'],
     emits: ['openModal'],
     setup() {
-        const compact = ref(true)
+        const compact = ref(false)
         return {
             compact,
         }
@@ -118,21 +117,6 @@ export default {
 }
 </script>
 <style scoped>
-ion-grid {
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
-ion-row {
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
-ion-col {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
 .direction-button {
     width: 100%;
     align-self: center;

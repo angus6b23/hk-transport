@@ -41,9 +41,9 @@ import presentToast from '@/components/presentToast.js'
 import Keypad from '@/components/Keypad'
 import { useMemoize } from '@vueuse/core'
 import { filterData } from '@/components/search'
-import RegularSearchItems from '@/components/RegularSearchItems.vue'
-import CompactSearchItemsLeft from '@/components/CompactSearchItemsLeft.vue'
-import CompactSearchItemsRight from '@/components/CompactSearchItemsRight'
+import RegularSearchItems from '@/components/SearchResultItems/RegularSearchItems.vue'
+import CompactSearchItemsLeft from '@/components/SearchResultItems/CompactSearchItemsLeft.vue'
+import CompactSearchItemsRight from '@/components/SearchResultItems/CompactSearchItemsRight'
 
 export default defineComponent({
     components: {

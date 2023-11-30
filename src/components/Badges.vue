@@ -1,6 +1,6 @@
 <template>
     <!-- Badges for bus -->
-    <div v-if="route.type === 'bus'">
+    <div v-if="route.type === 'bus'" :class="{'badge-left': position !== 'default'}">
         <ion-badge
             v-if="route.company.includes('KMB')"
             class="kmb-badge"
@@ -130,7 +130,6 @@ export default defineComponent({
     props: ['route', 'compact', 'position'],
     components: { IonBadge },
     mounted() {
-        console.log(this.position)
     },
 })
 </script>
@@ -199,5 +198,17 @@ export default defineComponent({
 }
 .compact {
     scale: 0.8;
+}
+.badge-left {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction:column;
+}
+@media screen and (min-width: 768px){
+    .compact {
+        scale: 1;
+        margin-bottom: 0.2rem;
+    }
+    
 }
 </style>

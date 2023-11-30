@@ -97,11 +97,16 @@ export default defineComponent({
     },
     async mounted() {
         try {
+            // Load config from local forage
             const config = await localforage.getItem('config')
+            let changesApplied = false
+            // If there is config and the data is filled
             if (config && config.dataFilled) {
                 this.config = config
                 this.settingFound = true
+                // Change the language according to config
                 this.$i18next.changeLanguage(this.config.lang)
+                // Change the theme to according to config
                 if (config.theme && config.theme == 'dark') {
                     this.body.classList.toggle('dark', true)
                 } else if (config.theme && config.theme == 'light') {
@@ -111,10 +116,25 @@ export default defineComponent({
                 ) {
                     this.body.classList.toggle('dark', true)
                 }
+                // Fill unfilled config
+                // Before v1.0.5, search item style should be undefined
+                if (config.selectItemStyle === undefined){
+                    this.config.selectItemStyle = 'comfort' //Default to comfort
+                    changesApplied = true
+                }
+                if ( changesApplied ){ // Save the new setting if changes apply is detected
+                    console.log('Changes detected')
+                    await localforage.setItem(
+                        'config',
+                        JSON.parse(JSON.stringify(this.config))
+                    )
+                }
             } else {
+                // otherwire, try to set to dark theme if device prefers that
                 if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     this.body.classList.toggle('dark', true)
                 }
+                // This will show the landing view
                 this.settingFound = false
             }
         } catch (err) {
