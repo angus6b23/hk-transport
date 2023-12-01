@@ -24,7 +24,7 @@
                     <h3 v-else></h3>
                     <!-- Hide Route with long route number -->
                 </ion-col>
-                <ion-col size-xs="7" size-md="10">
+                <ion-col size-xs="8" size-md="10">
                     <h5
                         v-if="$i18next.language === 'zh'"
                         class="ion-margin-start"
@@ -35,7 +35,7 @@
                         {{ route.destEN }}
                     </h5>
                 </ion-col>
-                <ion-col size-xs="3" size-md="1" class="badge-col">
+                <ion-col size-xs="2" size-md="1" class="badge-col">
                     <Badges
                         :route="route"
                         :compact="compact"

@@ -31,6 +31,7 @@ import { ref, toRaw } from 'vue'
 import { IonSelect, IonSelectOption } from '@ionic/vue'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import presentToast from '@/components/presentToast'
 
 export default {
     name: 'LeafletMap',
@@ -138,65 +139,63 @@ export default {
             self.map.invalidateSize()
         }, 200)
         // Add markers to marker group
-        for (let index in this.routeLocations) {
-            let marker
-            if (index == 0) {
-                marker = L.marker(
-                    [
-                        this.routeLocations[index].coord[1],
-                        this.routeLocations[index].coord[0],
-                    ],
-                    { icon: this.startIcon }
-                )
-            } else if (index == this.routeLocations.length - 1) {
-                marker = L.marker(
-                    [
-                        this.routeLocations[index].coord[1],
-                        this.routeLocations[index].coord[0],
-                    ],
-                    { icon: this.endIcon }
-                )
-            } else {
-                marker = L.marker(
-                    [
-                        this.routeLocations[index].coord[1],
-                        this.routeLocations[index].coord[0],
-                    ],
-                    { icon: this.nodeIcon }
-                )
+        let errorCaught = false
+        this.routeLocations.forEach((location, index) => {
+            try {
+                let [lat, long] = location.coord
+                let marker
+                if (index === 0) {
+                    marker = L.marker([long, lat], {
+                        icon: this.startIcon,
+                    })
+                } else if (index === this.routeLocations.length - 1) {
+                    marker = L.marker([long, lat], {
+                        icon: this.endIcon,
+                    })
+                } else {
+                    marker = L.marker([long, lat], {
+                        icon: this.nodeIcon,
+                    })
+                }
+                if (this.$i18next.language === 'zh') {
+                    marker.bindPopup(`${location.seq} ${location.nameTC}`)
+                } else {
+                    marker.bindPopup(`${location.seq}. ${location.nameEN}`)
+                }
+                marker.addTo(this.markersGroup)
+            } catch (err) {
+                errorCaught = true
             }
-            if (this.$i18next.language === 'zh') {
-                marker.bindPopup(
-                    `${this.routeLocations[index].seq} ${this.routeLocations[index].nameTC}`
-                )
-            } else {
-                marker.bindPopup(
-                    `${this.routeLocations[index].seq}. ${this.routeLocations[index].nameEN}`
-                )
-            }
-            marker.addTo(this.markersGroup)
-        }
-        // Create array for stop geometries
-        let stopGeometries = this.routeLocations.map(
-            (x) => new L.LatLng(x.coord[1], x.coord[0])
-        )
-        // console.log(stopGeometries);
-        let polyline = new L.Polyline(stopGeometries, {
-            color: '#3880ff',
-            weight: 4,
-            opacity: 1,
-            interactive: false,
         })
-        // Apply markers and polyline
-        toRaw(this.map).addLayer(this.markersGroup)
-        polyline.addTo(toRaw(this.map))
-        //Zoom to fit boundaries ? function not working
-        toRaw(this.map).fitBounds(
-            this.markersGroup.getBounds().pad(0.05),
-            false
-        )
+        // Create array for stop geometries
+        try {
+            let stopGeometries = this.routeLocations.map(
+                (x) => new L.LatLng(x.coord[1], x.coord[0])
+            )
+            let polyline = new L.Polyline(stopGeometries, {
+                color: '#3880ff',
+                weight: 4,
+                opacity: 1,
+                interactive: false,
+            })
+            // Apply markers and polyline
+            toRaw(this.map).addLayer(this.markersGroup)
+            polyline.addTo(toRaw(this.map))
+            //Zoom to fit boundaries ? function not working
+            toRaw(this.map).fitBounds(
+                this.markersGroup.getBounds().pad(0.05),
+                false
+            )
+        } catch {
+            errorCaught = true
+        }
+        if (errorCaught) {
+            presentToast('error', this.$t('toast.mapError'))
+        }
+
         // Set minimum zoom level to 10 to avoiding zooming out to world map
         toRaw(this.map).setMinZoom(10)
+
         // Try to get GPS location and set view
         // Use passed currentlocation first
         if (this.currentLocation && this.currentLocation.coords) {

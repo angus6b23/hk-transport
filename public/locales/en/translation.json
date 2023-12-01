@@ -142,6 +142,7 @@
         "networkError": "Network error. Please check the source api and your network",
         "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs",
         "invalidUrl": "The Url is invalid. Please remember to include http:// or https://",
-        "locationFail": "Unable to get current location by gps."
+        "locationFail": "Unable to get current location by gps.",
+        "mapError": "Some location cannot be shown on map. Please update the route data and try again."
     }
 }
