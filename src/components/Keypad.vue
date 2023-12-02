@@ -312,6 +312,9 @@ details > summary {
     margin-top: 0.5rem;
     margin-left: 1rem;
 }
+.ios details > summary {
+    margin-top: 0px;
+}
 @media screen and (min-width: 800px) {
     .grid {
         margin-left: auto;

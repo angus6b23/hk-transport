@@ -96,8 +96,9 @@ export default defineComponent({
         const type = ref(props.dataType)
         const dataReady = ref(false)
         const disableReorder = ref(true)
-        const keypadOpen = ref(false)
-
+        const keypadOpen = ref(false) // pass as a prop for keypad, will close the keypad if the value changes
+        const locationLoading = ref(false); // For displaying the loading bar while finding nearby routes
+        
         const memoFilterQuery = useMemoize(filterData, {
             getKey: (data, type, query, lang, maxResults) =>
                 `${query.toUpperCase()}-${lang}-${maxResults}`,
@@ -123,6 +124,7 @@ export default defineComponent({
             starred,
             type,
             dataReady,
+            locationLoading,
             cog,
             chevronBack,
             swapVerticalOutline,
@@ -378,6 +380,7 @@ export default defineComponent({
             await this.saveStar()
         },
         updateQuery(newQuery) {
+            this.hideKeypad();
             this.query = newQuery
         },
     },
@@ -400,12 +403,18 @@ export default defineComponent({
                 newQuery === 'Routes Nearby' ||
                 newQuery === '附近的路線'
             ) {
+                this.locationLoading = true;
                 getNearbyRoutesPromise(this.data, this.config.maxResults).then(res => {
+                    this.locationLoading = false
                     if (res instanceof Error){
                         presentToast('error', this.$t('toast.locationFail'))
                     } else {
                         // console.log(res)
-                        this.displayArray = res
+                        if (this.type === 'ferry'){
+                            this.displayArray = res.filter(route => route.direction === 1)
+                        } else {
+                            this.displayArray = res
+                        }
                     }
                 })
             } else {
@@ -467,5 +476,9 @@ export default defineComponent({
 }
 .swap-icon {
     margin-right: 1rem;
+}
+.location-buttons.md{
+    align-self: flex-start;
+    margin-top: 0.5rem
 }
 </style>

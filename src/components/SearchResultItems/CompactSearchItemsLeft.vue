@@ -101,7 +101,7 @@ export default {
         Badges,
     },
     props: ['displayArray', 'type'],
-    emits: ['openModal'],
+    emits: ['openModal', 'openAltModal'],
     setup() {
         const compact = ref(true)
         return {
@@ -113,6 +113,9 @@ export default {
         openModal(index) {
             this.$emit('openModal', index)
         },
+        openAltModal(index){
+            this.$emit('openAltModal', index)
+        }
     },
     beforeUnmount() {},
 }
