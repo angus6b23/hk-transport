@@ -36,7 +36,8 @@
         "showFerry": "Display all ferries",
         "toggleRouteKeypad": "Toogle Route Keypad",
         "from": "From",
-        "to": "To"
+        "to": "To",
+        "routesNearby": "Routes Nearby"
     },
     "listView": {
         "title": "All {transportType} Routes",

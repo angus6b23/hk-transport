@@ -36,7 +36,8 @@
         "showFerry": "顯示所有渡輪",
         "toggleRouteKeypad": "展開 / 收起路線鍵盤",
         "from": "從",
-        "to": "往"
+        "to": "往",
+        "routesNearby": "附近的路線"
     },
     "listView": {
         "title": "所有{transportType}路線",

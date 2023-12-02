@@ -236,7 +236,7 @@ export default {
             toRaw(this.map).remove()
         }
         if (this.watchLocation) {
-            navigator.geolocation.clearWatch(this.watch)
+            navigator.geolocation.clearWatch(this.watchLocation)
         }
     },
     watch: {

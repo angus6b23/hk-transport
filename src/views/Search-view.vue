@@ -29,6 +29,7 @@ import {
     chevronBack,
     swapVerticalOutline,
     newspaperOutline,
+    locationOutline,
 } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
@@ -44,7 +45,8 @@ import { filterData } from '@/components/search'
 import RegularSearchItems from '@/components/SearchResultItems/RegularSearchItems.vue'
 import CompactSearchItemsLeft from '@/components/SearchResultItems/CompactSearchItemsLeft.vue'
 import CompactSearchItemsRight from '@/components/SearchResultItems/CompactSearchItemsRight'
-import DetailSearchItems from '../components/SearchResultItems/DetailSearchItems.vue'
+import DetailSearchItems from '@/components/SearchResultItems/DetailSearchItems.vue'
+import getNearbyRoutesPromise from '@/components/getNearbyRoutes'
 
 export default defineComponent({
     components: {
@@ -125,6 +127,7 @@ export default defineComponent({
             chevronBack,
             swapVerticalOutline,
             newspaperOutline,
+            locationOutline,
         }
     },
     methods: {
@@ -147,7 +150,7 @@ export default defineComponent({
                 this.itemSelected = JSON.parse(
                     JSON.stringify(this.data[targetIndex])
                 )
-                console.log(this.itemSelected)
+                // console.log(this.itemSelected)
                 this.getAltRoutes()
                 this.modalIsOpen = true
             } else {
@@ -374,6 +377,9 @@ export default defineComponent({
             event.detail.complete(this.starred)
             await this.saveStar()
         },
+        updateQuery(newQuery) {
+            this.query = newQuery
+        },
     },
     async mounted() {
         this.data = await loadChunk(this.type)
@@ -390,6 +396,18 @@ export default defineComponent({
         query(newQuery) {
             if (newQuery === '') {
                 this.displayArray = this.starred
+            } else if (
+                newQuery === 'Routes Nearby' ||
+                newQuery === '附近的路線'
+            ) {
+                getNearbyRoutesPromise(this.data, this.config.maxResults).then(res => {
+                    if (res instanceof Error){
+                        presentToast('error', this.$t('toast.locationFail'))
+                    } else {
+                        // console.log(res)
+                        this.displayArray = res
+                    }
+                })
             } else {
                 this.displayArray = this.memoFilterQuery(
                     this.data,
@@ -449,5 +467,8 @@ export default defineComponent({
 }
 .swap-icon {
     margin-right: 1rem;
+}
+.location-button.md {
+    transform: translateY(-1.25rem);
 }
 </style>

@@ -28,6 +28,14 @@
                 @ionFocus="hideKeypad"
                 :data-testid="`search-bar-${type}`"
             ></ion-searchbar>
+            <ion-buttons slot="end">
+                <ion-button
+                    @click="updateQuery($t('searchView.routesNearby'))"
+                    class="location-button"
+                >
+                    <ion-icon :icon="locationOutline" />
+                </ion-button>
+            </ion-buttons>
             <!-- Keypad -->
             <Keypad
                 v-if="type != 'ferry'"
