@@ -468,7 +468,4 @@ export default defineComponent({
 .swap-icon {
     margin-right: 1rem;
 }
-.location-button.md {
-    transform: translateY(-1.25rem);
-}
 </style>

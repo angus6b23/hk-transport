@@ -36,8 +36,11 @@
                     <ion-icon :icon="locationOutline" />
                 </ion-button>
             </ion-buttons>
+        </ion-toolbar>
             <!-- Keypad -->
+        <ion-toolbar>
             <Keypad
+                slot="start"
                 v-if="type != 'ferry'"
                 :query="query"
                 :data="data"
