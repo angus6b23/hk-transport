@@ -50,7 +50,7 @@
                 expand="block"
                 @click="openModal(index)"
             >
-                <ion-col size-xs="8" size-md="10">
+                <ion-col size-xs="6" size-md="9">
                     <h5
                         v-if="$i18next.language === 'zh'"
                         class="ion-no-margin ion-margin-start"
@@ -60,6 +60,13 @@
                     <h5 v-else class="ion-no-margin ion-margin-start">
                         {{ route.routeNameEN }}
                     </h5>
+                </ion-col>
+                <ion-col size-xs="2" size-md="1" class="badge-col">
+                    <Badges
+                        :route="route"
+                        :compact="compact"
+                        position="right"
+                    />
                 </ion-col>
                 <ion-col size-xs="2" size-md="1" class="d-flex">
                     <ion-button

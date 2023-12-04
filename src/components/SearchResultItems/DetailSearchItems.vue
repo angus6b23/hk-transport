@@ -4,25 +4,25 @@
         :key="route.id"
         :data-testid="`search-item-${type}-${index}`"
         button
-    >
+        >
         <ion-grid>
             <!-- Rows for Bus and minibus -->
             <ion-row
                 v-if="type == 'bus' || type == 'minibus'"
                 expand="block"
                 @click="openModal(index)"
-            >
+                >
                 <ion-col
                     size-xs="3"
                     size-md="1"
                     class="route-no-wrapper ion-align-items-center"
-                >
+                    >
                     <div className="badge-wrapper">
                         <Badges
                             :route="route"
                             :compact="compact"
                             position="default"
-                        />
+                            />
                     </div>
                     <h3 v-if="route.routeNo.length < 10" class="route-no">
                         {{ route.routeNo }}
@@ -34,34 +34,34 @@
                     <div
                         v-if="$i18next.language === 'zh'"
                         class="ion-margin-start"
-                    >
+                        >
                         <span class="ion-text item-subtitle">
                             <span class="small-scale">{{
                                 $t('searchView.from')
-                            }}</span>
+                                }}</span>
                             {{ route.originTC }}
                         </span>
                         <h4 class="ion-no-margin">
                             <span class="small-scale">{{
                                 $t('searchView.to')
-                            }}</span>
+                                }}</span>
                             {{ route.destTC }}
                         </h4>
                     </div>
                     <div
                         v-else-if="$i18next.language === 'en'"
                         class="ion-margin-start"
-                    >
+                        >
                         <span class="ion-text item-subtitle">
                             <span class="small-scale">{{
                                 $t('searchView.from')
-                            }}</span>
+                                }}</span>
                             {{ route.originEN }}
                         </span>
                         <h5 class="ion-no-margin">
                             <span class="small-scale">{{
                                 $t('searchView.to')
-                            }}</span>
+                                }}</span>
                             {{ route.destEN }}
                         </h5>
                     </div>
@@ -71,24 +71,33 @@
             <ion-row v-else expand="block" @click="openModal(index)">
                 <ion-col size-xs="8" size-md="10">
                     <Badges :route="route" :compact="compact" />
-                    <h5
+                    <div
                         v-if="$i18next.language === 'zh'"
                         class="ion-no-margin ion-margin-start"
-                    >
-                        {{ route.routeNameTC }}
-                    </h5>
-                    <h5 v-else class="ion-no-margin ion-margin-start">
-                        {{ route.routeNameEN }}
-                    </h5>
+                        >
+                        <p class="ion-no-margin item-subtitle" v-if="getFerryVia(route.routeNameTC) !== ''">{{ `${$t('searchView.via')} ${getFerryVia(route.routeNameTC)}`}}</p>
+                        <h5 class="ion-no-margin">
+                            {{ `${getFerryFrom(route.routeNameTC)} → ${getFerryTo(route.routeNameTC)}` }}
+                        </h5>
+                    </div>
+                    <div
+                        v-else
+                        class="ion-no-margin ion-margin-start"
+                        >
+                        <p class="ion-no-margin item-subtitle" v-if="getFerryVia(route.routeNameEN) !== ''">{{ `${$t('searchView.via')} ${getFerryVia(route.routeNameEN)}`}}</p>
+                        <h5 class="ion-no-margin">
+                            {{ `${getFerryFrom(route.routeNameEN)} → ${getFerryTo(route.routeNameEN)}` }}
+                        </h5>
+                    </div>
                 </ion-col>
-                <ion-col size-xs="2" size-md="1" class="d-flex">
+                <ion-col size-xs="2" size-md="1" class="flex items-center">
                     <ion-button
                         @click.stop="openModal(index)"
                         class="direction1-button direction-button"
                         >{{ $t('searchView.inbound') }}</ion-button
                     >
                 </ion-col>
-                <ion-col size-xs="2" size-md="1" class="d-flex">
+                <ion-col size-xs="2" size-md="1" class="flex items-center">
                     <ion-button
                         @click.stop="openAltModal(index)"
                         class="direction2-button direction-button"
@@ -132,13 +141,25 @@ export default {
             compact,
         }
     },
-    mounted() {},
+    mounted(){
+    },
     methods: {
         openModal(index) {
             this.$emit('openModal', index)
         },
         openAltModal(index){
             this.$emit('openAltModal', index)
+        },
+        getFerryFrom(name){
+            return name.split(' - ').slice(0, 1).join('')
+        },
+        getFerryTo(name){
+            const nameArr = name.split(' - ')
+            return nameArr.slice(nameArr.length - 1, nameArr.length).join('');
+        },
+        getFerryVia(name){
+            const nameArr = name.split(' - ')
+            return nameArr.slice(1, nameArr.length - 1).join(', ');
         }
     },
     beforeUnmount() {},
@@ -180,5 +201,11 @@ ion-col {
 }
 .small-scale {
     font-size: 0.8rem;
+}
+.flex {
+    display: flex;
+}
+items-center {
+    align-items: center;
 }
 </style>

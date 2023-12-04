@@ -37,6 +37,7 @@
         "toggleRouteKeypad": "Toogle Route Keypad",
         "from": "From",
         "to": "To",
+        "via": "Via",
         "routesNearby": "Routes Nearby"
     },
     "listView": {
@@ -66,7 +67,9 @@
         "nt-short": "N.T.",
         "kaito": "Kai-to",
         "outlying": "Outlying Islands",
-        "inner": "Inner Routes"
+        "inner": "Inner Routes",
+        "outlying-short": "ISLAND",
+        "inner-short": "INNER"
     },
     "option": {
         "title": "Options",

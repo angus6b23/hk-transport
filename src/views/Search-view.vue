@@ -23,6 +23,7 @@ import {
     IonButtons,
     IonReorder,
     IonReorderGroup,
+    IonProgressBar
 } from '@ionic/vue'
 import {
     cog,
@@ -75,6 +76,7 @@ export default defineComponent({
         Keypad,
         IonReorder,
         IonReorderGroup,
+        IonProgressBar,
         RegularSearchItems,
         CompactSearchItemsLeft,
         CompactSearchItemsRight,

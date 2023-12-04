@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkhk_transport"]=self["webpackChunkhk_transport"]||[]).push([[815],{5674:function(n,e,s){s.r(e),s.d(e,{DialogWeb:function(){return r}});var t=s(9895);class r extends t.Uw{async alert(n){window.alert(n.message)}async prompt(n){const e=window.prompt(n.message,n.inputText||"");return{value:null!==e?e:"",cancelled:null===e}}async confirm(n){const e=window.confirm(n.message);return{value:e}}}}}]);
-//# sourceMappingURL=815.c1fd9f07.js.map

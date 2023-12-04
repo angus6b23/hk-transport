@@ -37,6 +37,7 @@
         "toggleRouteKeypad": "展開 / 收起路線鍵盤",
         "from": "從",
         "to": "往",
+        "via": "經",
         "routesNearby": "附近的路線"
     },
     "listView": {
@@ -66,7 +67,9 @@
         "nt-short": "新界",
         "kaito": "街渡",
         "outlying": "離島",
-        "inner": "內陸"
+        "inner": "內陸",
+        "outlying-short": "離島",
+        "inner-short": "內陸"
     },
     "option": {
         "title": "設定",

@@ -25,7 +25,7 @@
     },
     "searchView": {
         "title": "{transportType}路線",
-        "searchPlaceHolder": "請輪入路線號碼或終點站",
+        "searchPlaceHolder": "請輸入路線號碼或終點站",
         "searchPrompt": "搜尋{transportType}: {{query}}",
         "clearSearch": "清除搜尋",
         "starredPrompt": "已標記的{transportType}",
@@ -34,7 +34,11 @@
         "noItem": "尚未有顯示項目",
         "noItemHint": "可於搜尋後標記星號以方便使用",
         "showFerry": "顯示所有渡輪",
-        "toggleRouteKeypad": "展開 / 收起路線鍵盤"
+        "toggleRouteKeypad": "展開 / 收起路線鍵盤",
+        "from": "從",
+        "to": "往",
+        "via": "經",
+        "routesNearby": "附近的路線"
     },
     "listView": {
         "title": "所有{transportType}路線",
@@ -54,12 +58,18 @@
         "lrt": "港鐵",
         "night": "夜間",
         "special": "特別",
+        "special-short": "特別",
         "hki": "港島",
+        "hki-short": "港島",
         "kln": "九龍",
+        "kln-short": "九龍",
         "nt": "新界",
+        "nt-short": "新界",
         "kaito": "街渡",
         "outlying": "離島",
-        "inner": "內陸"
+        "inner": "內陸",
+        "outlying-short": "離島",
+        "inner-short": "內陸"
     },
     "option": {
         "title": "設定",
@@ -93,7 +103,12 @@
         "sourceCode": "顯示原代碼",
         "otherApp": "其他在12a.app 的app",
         "promise": "承諾",
-        "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。"
+        "promiseDescription": "本應用建立之原意為提供一個無廣告及保障私隱的交通應用。此應用現在及未來都不會加入任何廣告或具入侵性的追蹤器，所有用戶資料只會儲存在用戶端並不會上載到伺服器。",
+        "selectItemStyle": "選擇搜尋結果樣式",
+        "itemStyleComfort": "簡潔",
+        "itemStyleCompactLeft": "緊密 - 標示在左邊",
+        "itemStyleCompactRight": "緊密 - 標示在右邊",
+        "itemStyleDetail": "詳盡"
     },
     "etaPopup": {
         "frame": {
@@ -121,7 +136,8 @@
     },
     "news": {
         "title": "交通消息",
-        "fetching": "正在獲取交通消息"
+        "fetching": "正在獲取交通消息",
+        "sourceHeader": "交通消息由香港電台提供"
     },
     "toast": {
         "noEta": "此路線未有提供到站報時服務",
@@ -130,6 +146,7 @@
         "networkError": "網絡錯誤。請檢查來源url 和網絡狀況。",
         "changeSourceHint": "請按管理資料 > 重新下載路線資料 以反映設定",
         "invalidUrl": "網絡地址不正確，請確保地址包含協定 http:// 或 https://",
-        "locationFail": "無法獲得現時地點"
+        "locationFail": "無法獲得現時地點",
+        "mapError": "無法顯示本路線地點，請更新路線資料後再嘗試。"
     }
 }

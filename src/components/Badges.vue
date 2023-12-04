@@ -163,7 +163,10 @@
             :class="{
                 compact: compact,
             }"
-            >{{ $t('badges.outlying') }}</ion-badge
+            >
+            <span v-if="compact">{{ $t('badges.outlying-short') }}</span>
+            <span v-else>{{ $t('badges.outlying') }}</span>
+        </ion-badge
         >
         <ion-badge
             v-if="route.district == 'INNER'"
@@ -171,7 +174,10 @@
             :class="{
                 compact: compact,
             }"
-            >{{ $t('badges.inner') }}</ion-badge
+            >
+            <span v-if="compact">{{ $t('badges.inner-short') }}</span>
+            <span v-else>{{ $t('badges.inner') }}</span>
+        </ion-badge
         >
     </div>
 </template>
