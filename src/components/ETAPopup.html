@@ -2,6 +2,7 @@
 <ion-header>
     <!-- Toolbar -->
     <ion-toolbar>
+        <!-- Title for bus and minibus -->
         <ion-title
             data-testid="eta-title"
             v-if="item.type == 'bus' || item.type == 'minibus'"
@@ -12,6 +13,7 @@
             >
             <span v-else class="ion-margin-start">{{ item.destEN }}</span>
         </ion-title>
+        <!-- Title for Light Rail -->
         <ion-title data-testid="eta-title" v-else-if="item.type == 'lightRail'">
             {{ item.routeNameEN }}
             <span v-if="$i18next.language === 'zh'" class="ion-margin-start"
@@ -21,17 +23,20 @@
                 >{{ item.originEN }} - {{ item.destEN }}</span
             >
         </ion-title>
-        <ion-title class="marquee" v-else>
+        <!-- Title for Tram / Ferry -->
+        <ion-title v-else>
             <span v-if="$i18next.language === 'zh'"
                 >{{ item.routeNameTC }}</span
             >
             <span v-else>{{ item.routeNameEN }}</span>
         </ion-title>
+        <!-- Back Button -->
         <ion-buttons slot="start" class="top-buttons">
             <ion-button @click="closeModal" data-testid="close-modal"
                 ><ion-icon :icon="chevronBack"></ion-icon
             ></ion-button>
         </ion-buttons>
+        <!-- Swap Button -->
         <ion-buttons slot="end" class="top-buttons">
             <span v-if="altRoutes && altRoutes.length == 1">
                 <ion-button @click="swapDirection">
@@ -43,6 +48,7 @@
                     <ion-icon :icon="swapHorizontalOutline" />
                 </ion-button>
             </span>
+            <!-- Star button -->
             <span v-if="starred != undefined">
                 <ion-button v-if="checkbusStar" @click="removeStar">
                     <ion-icon :icon="star" />
@@ -69,7 +75,7 @@
                 <ion-label>{{ $t('etaPopup.frame.info') }}</ion-label>
             </ion-segment-button>
             <ion-segment-button
-                v-if="item.type != 'mtr' && item.type != 'lightRail'"
+                v-if="item.type != 'mtr'"
                 value="map"
                 data-testid="eta-tab-map"
             >

@@ -239,7 +239,7 @@ export default {
                     }
                 } else {
                     return {
-                        distance: 9999999,
+                        distance: Infinity,
                     }
                 }
             })

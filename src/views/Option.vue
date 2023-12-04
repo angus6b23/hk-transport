@@ -37,6 +37,7 @@ import {
     shieldCheckmarkOutline,
     linkOutline,
     listOutline,
+    menuOutline,
 } from 'ionicons/icons'
 import fetchApiData from '@/fetch/fetchAPIData'
 import presentToast from '@/components/presentToast.js'
@@ -60,7 +61,7 @@ export default {
         IonCheckbox,
         IonRange,
     },
-    emits: ['closeOption', 'updateData', 'downloadData', 'changeLanguage'],
+    emits: ['closeOption', 'updateData', 'downloadData'],
     setup() {
         const config = inject('globalConfig')
         const body = document.body
@@ -72,6 +73,7 @@ export default {
                 config.value.theme,
                 config.value.lang,
                 config.value.maxResults,
+                config.value.searchItemStyle,
             ],
             async () => {
                 await localforage.setItem(
@@ -96,13 +98,12 @@ export default {
             returnDownForwardOutline,
             bookOutline,
             listOutline,
+            menuOutline,
             config,
             body,
         }
     },
-    async mounted() {
-        console.log(this.config)
-    },
+    async mounted() {},
     methods: {
         closeOption() {
             this.$emit('closeOption')
@@ -226,11 +227,36 @@ export default {
             const res = await sourceSheet.onDidDismiss()
             if (res.data && this.config.fetchMethod != res.data.action) {
                 this.config.fetchMethod = res.data.action
-                await localforage.setItem(
-                    'config',
-                    JSON.parse(JSON.stringify(this.config))
-                )
                 await presentToast('info', this.$t('toast.changeSourceHint'))
+            }
+        },
+        async presentSearchItemStyleAction() {
+            const sourceActions = [
+                {
+                    text: this.$t('option.itemStyleComfort'),
+                    data: { action: 'comfort' },
+                },
+                {
+                    text: this.$t('option.itemStyleCompactLeft'),
+                    data: { action: 'compact_left' },
+                },
+                {
+                    text: this.$t('option.itemStyleCompactRight'),
+                    data: { action: 'compact_right' },
+                },
+                {
+                    text: this.$t('option.itemStyleDetail'),
+                    data: { action: 'detail' },
+                },
+            ]
+            const sourceSheet = await actionSheetController.create({
+                header: this.$t('option.selectItemStyle'),
+                buttons: sourceActions,
+            })
+            await sourceSheet.present()
+            const res = await sourceSheet.onDidDismiss()
+            if (res.data && this.config.searchItemStyle !== res.data.action) {
+                this.config.searchItemStyle = res.data.action
             }
         },
         async presentThemeAction() {
@@ -273,16 +299,16 @@ export default {
 }
 </script>
 <style scoped>
-.flex{
+.flex {
     display: flex;
 }
-.flex-wrap{
+.flex-wrap {
     flex-wrap: wrap;
 }
-.w-full{
+.w-full {
     width: 100%;
 }
-.py-0{
+.py-0 {
     padding-top: 0px;
     padding-bottom: 0px;
 }

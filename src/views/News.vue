@@ -1,12 +1,16 @@
 <template>
+    <!-- Header for news -->
     <ion-header>
         <ion-toolbar>
+            <!-- Title -->
             <ion-title>{{ $t('news.title') }}</ion-title>
+            <!-- Back button -->
             <ion-buttons slot="start">
                 <ion-button @click="closeNews">
                     <ion-icon :icon="chevronBack" />
                 </ion-button>
             </ion-buttons>
+            <!-- refresh Button -->
             <ion-buttons slot="end">
                 <ion-button @click="fetchNews">
                     <ion-icon :icon="refreshOutline" />
@@ -15,7 +19,11 @@
         </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding-bottom">
+        <!-- List Starts here -->
         <ion-list>
+            <ion-list-header>
+                <ion-label>{{ $t('news.sourceHeader') }}</ion-label>
+            </ion-list-header>
             <ion-item v-for="(message, index) of news" :key="index">
                 <ion-label style="white-space: unset">
                     <h2 style="margin-bottom: 0.5rem">
@@ -36,6 +44,7 @@ import {
     IonTitle,
     IonContent,
     IonList,
+    IonListHeader,
     IonItem,
     IonIcon,
     IonButton,
@@ -56,6 +65,7 @@ export default {
         IonTitle,
         IonContent,
         IonList,
+        IonListHeader,
         IonItem,
         IonIcon,
         IonButton,

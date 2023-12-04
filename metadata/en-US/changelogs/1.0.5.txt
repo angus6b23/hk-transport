@@ -1,0 +1,7 @@
+Update
+
+- Fixed typos
+- New search item styles
+- New function: Routes Nearby
+- Can now display light rail routes on map (Require updating route data)
+- Better error handling at map view

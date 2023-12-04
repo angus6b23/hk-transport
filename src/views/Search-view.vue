@@ -7,9 +7,9 @@ import {
     IonHeader,
     IonToolbar,
     IonContent,
-    IonText,
     IonSearchbar,
     IonItem,
+    IonText,
     IonLabel,
     IonList,
     IonListHeader,
@@ -23,12 +23,14 @@ import {
     IonButtons,
     IonReorder,
     IonReorderGroup,
+    IonProgressBar
 } from '@ionic/vue'
 import {
     cog,
     chevronBack,
     swapVerticalOutline,
     newspaperOutline,
+    locationOutline,
 } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
 import ETAPopup from '@/components/ETAPopup.vue'
@@ -41,6 +43,11 @@ import presentToast from '@/components/presentToast.js'
 import Keypad from '@/components/Keypad'
 import { useMemoize } from '@vueuse/core'
 import { filterData } from '@/components/search'
+import RegularSearchItems from '@/components/SearchResultItems/RegularSearchItems.vue'
+import CompactSearchItemsLeft from '@/components/SearchResultItems/CompactSearchItemsLeft.vue'
+import CompactSearchItemsRight from '@/components/SearchResultItems/CompactSearchItemsRight'
+import DetailSearchItems from '@/components/SearchResultItems/DetailSearchItems.vue'
+import getNearbyRoutesPromise from '@/components/getNearbyRoutes'
 
 export default defineComponent({
     components: {
@@ -69,6 +76,11 @@ export default defineComponent({
         Keypad,
         IonReorder,
         IonReorderGroup,
+        IonProgressBar,
+        RegularSearchItems,
+        CompactSearchItemsLeft,
+        CompactSearchItemsRight,
+        DetailSearchItems,
     },
     name: 'SearchView',
     props: ['dataType'],
@@ -86,8 +98,9 @@ export default defineComponent({
         const type = ref(props.dataType)
         const dataReady = ref(false)
         const disableReorder = ref(true)
-        const keypadOpen = ref(false)
-
+        const keypadOpen = ref(false) // pass as a prop for keypad, will close the keypad if the value changes
+        const locationLoading = ref(false); // For displaying the loading bar while finding nearby routes
+        
         const memoFilterQuery = useMemoize(filterData, {
             getKey: (data, type, query, lang, maxResults) =>
                 `${query.toUpperCase()}-${lang}-${maxResults}`,
@@ -113,18 +126,20 @@ export default defineComponent({
             starred,
             type,
             dataReady,
+            locationLoading,
             cog,
             chevronBack,
             swapVerticalOutline,
             newspaperOutline,
+            locationOutline,
         }
     },
     methods: {
         openModal(index) {
             this.itemSelected = JSON.parse(
                 JSON.stringify(this.displayArray[index])
-            ) //Use Deep copy to prevent problems when clicked again
-            console.log(this.itemSelected)
+            ) // Use Deep copy to prevent problems when clicked again
+            // console.log(this.itemSelected)
             this.getAltRoutes()
             this.modalIsOpen = true
         },
@@ -139,7 +154,7 @@ export default defineComponent({
                 this.itemSelected = JSON.parse(
                     JSON.stringify(this.data[targetIndex])
                 )
-                console.log(this.itemSelected)
+                // console.log(this.itemSelected)
                 this.getAltRoutes()
                 this.modalIsOpen = true
             } else {
@@ -366,6 +381,10 @@ export default defineComponent({
             event.detail.complete(this.starred)
             await this.saveStar()
         },
+        updateQuery(newQuery) {
+            this.hideKeypad();
+            this.query = newQuery
+        },
     },
     async mounted() {
         this.data = await loadChunk(this.type)
@@ -382,6 +401,24 @@ export default defineComponent({
         query(newQuery) {
             if (newQuery === '') {
                 this.displayArray = this.starred
+            } else if (
+                newQuery === 'Routes Nearby' ||
+                newQuery === '附近的路線'
+            ) {
+                this.locationLoading = true;
+                getNearbyRoutesPromise(this.data, this.config.maxResults).then(res => {
+                    this.locationLoading = false
+                    if (res instanceof Error){
+                        presentToast('error', this.$t('toast.locationFail'))
+                    } else {
+                        // console.log(res)
+                        if (this.type === 'ferry'){
+                            this.displayArray = res.filter(route => route.direction === 1)
+                        } else {
+                            this.displayArray = res
+                        }
+                    }
+                })
             } else {
                 this.displayArray = this.memoFilterQuery(
                     this.data,
@@ -429,17 +466,6 @@ export default defineComponent({
 .d-flex {
     display: flex;
 }
-.direction-button {
-    width: 100%;
-    align-self: center;
-    justify-self: center;
-}
-.direction1-button {
-    --background: #5e6fa1;
-}
-.direction2-button {
-    --background: #a1905e;
-}
 .star-wrapper {
     font-size: 1.2rem;
     width: 100%;
@@ -452,5 +478,9 @@ export default defineComponent({
 }
 .swap-icon {
     margin-right: 1rem;
+}
+.location-buttons.md{
+    align-self: flex-start;
+    margin-top: 0.5rem
 }
 </style>
