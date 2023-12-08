@@ -2,9 +2,15 @@
 <img src="https://raw.githubusercontent.com/angus6b23/hk-transport/master/assets/logo.svg" width="800" height="300" alt="hk-transport-logo">
 </div>
 
-# HK transport
-
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+# HK transport 香港交通
+<div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; margin-left: -0.5rem">
+![GitHub License](https://img.shields.io/github/license/angus6b23/hk-transport)
+![GitHub release (with filter)](https://img.shields.io/github/v/release/angus6b23/hk-transport)
+![F-Droid (including pre-releases)](https://img.shields.io/f-droid/v/app.hkTransport)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fhk-transport.12a.app)
+![Backend](https://img.shields.io/website?url=https%3A%2F%2Fapi.12a.app%2Fhk-transport&label=backend)
+![Liberapay receiving](https://img.shields.io/liberapay/receives/12a.app)
+</div>
 
 An app viewing all major modes of transport in Hong Kong.
 
@@ -25,10 +31,13 @@ In the app, you can find data of
     渡輪（未提供到站時間）
 
 ## Screenshots
-![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/en-US/images/phoneScreenshots/en-1.png)
-![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/zh-TW/images/phoneScreenshots/zh-1.png)
-![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/en-US/images/phoneScreenshots/en-3.png)
-![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/zh-TW/images/phoneScreenshots/zh-4.png)
+<div style="display: flex; flex-wrap: wrap; gap: 1rem">
+<img src="https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/en-US/images/phoneScreenshots/en-1.png" width="300" alt="en-search-screenshot">
+<img src="https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/zh-TW/images/phoneScreenshots/zh-1.png" width="300" alt="zh-search-screenshot">
+<img src="https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/en-US/images/phoneScreenshots/en-3.png" width="300" alt="eta-screenshot">
+<img src="https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/zh-TW/images/phoneScreenshots/zh-4.png" width="300" alt="list-screenshot">
+</div>
+
 
 
 ## Features 
