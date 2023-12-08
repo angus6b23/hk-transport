@@ -4,12 +4,12 @@
 
 # HK transport 香港交通
 <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; margin-left: -0.5rem">
-![GitHub License](https://img.shields.io/github/license/angus6b23/hk-transport)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/angus6b23/hk-transport)
-![F-Droid (including pre-releases)](https://img.shields.io/f-droid/v/app.hkTransport)
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fhk-transport.12a.app)
-![Backend](https://img.shields.io/website?url=https%3A%2F%2Fapi.12a.app%2Fhk-transport&label=backend)
-![Liberapay receiving](https://img.shields.io/liberapay/receives/12a.app)
+<img alt="GitHub License" src="https://img.shields.io/github/license/angus6b23/hk-transport">
+<img alt="GitHub release (with filter)" src="https://img.shields.io/github/v/release/angus6b23/hk-transport">
+<img alt="F-Droid (including pre-releases)" src="https://img.shields.io/f-droid/v/app.hkTransport">
+<img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fhk-transport.12a.app">
+<img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fapi.12a.app%2Fhk-transport&label=backend">
+<img alt="Liberapay receiving" src="https://img.shields.io/liberapay/receives/12a.app">
 </div>
 
 An app viewing all major modes of transport in Hong Kong.
