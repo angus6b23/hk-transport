@@ -24,7 +24,14 @@ In the app, you can find data of
 -   Ferry（Estimated time of arrival not available）
     渡輪（未提供到站時間）
 
-## Features
+## Screenshots
+![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/en-US/images/phoneScreenshots/en-1.png)
+![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/zh-TW/images/phoneScreenshots/zh-1.png)
+![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/en-US/images/phoneScreenshots/en-3.png)
+![img](https://raw.githubusercontent.com/angus6b23/hk-transport/master/metadata/zh-TW/images/phoneScreenshots/zh-4.png)
+
+
+## Features 
 
 -   [Live site 線上版](https://hk-transport.12a.app)
 -   [Google Play Store](https://play.google.com/store/apps/details?id=app.hkTransport)
