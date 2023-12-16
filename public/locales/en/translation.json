@@ -124,10 +124,11 @@
             "journeyTime": "Journey Time",
             "fullFare": "Full Fare",
             "details": "Route Details",
-            "MF": "Monday to Friday",
-            "S": "Saturday",
+            "MF": "Monday to Friday (Except Public Holidays)",
+            "MS": "Monday to Saturday (Except Public Holidays)",
+            "S": "Saturday (Except Public Holidays)",
             "H": "Sunday and Public Holidays",
-            "D": "Daily"
+            "D": "Daily (Except Public Holidays)"
         },
         "map": {
             "selectStation": "Please select station",

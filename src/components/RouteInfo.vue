@@ -46,6 +46,9 @@
                         <ion-card-title v-if="section.title == 'MF'">{{
                             $t('etaPopup.info.MF')
                         }}</ion-card-title>
+                        <ion-card-title v-else-if="section.title == 'MS'">{{
+                            $t('etaPopup.info.MS')
+                        }}</ion-card-title>
                         <ion-card-title v-else-if="section.title == 'S'">{{
                             $t('etaPopup.info.S')
                         }}</ion-card-title>
