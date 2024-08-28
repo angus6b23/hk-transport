@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import i18n from './i18next'
 import App from './App.vue'
 import router from './router'
@@ -24,10 +25,31 @@ import '@ionic/vue/css/display.css'
 import './theme/variables.css'
 
 import './registerServiceWorker'
+import { persistencePlugin } from 'pinia-persistence-plugin'
+import localforage from 'localforage'
 
+const getItem = async (key) => {
+    return await localforage.getItem(key)
+}
+const setItem = async (key, value) => {
+    await localforage.setItem(key, value)
+}
+const removeItem = async (key) => {
+    await localforage.removeItem(key)
+}
+
+const pinia = createPinia()
+pinia.use(
+    persistencePlugin({
+        storeKeysPrefix: 'pinia',
+        persistenceDefault: true,
+        storageItemsDefault: [{ storage: { getItem, setItem, removeItem } }],
+    })
+)
 const app = i18n(createApp(App))
     .use(IonicVue, { innerHTMLTemplatesEnabled: true })
     .use(router)
+    .use(pinia)
 
 router.isReady().then(() => {
     app.mount('#app')

@@ -23,7 +23,8 @@ import {
     IonButtons,
     IonReorder,
     IonReorderGroup,
-    IonProgressBar
+    IonProgressBar,
+    useBackButton,
 } from '@ionic/vue'
 import {
     cog,
@@ -48,6 +49,8 @@ import CompactSearchItemsLeft from '@/components/SearchResultItems/CompactSearch
 import CompactSearchItemsRight from '@/components/SearchResultItems/CompactSearchItemsRight'
 import DetailSearchItems from '@/components/SearchResultItems/DetailSearchItems.vue'
 import getNearbyRoutesPromise from '@/components/getNearbyRoutes'
+import { App } from '@capacitor/app'
+import { useTranslation } from 'i18next-vue'
 
 export default defineComponent({
     components: {
@@ -99,8 +102,10 @@ export default defineComponent({
         const dataReady = ref(false)
         const disableReorder = ref(true)
         const keypadOpen = ref(false) // pass as a prop for keypad, will close the keypad if the value changes
-        const locationLoading = ref(false); // For displaying the loading bar while finding nearby routes
-        
+        const locationLoading = ref(false) // For displaying the loading bar while finding nearby routes
+        const { t } = useTranslation()
+        let exitApp = false
+
         const memoFilterQuery = useMemoize(filterData, {
             getKey: (data, type, query, lang, maxResults) =>
                 `${query.toUpperCase()}-${lang}-${maxResults}`,
@@ -108,6 +113,17 @@ export default defineComponent({
         // Event listeners
         addEventListener('ionModalDidDismiss', function () {
             modalIsOpen.value = false
+        })
+        useBackButton(10, () => {
+            if (exitApp) {
+                App.exitApp()
+            } else {
+                presentToast('info', t('toast.exitMessage'))
+                exitApp = true
+                setTimeout(() => {
+                    exitApp = false
+                }, 800)
+            }
         })
         const config = inject('globalConfig')
         return {
@@ -382,7 +398,7 @@ export default defineComponent({
             await this.saveStar()
         },
         updateQuery(newQuery) {
-            this.hideKeypad();
+            this.hideKeypad()
             this.query = newQuery
         },
     },
@@ -405,20 +421,24 @@ export default defineComponent({
                 newQuery === 'Routes Nearby' ||
                 newQuery === '附近的路線'
             ) {
-                this.locationLoading = true;
-                getNearbyRoutesPromise(this.data, this.config.maxResults).then(res => {
-                    this.locationLoading = false
-                    if (res instanceof Error){
-                        presentToast('error', this.$t('toast.locationFail'))
-                    } else {
-                        // console.log(res)
-                        if (this.type === 'ferry'){
-                            this.displayArray = res.filter(route => route.direction === 1)
+                this.locationLoading = true
+                getNearbyRoutesPromise(this.data, this.config.maxResults).then(
+                    (res) => {
+                        this.locationLoading = false
+                        if (res instanceof Error) {
+                            presentToast('error', this.$t('toast.locationFail'))
                         } else {
-                            this.displayArray = res
+                            // console.log(res)
+                            if (this.type === 'ferry') {
+                                this.displayArray = res.filter(
+                                    (route) => route.direction === 1
+                                )
+                            } else {
+                                this.displayArray = res
+                            }
                         }
                     }
-                })
+                )
             } else {
                 this.displayArray = this.memoFilterQuery(
                     this.data,
@@ -479,8 +499,8 @@ export default defineComponent({
 .swap-icon {
     margin-right: 1rem;
 }
-.location-buttons.md{
+.location-buttons.md {
     align-self: flex-start;
-    margin-top: 0.5rem
+    margin-top: 0.5rem;
 }
 </style>

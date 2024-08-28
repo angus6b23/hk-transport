@@ -148,6 +148,7 @@
         "changeSourceHint": "請按管理資料 > 重新下載路線資料 以反映設定",
         "invalidUrl": "網絡地址不正確，請確保地址包含協定 http:// 或 https://",
         "locationFail": "無法獲得現時地點",
-        "mapError": "無法顯示本路線地點，請更新路線資料後再嘗試。"
+        "mapError": "無法顯示本路線地點，請更新路線資料後再嘗試。",
+        "exitMessage": "再按一下返回鍵退出應用程式"
     }
 }
