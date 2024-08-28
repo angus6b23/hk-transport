@@ -148,6 +148,7 @@
         "changeSourceHint": "Please press Manage Data > Reload all routes data to apply chanegs",
         "invalidUrl": "The Url is invalid. Please remember to include http:// or https://",
         "locationFail": "Unable to get current location by gps.",
-        "mapError": "Some location cannot be shown on map. Please update the route data and try again."
+        "mapError": "Some location cannot be shown on map. Please update the route data and try again.",
+        "exitMessage": "Press back once more to exit."
     }
 }

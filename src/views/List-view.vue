@@ -19,6 +19,7 @@ import {
     IonIcon,
     IonButtons,
     IonButton,
+    useBackButton,
 } from '@ionic/vue'
 import { cog, newspaperOutline } from 'ionicons/icons'
 import { loadChunk } from '@/components/loadData.js'
@@ -27,6 +28,8 @@ import ETAPopup from '@/components/ETAPopup.vue'
 import OptionView from '@/views/Option.vue'
 import News from './News.vue'
 import sleep from '@/components/sleep.js'
+import { App } from '@capacitor/app'
+import { useTranslation } from 'i18next-vue'
 
 export default defineComponent({
     name: 'ListView',
@@ -62,9 +65,22 @@ export default defineComponent({
         const type = ref(props.dataType)
         const dataReady = ref(false)
         const altRoutes = ref([]) // For saving directions with same routeNo, which will be passed to etaPopup
+        const { t } = useTranslation()
+        let exitApp = false
         // Event listeners
         addEventListener('ionModalDidDismiss', function () {
             modalIsOpen.value = false
+        })
+        useBackButton(10, () => {
+            if (exitApp) {
+                App.exitApp()
+            } else {
+                presentToast('info', t('toast.exitMessage'))
+                exitApp = true
+                setTimeout(() => {
+                    exitApp = false
+                }, 800)
+            }
         })
         return {
             data,

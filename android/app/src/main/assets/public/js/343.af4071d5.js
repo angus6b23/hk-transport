@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkhk_transport"]=self["webpackChunkhk_transport"]||[]).push([[343],{6343:function(r,e,n){n.r(e),n.d(e,{default:function(){return f}});var t=n(641);function a(r,e,n,a,c,u){const s=(0,t.g2)("SearchView");return(0,t.uX)(),(0,t.Wv)(s,{dataType:"ferry"})}var c=n(9042),u=(0,t.pM)({name:"ferry",components:{SearchView:c.A}}),s=n(6262);const o=(0,s.A)(u,[["render",a]]);var f=o}}]);
+//# sourceMappingURL=343.af4071d5.js.map
