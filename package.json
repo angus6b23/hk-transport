@@ -46,7 +46,8 @@
         "swiper": "^11.1.7",
         "vue": "^3.3.7",
         "vue-router": "^4.2.5",
-        "vue3-marquee": "^4.0.0"
+        "vue3-marquee": "^4.0.0",
+        "yarn": "^1.22.22"
     },
     "devDependencies": {
         "@capacitor/assets": "^3.0.5",
